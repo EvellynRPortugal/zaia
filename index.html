@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#1a1030" />
 <title>Zaia</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%238b5cf6'/%3E%3Cstop offset='.55' stop-color='%23d946ef'/%3E%3Cstop offset='1' stop-color='%23fb7137'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='26' fill='url(%23g)'/%3E%3Ccircle cx='46' cy='56' r='22' fill='%23fff1cf'/%3E%3Ccircle cx='58' cy='48' r='19' fill='%23d946ef'/%3E%3Ccircle cx='73' cy='31' r='2.4' fill='white'/%3E%3Ccircle cx='29' cy='30' r='2' fill='white'/%3E%3Ccircle cx='33' cy='70' r='1.6' fill='white'/%3E%3C/svg%3E" />
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%238b5cf6'/%3E%3Cstop offset='.55' stop-color='%23d946ef'/%3E%3Cstop offset='1' stop-color='%23fb7137'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='26' fill='url(%23g)'/%3E%3Ccircle cx='46' cy='56' r='22' fill='%23fff1cf'/%3E%3Ccircle cx='58' cy='48' r='19' fill='%23d946ef'/%3E%3C/svg%3E" />
 <style>
   :root{
     --bg:#160e29;
@@ -73,10 +75,18 @@
   .topo{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:26px 4px 8px}
   .saudacao h1{font-size:24px;font-weight:700;letter-spacing:-.5px}
   .saudacao p{color:var(--txt-dim);font-size:14px;margin-top:2px}
-  .menu-user{display:flex;align-items:center;gap:10px;flex-shrink:0}
-  .avatar{width:38px;height:38px;border-radius:50%;
+  .menu-user{position:relative;flex-shrink:0}
+  .avatar{width:44px;height:44px;border-radius:50%;
     background:linear-gradient(135deg,var(--roxo),var(--magenta));
-    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+    background-size:cover;background-position:center;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:17px;
+    cursor:pointer;overflow:hidden;border:2px solid rgba(255,255,255,.18);transition:.2s}
+  .avatar:hover{border-color:var(--magenta);transform:scale(1.05)}
+  .menu-drop{position:absolute;right:0;top:52px;background:var(--card-solid);
+    border:1px solid var(--stroke);border-radius:16px;padding:6px;min-width:190px;
+    box-shadow:var(--sombra);z-index:60;display:flex;flex-direction:column;gap:2px}
+  .menu-drop button{text-align:left;padding:11px 13px;border-radius:11px;color:var(--txt);font-size:14px}
+  .menu-drop button:hover{background:rgba(255,255,255,.08)}
   .icon-btn{width:38px;height:38px;border-radius:12px;background:var(--card);
     border:1px solid var(--stroke);display:flex;align-items:center;justify-content:center;font-size:16px}
   .icon-btn:hover{border-color:var(--magenta)}
@@ -178,7 +188,8 @@
     z-index:50;display:none;align-items:flex-end;justify-content:center;padding:0}
   .modal-bg.on{display:flex}
   .modal{width:100%;max-width:480px;background:var(--card-solid);border:1px solid var(--stroke);
-    border-radius:24px 24px 0 0;padding:24px 22px calc(24px + env(safe-area-inset-bottom));animation:sobe .25s ease}
+    border-radius:24px 24px 0 0;padding:24px 22px calc(24px + env(safe-area-inset-bottom));
+    max-height:90vh;overflow-y:auto;animation:sobe .25s ease}
   @keyframes sobe{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
   @media(min-width:560px){.modal-bg{align-items:center}.modal{border-radius:24px;margin:20px}}
   .modal h3{font-size:18px;margin-bottom:16px}
@@ -193,6 +204,84 @@
   .modal-acoes{display:flex;gap:10px;margin-top:22px}
   .modal-acoes .btn{margin-top:0}
   .btn-sec{background:rgba(255,255,255,.08);color:var(--txt)}
+  textarea.campo{resize:vertical;min-height:66px;line-height:1.45}
+  .anexos-lista{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+  .anexo{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.22);
+    border:1px solid var(--stroke);border-radius:11px;padding:8px 11px;font-size:13px}
+  .anexo a{color:#c4b5fd;text-decoration:none;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .anexo button{color:var(--txt-dim);width:24px;flex-shrink:0}
+  .t-desc{font-size:13px;color:var(--txt-dim);margin-top:3px;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .t-corpo{cursor:pointer}
+
+  /* Spotify */
+  .spotify{margin-top:10px}
+  .sp-connect{width:100%;background:rgba(30,215,96,.14);border:1px solid rgba(30,215,96,.4);
+    color:#1ed760;border-radius:16px;padding:12px;font-size:14px;font-weight:600}
+  .sp-connect:hover{background:rgba(30,215,96,.24)}
+  .sp-player{display:flex;align-items:center;gap:12px;background:var(--card);
+    border:1px solid var(--stroke);border-radius:18px;padding:10px 12px;backdrop-filter:blur(10px)}
+  .sp-capa{width:46px;height:46px;border-radius:10px;object-fit:cover;flex-shrink:0;background:rgba(0,0,0,.3)}
+  .sp-info{flex:1;min-width:0}
+  .sp-musica{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sp-artista{font-size:12.5px;color:var(--txt-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sp-ctrl{display:flex;gap:2px;flex-shrink:0}
+  .sp-ctrl button{width:34px;height:34px;border-radius:10px;font-size:15px;color:var(--txt)}
+  .sp-ctrl button:hover{background:rgba(255,255,255,.1)}
+  .sp-sair{width:26px;color:var(--txt-dim);flex-shrink:0;font-size:12px}
+  .sp-sair:hover{color:var(--urgente)}
+
+  /* botão modo crise */
+  .btn-crise{position:fixed;left:18px;bottom:26px;width:46px;height:46px;border-radius:50%;
+    background:rgba(30,20,55,.7);border:1px solid var(--stroke);font-size:20px;z-index:41;
+    backdrop-filter:blur(8px);box-shadow:0 6px 18px -6px rgba(0,0,0,.6);opacity:.75;transition:.2s}
+  .btn-crise:hover{opacity:1;transform:scale(1.08)}
+
+  /* MODO CRISE */
+  .crise{position:fixed;inset:0;z-index:200;overflow-y:auto;
+    background:linear-gradient(180deg,#05030d 0%,#0c0820 40%,#140a24 70%,#1c0e2e 100%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:40px 24px;text-align:center;color:#e9e2ff}
+  .crise-sair{position:fixed;top:18px;right:20px;width:40px;height:40px;border-radius:12px;
+    color:rgba(220,210,255,.5);font-size:16px;z-index:210}
+  .crise-sair:hover{color:#fff;background:rgba(255,255,255,.06)}
+  .crise-passo{max-width:440px;width:100%;display:flex;flex-direction:column;align-items:center;gap:14px;animation:cfade .6s ease}
+  @keyframes cfade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  .crise-titulo{font-size:26px;font-weight:600;letter-spacing:-.3px;line-height:1.3;color:#f0eaff}
+  .crise-titulo b{color:#d9b8ff;font-weight:700}
+  .crise-sub{font-size:15px;color:#a99ccc;line-height:1.6}
+  .crise-etapa{font-size:12px;text-transform:uppercase;letter-spacing:2px;color:#7a6ba0}
+  .crise-dica{font-size:13px;color:#6f6296;font-style:italic;margin-top:4px}
+  .crise-btn{margin-top:12px;background:linear-gradient(100deg,#5b3a9e,#8b5cf6);color:#fff;
+    border-radius:16px;padding:14px 34px;font-size:15px;font-weight:600;transition:.2s}
+  .crise-btn:hover{filter:brightness(1.12)}
+  .crise-btn.ghost{background:transparent;color:#9a8cc0;padding:10px;font-size:13px;margin-top:2px}
+  .crise-btn.ghost:hover{color:#d9b8ff}
+  .crise-luar{width:120px;height:120px;border-radius:50%;
+    background:radial-gradient(circle at 40% 35%,#fff6dd,#f7c66a 45%,rgba(217,70,239,0) 72%);
+    filter:blur(2px);animation:pulsa 5s ease-in-out infinite;margin-bottom:6px}
+  @keyframes pulsa{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.08);opacity:1}}
+  /* aterrissagem pontos */
+  .ater-pontos{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:10px 0}
+  .ater-pt{width:52px;height:52px;border-radius:50%;border:2px solid rgba(180,150,255,.35);
+    background:rgba(139,92,246,.08);font-size:22px;color:transparent;transition:.25s}
+  .ater-pt.on{background:radial-gradient(circle,#8b5cf6,#5b3a9e);border-color:#d9b8ff;color:#fff1cf;transform:scale(1.05)}
+  /* traçar */
+  .tr-svg{width:min(300px,80vw);height:min(300px,80vw);touch-action:none;margin:6px 0}
+  #tr-dot{cursor:grab;filter:drop-shadow(0 0 8px rgba(255,241,207,.6))}
+  /* puzzle */
+  .puzzle{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;width:min(300px,80vw);
+    height:min(300px,80vw);margin:8px auto;background:rgba(0,0,0,.3);padding:5px;border-radius:14px}
+  .puzzle .pc{border-radius:8px;background-size:300% 300%;cursor:pointer;transition:.12s;
+    display:flex;align-items:center;justify-content:center;font-size:20px;color:rgba(255,255,255,.5);font-weight:700}
+  .puzzle .pc:hover{filter:brightness(1.15)}
+  .puzzle .pc.vazio{background:none!important;cursor:default;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)}
+  .crise-plbar{position:fixed;top:16px;left:20px;right:70px;display:flex;gap:8px;align-items:center;z-index:210}
+  .crise-plbar input{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(180,150,255,.2);
+    border-radius:12px;padding:9px 12px;color:#e9e2ff;font-size:12.5px;outline:none}
+  .crise-plbar input::placeholder{color:#6f6296}
+  .crise-plbar button{background:rgba(30,215,96,.15);border:1px solid rgba(30,215,96,.4);
+    color:#1ed760;border-radius:12px;padding:9px 12px;font-size:12.5px;font-weight:600;white-space:nowrap}
 
   .carregando{min-height:100dvh;display:flex;align-items:center;justify-content:center;color:var(--txt-dim)}
   .oculto{display:none!important}
@@ -265,18 +354,41 @@
       <p id="resumo-linha">…</p>
     </div>
     <div class="menu-user">
-      <button id="btn-notif" class="icon-btn" title="Ativar lembretes">🔔</button>
-      <div id="avatar" class="avatar">E</div>
-      <button id="btn-sair" class="icon-btn" title="Sair">⏻</button>
+      <button id="avatar" class="avatar" title="Menu">E</button>
+      <div id="menu-drop" class="menu-drop oculto">
+        <button id="btn-foto">🖼️ Trocar foto</button>
+        <button id="btn-notif">🔔 Ativar lembretes</button>
+        <button id="btn-exportar">⬇️ Exportar meus dados</button>
+        <button id="btn-sair">⏻ Sair</button>
+      </div>
+      <input id="foto-input" type="file" accept="image/*" class="oculto"/>
     </div>
   </div>
 
   <!-- barra Zaia -->
   <div class="zaia-bar">
-    <input id="cmd" placeholder="Fala comigo… ex: reunião com a oficina amanhã 15h" />
+    <input id="cmd" placeholder="Fala comigo… ex: revisar o capítulo 2 do TCC sexta 15h" />
     <button id="cmd-send" class="zaia-send">➤</button>
   </div>
   <div id="zaia-fala" class="zaia-fala hint">Escreve do seu jeito que eu me viro. 💫</div>
+
+  <!-- SPOTIFY -->
+  <div id="spotify" class="spotify oculto">
+    <button id="sp-connect" class="sp-connect">🎵 Conectar Spotify</button>
+    <div id="sp-player" class="sp-player oculto">
+      <img id="sp-capa" class="sp-capa" alt=""/>
+      <div class="sp-info">
+        <div id="sp-musica" class="sp-musica">—</div>
+        <div id="sp-artista" class="sp-artista">—</div>
+      </div>
+      <div class="sp-ctrl">
+        <button id="sp-prev" title="Anterior">⏮</button>
+        <button id="sp-play" title="Play/Pause">⏯</button>
+        <button id="sp-next" title="Próxima">⏭</button>
+      </div>
+      <button id="sp-sair" class="sp-sair" title="Desconectar Spotify">✕</button>
+    </div>
+  </div>
 
   <!-- abas -->
   <div class="aba-nav">
@@ -313,34 +425,100 @@
     <div class="sec-titulo">O que a Zaia aprendeu com você</div>
     <div id="lista-sinonimos"></div>
     <div class="add-etapa" style="margin-top:12px">
-      <input id="sin-termo" placeholder="palavra (ex: oficina)"/>
-      <input id="sin-signif" placeholder="= etiqueta (ex: trabalho)"/>
+      <input id="sin-termo" placeholder="palavra (ex: academia)"/>
+      <input id="sin-signif" placeholder="= etiqueta (ex: casa)"/>
       <button id="sin-add" class="mini-btn">Ensinar</button>
     </div>
-    <button id="btn-exportar" class="btn btn-sec" style="margin-top:22px">⬇ Exportar meus dados</button>
   </section>
 </div>
 
+<!-- BOTÃO MODO CRISE (discreto, sempre visível) -->
+<button id="btn-crise" class="btn-crise oculto" title="Modo calma">🌙</button>
+
 <!-- FAB -->
 <button id="fab" class="fab oculto">+</button>
+
+<!-- MODO CRISE -->
+<div id="crise" class="crise oculto">
+  <button id="crise-sair" class="crise-sair" title="Sair">✕</button>
+
+  <!-- playlist -->
+  <div id="crise-playlist-bar" class="crise-plbar"></div>
+
+  <!-- passo 0: acolhimento -->
+  <div class="crise-passo" data-passo="0">
+    <div class="crise-luar"></div>
+    <h2 class="crise-titulo">Tá tudo bem.</h2>
+    <p class="crise-sub">Vamos atravessar isso juntas, sem pressa.<br>Respira. Quando quiser, começamos.</p>
+    <button class="crise-btn" data-ir="1">Começar</button>
+  </div>
+
+  <!-- passo 1: aterrissagem -->
+  <div class="crise-passo oculto" data-passo="1">
+    <p class="crise-etapa">Aterrissagem · <span id="ater-sec">1</span>/3</p>
+    <h2 class="crise-titulo" id="ater-pedido">Encontre <b>2 coisas</b> que você vê</h2>
+    <p class="crise-sub">Olhe ao redor. Toque num ponto a cada coisa que encontrar.</p>
+    <div id="ater-pontos" class="ater-pontos"></div>
+    <p class="crise-dica" id="ater-dica">no seu tempo…</p>
+  </div>
+
+  <!-- passo 2: traçar padrões -->
+  <div class="crise-passo oculto" data-passo="2">
+    <p class="crise-etapa">Traçar · sessão <span id="tr-sec">1</span>/3</p>
+    <h2 class="crise-titulo">Siga a linha devagar</h2>
+    <p class="crise-sub">Arraste o pontinho pelo caminho, no ritmo da sua respiração.</p>
+    <svg id="tr-svg" class="tr-svg" viewBox="0 0 300 300">
+      <path id="tr-guia" fill="none" stroke="rgba(180,150,255,.25)" stroke-width="10" stroke-linecap="round"/>
+      <path id="tr-prog" fill="none" stroke="url(#tr-grad)" stroke-width="10" stroke-linecap="round"/>
+      <defs><linearGradient id="tr-grad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#d946ef"/></linearGradient></defs>
+      <circle id="tr-dot" r="13" fill="#fff1cf"/>
+    </svg>
+    <p class="crise-dica" id="tr-laps">volta 1 de 2</p>
+  </div>
+
+  <!-- passo 3: quebra-cabeça -->
+  <div class="crise-passo oculto" data-passo="3">
+    <p class="crise-etapa">Quebra-cabeça</p>
+    <h2 class="crise-titulo">Monte a cena, com calma</h2>
+    <p class="crise-sub">Toque numa peça vizinha do espaço vazio pra deslizar.</p>
+    <div id="puzzle" class="puzzle"></div>
+    <button class="crise-btn ghost" id="puzzle-embaralha">embaralhar de novo</button>
+  </div>
+
+  <!-- passo final -->
+  <div class="crise-passo oculto" data-passo="4">
+    <div class="crise-luar"></div>
+    <h2 class="crise-titulo">Você chegou até aqui. 💜</h2>
+    <p class="crise-sub">Respira fundo mais uma vez.<br>Você fez muito bem em cuidar de você.</p>
+    <button class="crise-btn" id="crise-fim">Voltar pra Zaia</button>
+    <button class="crise-btn ghost" data-ir="1">Repetir a trilha</button>
+  </div>
+</div>
 
 <!-- MODAL TAREFA -->
 <div id="modal-tarefa" class="modal-bg">
   <div class="modal">
     <h3 id="modal-titulo">Nova tarefa</h3>
     <input type="hidden" id="m-id"/>
-    <label>O quê?</label>
+    <label>Título</label>
     <input id="m-titulo" class="campo" placeholder="ex: revisar capítulo 2 do TCC"/>
+    <label>Descrição (detalhes, passos, observações)</label>
+    <textarea id="m-desc" class="campo" rows="3" placeholder="anota aqui tudo que te ajuda a lembrar…"></textarea>
     <label>Prioridade</label>
     <div class="prio-pick" id="m-prio">
       <button data-p="urgente">🔴 Urgente</button>
       <button data-p="importante" class="sel">🟡 Importante</button>
       <button data-p="tranquilo">🟢 Tranquilo</button>
     </div>
-    <label>Prazo (opcional)</label>
+    <label>Data e horário limite (opcional)</label>
     <input id="m-prazo" class="campo" type="datetime-local"/>
     <label>Etiqueta (opcional)</label>
     <input id="m-etiqueta" class="campo" placeholder="trabalho, casa, faculdade…"/>
+    <label>Anexos (opcional)</label>
+    <div id="m-anexos" class="anexos-lista"></div>
+    <button id="m-add-anexo" class="mini-btn" type="button">📎 Anexar arquivo</button>
+    <input id="m-file" type="file" class="oculto" multiple/>
     <div class="modal-acoes">
       <button id="m-cancelar" class="btn btn-sec">Cancelar</button>
       <button id="m-salvar" class="btn btn-primario">Salvar</button>
@@ -368,7 +546,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebas
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword,
   createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut }
   from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc,
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, setDoc,
   onSnapshot, query, where }
   from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
@@ -386,8 +564,10 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 /* ===== ESTADO ===== */
-let user=null, tarefas=[], projetos=[], etapas=[], sinonimos=[];
+let user=null, tarefas=[], projetos=[], etapas=[], sinonimos=[], anexos=[];
 let unsub=[]; const notificadas=new Set();
+let anexoPend=[], anexoRem=[];
+let crisePlaylistLink='';
 const $=s=>document.querySelector(s);
 const el=(id)=>document.getElementById(id);
 
@@ -407,6 +587,28 @@ el('btn-google').onclick=async()=>{
   catch(e){ mostraErro(e); }
 };
 el('btn-sair').onclick=()=>signOut(auth);
+
+/* menu do avatar */
+el('avatar').onclick=e=>{e.stopPropagation();el('menu-drop').classList.toggle('oculto');};
+document.addEventListener('click',()=>el('menu-drop').classList.add('oculto'));
+el('btn-foto').onclick=()=>el('foto-input').click();
+el('foto-input').onchange=e=>{
+  const file=e.target.files[0]; if(!file)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    const img=new Image();
+    img.onload=async()=>{
+      const c=document.createElement('canvas'),S=256;c.width=S;c.height=S;
+      const ctx=c.getContext('2d'),min=Math.min(img.width,img.height);
+      ctx.drawImage(img,(img.width-min)/2,(img.height-min)/2,min,min,0,0,S,S);
+      const dataURL=c.toDataURL('image/jpeg',0.85);
+      try{ await setDoc(doc(db,'perfil',user.uid),{userId:user.uid,foto:dataURL},{merge:true}); fala('Foto atualizada! 📸'); }
+      catch(err){ fala('Não consegui salvar a foto 😞',true); }
+    };
+    img.src=r.result;
+  };
+  r.readAsDataURL(file);
+};
 function mostraErro(e){
   const m={'auth/invalid-credential':'E-mail ou senha incorretos.',
     'auth/email-already-in-use':'Esse e-mail já tem conta. Tenta entrar.',
@@ -423,6 +625,7 @@ onAuthStateChanged(auth, u=>{
     el('tela-login').classList.add('oculto');
     el('tela-app').classList.remove('oculto');
     el('fab').classList.remove('oculto');
+    el('btn-crise').classList.remove('oculto');
     const nome=(u.displayName||u.email||'E').trim();
     el('avatar').textContent=nome[0].toUpperCase();
     saudacao(nome);
@@ -432,6 +635,7 @@ onAuthStateChanged(auth, u=>{
     tarefas=[];projetos=[];etapas=[];sinonimos=[];
     el('tela-app').classList.add('oculto');
     el('fab').classList.add('oculto');
+    el('btn-crise').classList.add('oculto');
     el('tela-login').classList.remove('oculto');
   }
 });
@@ -450,6 +654,16 @@ function ligarDados(){
   unsub.push(onSnapshot(col('projetos'),s=>{projetos=docs(s);render();}, err));
   unsub.push(onSnapshot(col('etapas'),  s=>{etapas=docs(s);render();}, err));
   unsub.push(onSnapshot(col('sinonimos'),s=>{sinonimos=docs(s);render();}, err));
+  unsub.push(onSnapshot(col('anexos'), s=>{anexos=docs(s);render();}, err));
+  unsub.push(onSnapshot(doc(db,'perfil',user.uid), s=>{
+    const d=s.exists()?s.data():{}; aplicarFoto(d.foto||null);
+    crisePlaylistLink=d.crisePlaylist||''; if(el('crise-pl'))el('crise-pl').value=crisePlaylistLink;
+  }, ()=>{}));
+}
+function aplicarFoto(url){
+  const a=el('avatar');
+  if(url){a.style.backgroundImage=`url(${url})`;a.textContent='';}
+  else{a.style.backgroundImage='';}
 }
 const docs=s=>s.docs.map(d=>({id:d.id,...d.data()}));
 function err(e){ fala('Não consegui falar com o banco 😞 ('+e.code+'). Confere as regras do Firestore.',true); }
@@ -490,13 +704,17 @@ function render(){
 function itemTarefa(t){
   const prazo=t.prazo?`<span class="tag tag-prazo ${venceu(t.prazo)&&!t.concluida?'venc':''}">🕓 ${fmtPrazo(t.prazo)}</span>`:'';
   const etq=t.etiqueta?`<span class="tag tag-etiqueta">${esc(t.etiqueta)}</span>`:'';
+  const nAnex=anexos.filter(a=>a.tarefaId===t.id).length;
+  const anx=nAnex?`<span class="tag tag-prazo">📎 ${nAnex}</span>`:'';
+  const desc=t.descricao?`<div class="t-desc">${esc(t.descricao)}</div>`:'';
   return `<div class="tarefa ${t.concluida?'feita':''}">
     <button class="check ${t.concluida?'on':''}" data-check="${t.id}">✓</button>
-    <div class="t-corpo">
+    <div class="t-corpo" data-open="${t.id}">
       <div class="t-titulo">${esc(t.titulo)}</div>
+      ${desc}
       <div class="t-meta">
         <span class="tag tag-${t.prioridade}">${{urgente:'🔴',importante:'🟡',tranquilo:'🟢'}[t.prioridade]} ${t.prioridade}</span>
-        ${etq}${prazo}
+        ${etq}${prazo}${anx}
       </div>
     </div>
     <div class="t-acoes">
@@ -578,12 +796,19 @@ document.body.addEventListener('click', async e=>{
   const d=t.dataset;
   if(d.check)   return toggleTarefa(d.check);
   if(d.edit)    return abrirEdicao(d.edit);
-  if(d.del)     { if(confirm('Apagar essa tarefa?')) return del('tarefas',d.del); }
+  if(d.del)     { if(confirm('Apagar essa tarefa?')){ anexos.filter(a=>a.tarefaId===d.del).forEach(a=>del('anexos',a.id)); return del('tarefas',d.del); } }
+  if(d.remanexo){ anexoRem.push(d.remanexo); return renderAnexosModal(); }
+  if(d.rempend!==undefined){ anexoPend.splice(+d.rempend,1); return renderAnexosModal(); }
   if(d.checketapa) return toggleEtapa(d.checketapa);
   if(d.deletapa)   return del('etapas',d.deletapa);
   if(d.delproj) { if(confirm('Apagar o projeto e todas as etapas?')){ etapas.filter(x=>x.projetoId===d.delproj).forEach(x=>del('etapas',x.id)); return del('projetos',d.delproj);} }
   if(d.delsin)  return del('sinonimos',d.delsin);
   if(d.addetapa)return addEtapaUI(d.addetapa);
+});
+/* abrir tarefa ao tocar no corpo (fora dos botões) */
+document.body.addEventListener('click',e=>{
+  const o=e.target.closest('[data-open]');
+  if(o&&!e.target.closest('button'))abrirEdicao(o.dataset.open);
 });
 async function toggleTarefa(id){
   const t=tarefas.find(x=>x.id===id);
@@ -613,30 +838,79 @@ el('fab').onclick=()=>abrirNova();
 function abrirNova(pre={}){
   el('modal-titulo').textContent='Nova tarefa';
   el('m-id').value=''; el('m-titulo').value=pre.titulo||'';
+  el('m-desc').value='';
   el('m-etiqueta').value=pre.etiqueta||''; el('m-prazo').value=pre.prazo?paraInput(pre.prazo):'';
   setPrio(pre.prioridade||'importante');
+  anexoPend=[];anexoRem=[];renderAnexosModal();
   el('modal-tarefa').classList.add('on'); el('m-titulo').focus();
 }
 function abrirEdicao(id){
-  const t=tarefas.find(x=>x.id===id);
+  const t=tarefas.find(x=>x.id===id); if(!t)return;
   el('modal-titulo').textContent='Editar tarefa';
   el('m-id').value=id; el('m-titulo').value=t.titulo;
+  el('m-desc').value=t.descricao||'';
   el('m-etiqueta').value=t.etiqueta||''; el('m-prazo').value=t.prazo?paraInput(t.prazo):'';
   setPrio(t.prioridade);
+  anexoPend=[];anexoRem=[];renderAnexosModal();
   el('modal-tarefa').classList.add('on');
+}
+function renderAnexosModal(){
+  const id=el('m-id').value;
+  const existentes=id?anexos.filter(a=>a.tarefaId===id&&!anexoRem.includes(a.id)):[];
+  let h='';
+  existentes.forEach(a=>{h+=`<div class="anexo"><span>📄</span><a href="${a.dados}" download="${esc(a.nome)}" target="_blank" rel="noopener">${esc(a.nome)}</a><button data-remanexo="${a.id}">✕</button></div>`;});
+  anexoPend.forEach((a,i)=>{h+=`<div class="anexo"><span>🆕</span><a href="${a.dados}" download="${esc(a.nome)}" target="_blank" rel="noopener">${esc(a.nome)}</a><button data-rempend="${i}">✕</button></div>`;});
+  el('m-anexos').innerHTML=h;
+}
+el('m-add-anexo').onclick=()=>el('m-file').click();
+el('m-file').onchange=async e=>{ for(const f of e.target.files){ await addAnexoPend(f);} e.target.value=''; renderAnexosModal(); };
+const MAXB64=950000;
+function addAnexoPend(file){
+  return new Promise(res=>{
+    const r=new FileReader();
+    r.onload=()=>{
+      if(file.type&&file.type.startsWith('image/')){
+        const img=new Image();
+        img.onload=()=>{
+          let w=img.width,h=img.height;const M=1400;
+          if(Math.max(w,h)>M){const k=M/Math.max(w,h);w=Math.round(w*k);h=Math.round(h*k);}
+          const c=document.createElement('canvas');c.width=w;c.height=h;
+          c.getContext('2d').drawImage(img,0,0,w,h);
+          let q=0.72,url=c.toDataURL('image/jpeg',q);
+          while(url.length>MAXB64&&q>0.4){q-=0.12;url=c.toDataURL('image/jpeg',q);}
+          if(url.length>MAXB64){fala('Essa imagem é grande demais, mesmo comprimida 😞',true);return res();}
+          anexoPend.push({nome:file.name.replace(/\.[^.]+$/,'')+'.jpg',tipo:'image/jpeg',dados:url});res();
+        };
+        img.onerror=()=>res();
+        img.src=r.result;
+      }else{
+        if(r.result.length>MAXB64){fala(`"${file.name}" passou do limite (máx ~700 KB por arquivo). 😞`,true);return res();}
+        anexoPend.push({nome:file.name,tipo:file.type||'arquivo',dados:r.result});res();
+      }
+    };
+    r.onerror=()=>res();
+    r.readAsDataURL(file);
+  });
 }
 function setPrio(p){prioSel=p;document.querySelectorAll('#m-prio button').forEach(x=>x.classList.toggle('sel',x.dataset.p===p));}
 const paraInput=ms=>{const d=new Date(ms-d0());return new Date(ms).toISOString().slice(0,16);};
 const d0=()=>new Date().getTimezoneOffset()*60000;
 el('m-cancelar').onclick=()=>el('modal-tarefa').classList.remove('on');
 el('m-salvar').onclick=async()=>{
-  const tit=el('m-titulo').value.trim(); if(!tit)return;
+  const tit=el('m-titulo').value.trim(); if(!tit){fala('Dá um título pra tarefa. 🙂');return;}
   const prazo=el('m-prazo').value?new Date(el('m-prazo').value).getTime():null;
-  const dados={titulo:tit,prioridade:prioSel,etiqueta:el('m-etiqueta').value.trim()||null,prazo,lembrete:prazo};
-  const id=el('m-id').value;
-  if(id) await updateDoc(doc(db,'tarefas',id),dados);
-  else   await addDoc(collection(db,'tarefas'),{...dados,userId:user.uid,concluida:false,criadaEm:Date.now()});
-  el('modal-tarefa').classList.remove('on');
+  const dados={titulo:tit,descricao:el('m-desc').value.trim()||null,prioridade:prioSel,
+    etiqueta:el('m-etiqueta').value.trim()||null,prazo,lembrete:prazo};
+  let id=el('m-id').value;
+  el('m-salvar').disabled=true;
+  try{
+    if(id) await updateDoc(doc(db,'tarefas',id),dados);
+    else { const ref=await addDoc(collection(db,'tarefas'),{...dados,userId:user.uid,concluida:false,criadaEm:Date.now()}); id=ref.id; }
+    for(const aid of anexoRem){ await del('anexos',aid); }
+    for(const a of anexoPend){ await addDoc(collection(db,'anexos'),{tarefaId:id,userId:user.uid,nome:a.nome,tipo:a.tipo,dados:a.dados,criadaEm:Date.now()}); }
+    el('modal-tarefa').classList.remove('on');
+  }catch(err){ fala('Não consegui salvar 😞 ('+(err.code||err.message)+')',true); }
+  el('m-salvar').disabled=false;
 };
 
 /* ===== MODAL PROJETO ===== */
@@ -668,7 +942,7 @@ el('sin-add').onclick=async()=>{
 
 /* ===== EXPORTAR ===== */
 el('btn-exportar').onclick=()=>{
-  const dump={exportadoEm:new Date().toISOString(),tarefas,projetos,etapas,sinonimos};
+  const dump={exportadoEm:new Date().toISOString(),tarefas,projetos,etapas,sinonimos,anexos};
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([JSON.stringify(dump,null,2)],{type:'application/json'}));
   a.download='zaia-backup-'+new Date().toISOString().slice(0,10)+'.json'; a.click();
@@ -754,9 +1028,9 @@ function criarPorTexto(bruto){
   let etiqueta=null;
   for(const s of sinonimos){ if(s.tipo==='etiqueta'&&low.includes(s.termo.toLowerCase())){etiqueta=s.significado;break;} }
   if(!etiqueta){
-    if(/\b(tcc|prova|aula|faculdade|uni|monografia|artigo|professora?)\b/.test(low))etiqueta='faculdade';
-    else if(/\b(reuni[ãa]o|frota|oficina|relat[óo]rio|planilha|chefe|trabalho|os\b)/.test(low))etiqueta='trabalho';
-    else if(/\b(mercado|boleto|conta|casa|m[ãa]e|remédio|farm[áa]cia|comprar)\b/.test(low))etiqueta='casa';
+    if(/\b(tcc|prova|aula|faculdade|uni|monografia|artigo|professora?|mestrado)\b/.test(low))etiqueta='faculdade';
+    else if(/\b(reuni[ãa]o|relat[óo]rio|planilha|chefe|trabalho|projeto|entrega|e-?mail)\b/.test(low))etiqueta='trabalho';
+    else if(/\b(mercado|boleto|conta|casa|m[ãa]e|rem[ée]dio|farm[áa]cia|comprar|limpeza)\b/.test(low))etiqueta='casa';
   }
   // data/hora
   const {data,limpo}=parseData(txt);
@@ -768,7 +1042,7 @@ function criarPorTexto(bruto){
   titulo=titulo.charAt(0).toUpperCase()+titulo.slice(1);
   if(!titulo){fala('Não peguei bem — quer abrir o formulário?');return abrirNova({prioridade});}
   const prazo=data?data.getTime():null;
-  addDoc(collection(db,'tarefas'),{titulo,prioridade,etiqueta,prazo,lembrete:prazo,userId:user.uid,concluida:false,criadaEm:Date.now()});
+  addDoc(collection(db,'tarefas'),{titulo,descricao:null,prioridade,etiqueta,prazo,lembrete:prazo,userId:user.uid,concluida:false,criadaEm:Date.now()});
   const quando=prazo?` pra ${fmtPrazo(prazo)}`:'';
   const et=etiqueta?` [${etiqueta}]`:'';
   fala(`Feito. Anotei “${titulo}”${quando}${et}. ${prioridade==='urgente'?'Marquei como urgente. 🔴':'🌙'}`);
@@ -840,6 +1114,263 @@ setInterval(()=>{
     }
   });
 },30000);
+
+/* ===== SPOTIFY (agora tocando) ===== */
+const SP_CLIENT='3ff6a49b29534154b3b1f5710e83e7f1';
+const SP_REDIRECT=location.origin+location.pathname;
+const SP_SCOPES='user-read-playback-state user-modify-playback-state user-read-currently-playing';
+let spTimer=null;
+
+const sp={
+  get token(){return localStorage.getItem('sp_token');},
+  get refresh(){return localStorage.getItem('sp_refresh');},
+  get exp(){return +localStorage.getItem('sp_exp')||0;},
+  set(t){ if(t.access_token)localStorage.setItem('sp_token',t.access_token);
+    if(t.refresh_token)localStorage.setItem('sp_refresh',t.refresh_token);
+    if(t.expires_in)localStorage.setItem('sp_exp',Date.now()+(t.expires_in-60)*1000); },
+  limpar(){['sp_token','sp_refresh','sp_exp'].forEach(k=>localStorage.removeItem(k));}
+};
+
+function b64url(buf){return btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
+async function spLogin(){
+  const arr=crypto.getRandomValues(new Uint8Array(64));
+  const verifier=b64url(arr);
+  localStorage.setItem('sp_verifier',verifier);
+  const challenge=b64url(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier)));
+  const p=new URLSearchParams({client_id:SP_CLIENT,response_type:'code',redirect_uri:SP_REDIRECT,
+    code_challenge_method:'S256',code_challenge:challenge,scope:SP_SCOPES});
+  location.href='https://accounts.spotify.com/authorize?'+p;
+}
+async function spTrocarCodigo(code){
+  const verifier=localStorage.getItem('sp_verifier');
+  const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:new URLSearchParams({client_id:SP_CLIENT,grant_type:'authorization_code',code,
+      redirect_uri:SP_REDIRECT,code_verifier:verifier})});
+  if(r.ok){ sp.set(await r.json()); spIniciarPlayer(); }
+}
+async function spRenovar(){
+  if(!sp.refresh)return false;
+  const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:new URLSearchParams({client_id:SP_CLIENT,grant_type:'refresh_token',refresh_token:sp.refresh})});
+  if(r.ok){ sp.set(await r.json()); return true; }
+  sp.limpar(); return false;
+}
+async function spFetch(url,opt={}){
+  if(Date.now()>sp.exp){ if(!await spRenovar())return null; }
+  opt.headers={...(opt.headers||{}),Authorization:'Bearer '+sp.token};
+  let r=await fetch(url,opt);
+  if(r.status===401){ if(await spRenovar()){opt.headers.Authorization='Bearer '+sp.token;r=await fetch(url,opt);} }
+  return r;
+}
+async function spAtualizar(){
+  const r=await spFetch('https://api.spotify.com/v1/me/player/currently-playing');
+  if(!r||r.status===204||!r.ok){ el('sp-musica').textContent='Nada tocando'; el('sp-artista').textContent='abre o Spotify e dá play'; el('sp-capa').src=''; return; }
+  const d=await r.json();
+  if(!d||!d.item)return;
+  el('sp-musica').textContent=d.item.name;
+  el('sp-artista').textContent=d.item.artists.map(a=>a.name).join(', ');
+  const img=d.item.album?.images?.[0]?.url; if(img)el('sp-capa').src=img;
+  el('sp-play').textContent=d.is_playing?'⏸':'▶';
+}
+function spIniciarPlayer(){
+  el('sp-connect').classList.add('oculto');
+  el('sp-player').classList.remove('oculto');
+  spAtualizar();
+  clearInterval(spTimer);
+  spTimer=setInterval(spAtualizar,5000);
+}
+el('sp-connect').onclick=spLogin;
+el('sp-sair').onclick=()=>{ sp.limpar(); clearInterval(spTimer);
+  el('sp-player').classList.add('oculto'); el('sp-connect').classList.remove('oculto'); };
+el('sp-prev').onclick=async()=>{ await spFetch('https://api.spotify.com/v1/me/player/previous',{method:'POST'}); setTimeout(spAtualizar,400); };
+el('sp-next').onclick=async()=>{ await spFetch('https://api.spotify.com/v1/me/player/next',{method:'POST'}); setTimeout(spAtualizar,400); };
+el('sp-play').onclick=async()=>{
+  const r=await spFetch('https://api.spotify.com/v1/me/player');
+  const d=r&&r.ok?await r.json():null;
+  const tocando=d&&d.is_playing;
+  await spFetch('https://api.spotify.com/v1/me/player/'+(tocando?'pause':'play'),{method:'PUT'});
+  setTimeout(spAtualizar,400);
+};
+
+async function spBoot(){
+  el('spotify').classList.remove('oculto');
+  const params=new URLSearchParams(location.search);
+  const code=params.get('code');
+  if(code){
+    history.replaceState({},'',SP_REDIRECT);
+    await spTrocarCodigo(code);
+  }else if(sp.token||sp.refresh){
+    spIniciarPlayer();
+  }
+}
+spBoot();
+
+/* ===== MODO CRISE ===== */
+// injeta o campo da playlist na barra
+el('crise-playlist-bar').innerHTML=`<input id="crise-pl" placeholder="cole o link de uma playlist do Spotify (opcional)"/><button id="crise-pl-save">Salvar</button>`;
+el('crise-pl').value=crisePlaylistLink;
+el('crise-pl-save').onclick=async()=>{
+  const link=el('crise-pl').value.trim();
+  try{ await setDoc(doc(db,'perfil',user.uid),{userId:user.uid,crisePlaylist:link},{merge:true});
+    el('crise-pl-save').textContent='Salvo ✓'; setTimeout(()=>el('crise-pl-save').textContent='Salvar',1500);
+  }catch(e){ el('crise-pl-save').textContent='erro'; }
+};
+
+function plContext(link){
+  const m=(link||'').match(/playlist[/:]([A-Za-z0-9]+)/);
+  return m?'spotify:playlist:'+m[1]:null;
+}
+async function crisePlay(){
+  const ctx=plContext(crisePlaylistLink);
+  if(!ctx||!(sp.token||sp.refresh))return;
+  try{ await spFetch('https://api.spotify.com/v1/me/player/play',{method:'PUT',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify({context_uri:ctx})}); }catch(e){}
+}
+
+el('btn-crise').onclick=()=>{ el('crise').classList.remove('oculto'); irPasso(0); crisePlay(); };
+el('crise-sair').onclick=fecharCrise;
+el('crise-fim').onclick=fecharCrise;
+function fecharCrise(){ el('crise').classList.add('oculto'); pararTracar(); }
+document.querySelectorAll('#crise [data-ir]').forEach(b=>b.onclick=()=>irPasso(+b.dataset.ir));
+
+function irPasso(n){
+  document.querySelectorAll('.crise-passo').forEach(p=>p.classList.toggle('oculto',+p.dataset.passo!==n));
+  el('crise').scrollTop=0;
+  if(n===1)iniciarAterrissagem();
+  if(n===2)iniciarTracar();
+  if(n===3)iniciarPuzzle();
+}
+
+/* --- Aterrissagem 2 -> 4 -> 6 --- */
+const ATER=[2,4,6];
+let aterSec=0;
+function iniciarAterrissagem(){ aterSec=0; montarAter(); }
+function montarAter(){
+  const n=ATER[aterSec];
+  el('ater-sec').textContent=aterSec+1;
+  el('ater-pedido').innerHTML=`Encontre <b>${n} coisa${n>1?'s':''}</b> que você vê`;
+  el('ater-dica').textContent='no seu tempo…';
+  let feitos=0;
+  const box=el('ater-pontos'); box.innerHTML='';
+  for(let i=0;i<n;i++){
+    const b=document.createElement('button'); b.className='ater-pt'; b.textContent='✓';
+    b.onclick=()=>{ if(b.classList.contains('on'))return; b.classList.add('on'); feitos++;
+      if(feitos===n){ el('ater-dica').textContent='isso… você está aqui, agora. 🌙';
+        setTimeout(()=>{ aterSec++; if(aterSec<ATER.length)montarAter(); else irPasso(2); },900); } };
+    box.appendChild(b);
+  }
+}
+
+/* --- Traçar padrões (3 sessões, 2 voltas cada) --- */
+const FORMAS=[
+  'M60,150 C60,80 240,80 240,150 C240,220 60,220 60,150', // laço/onda fechada
+  'M40,150 C40,60 150,60 150,150 C150,240 260,240 260,150 C260,60 150,60 150,150 C150,240 40,240 40,150', // 8/infinito
+  'M150,40 C60,40 60,150 150,150 C240,150 240,260 150,260' // S alongado
+];
+let trSec=0,trLap=0,trTotal=0,trProg=0,trSamples=[],trDrag=false;
+const LAPS=2;
+function iniciarTracar(){ trSec=0; montarTracar(); }
+function montarTracar(){
+  el('tr-sec').textContent=trSec+1; trLap=0; trProg=0;
+  const guia=el('tr-guia'), prog=el('tr-prog');
+  guia.setAttribute('d',FORMAS[trSec]); prog.setAttribute('d',FORMAS[trSec]);
+  trTotal=guia.getTotalLength();
+  prog.style.strokeDasharray=trTotal; prog.style.strokeDashoffset=trTotal;
+  // amostra o caminho
+  trSamples=[]; for(let l=0;l<=trTotal;l+=4){const p=guia.getPointAtLength(l);trSamples.push({l,x:p.x,y:p.y});}
+  atualizaDot();
+  el('tr-laps').textContent=`volta 1 de ${LAPS}`;
+}
+function atualizaDot(){
+  const p=el('tr-guia').getPointAtLength(trProg);
+  el('tr-dot').setAttribute('cx',p.x); el('tr-dot').setAttribute('cy',p.y);
+  el('tr-prog').style.strokeDashoffset=trTotal-trProg;
+}
+function svgPonto(ev){
+  const svg=el('tr-svg'),r=svg.getBoundingClientRect();
+  const cx=(ev.touches?ev.touches[0].clientX:ev.clientX)-r.left;
+  const cy=(ev.touches?ev.touches[0].clientY:ev.clientY)-r.top;
+  return {x:cx*300/r.width,y:cy*300/r.height};
+}
+function moverTracar(ev){
+  if(!trDrag)return; ev.preventDefault();
+  const pt=svgPonto(ev);
+  // procura amostra mais próxima à frente
+  let melhor=trProg,dist=1e9;
+  for(const s of trSamples){
+    if(s.l<trProg-8||s.l>trProg+40)continue;
+    const d=(s.x-pt.x)**2+(s.y-pt.y)**2;
+    if(d<dist){dist=d;melhor=s.l;}
+  }
+  if(dist<1600 && melhor>trProg){ trProg=melhor; atualizaDot();
+    if(trProg>=trTotal-4){
+      trLap++;
+      if(trLap>=LAPS){ trSec++; if(trSec<FORMAS.length){ setTimeout(montarTracar,500);} else { setTimeout(()=>irPasso(3),500);} trDrag=false; }
+      else { trProg=0; atualizaDot(); el('tr-laps').textContent=`volta ${trLap+1} de ${LAPS}`; }
+    }
+  }
+}
+function pararTracar(){ trDrag=false; }
+['mousedown','touchstart'].forEach(e=>el('tr-dot').addEventListener(e,()=>{trDrag=true;}));
+['mousemove','touchmove'].forEach(e=>el('tr-svg').addEventListener(e,moverTracar,{passive:false}));
+['mouseup','touchend','mouseleave'].forEach(e=>document.addEventListener(e,()=>{trDrag=false;}));
+
+/* --- Quebra-cabeça deslizante 3x3 --- */
+let pzOrdem=[],pzImg='';
+function cenaNoturna(){
+  const c=document.createElement('canvas');c.width=300;c.height=300;const x=c.getContext('2d');
+  const g=x.createLinearGradient(0,0,0,300);
+  g.addColorStop(0,'#0a0620');g.addColorStop(.4,'#3a1a5c');g.addColorStop(.7,'#7a2f6a');g.addColorStop(1,'#c85a3a');
+  x.fillStyle=g;x.fillRect(0,0,300,300);
+  // lua
+  const lg=x.createRadialGradient(150,175,10,150,175,70);
+  lg.addColorStop(0,'#fff3d6');lg.addColorStop(.6,'#fcae4a');lg.addColorStop(1,'rgba(240,107,62,0)');
+  x.fillStyle=lg;x.beginPath();x.arc(150,175,70,0,7);x.fill();
+  x.fillStyle='#fff1cf';x.beginPath();x.arc(150,175,28,0,7);x.fill();
+  // estrelas
+  x.fillStyle='#fff';[[40,40],[90,70],[230,50],[260,90],[60,110],[200,30],[120,45]].forEach(([a,b])=>{x.beginPath();x.arc(a,b,1.4,0,7);x.fill();});
+  // colinas
+  x.fillStyle='#2a1140';x.beginPath();x.moveTo(0,240);x.quadraticCurveTo(150,200,300,240);x.lineTo(300,300);x.lineTo(0,300);x.fill();
+  x.fillStyle='#180a2a';x.beginPath();x.moveTo(0,270);x.quadraticCurveTo(150,245,300,270);x.lineTo(300,300);x.lineTo(0,300);x.fill();
+  return c.toDataURL();
+}
+function iniciarPuzzle(){
+  if(!pzImg)pzImg=cenaNoturna();
+  pzOrdem=[...Array(9).keys()]; // 8 = vazio
+  embaralhaPuzzle(); desenhaPuzzle();
+}
+el('puzzle-embaralha').onclick=()=>{embaralhaPuzzle();desenhaPuzzle();};
+function vizinhos(i){const r=Math.floor(i/3),c=i%3,v=[];if(r>0)v.push(i-3);if(r<2)v.push(i+3);if(c>0)v.push(i-1);if(c<2)v.push(i+1);return v;}
+function embaralhaPuzzle(){
+  let vazio=8;
+  for(let k=0;k<120;k++){const vz=vizinhos(vazio);const alvo=vz[Math.floor(Math.random()*vz.length)];
+    [pzOrdem[vazio],pzOrdem[alvo]]=[pzOrdem[alvo],pzOrdem[vazio]];vazio=alvo;}
+}
+function desenhaPuzzle(){
+  const p=el('puzzle');p.innerHTML='';
+  pzOrdem.forEach((peca,pos)=>{
+    const d=document.createElement('div');d.className='pc';
+    if(peca===8){d.classList.add('vazio');}
+    else{
+      const r=Math.floor(peca/3),c=peca%3;
+      d.style.backgroundImage=`url(${pzImg})`;
+      d.style.backgroundPosition=`${c*50}% ${r*50}%`;
+      d.textContent=peca+1;
+      d.onclick=()=>tentaMover(pos);
+    }
+    p.appendChild(d);
+  });
+}
+function tentaMover(pos){
+  const vazio=pzOrdem.indexOf(8);
+  if(vizinhos(pos).includes(vazio)){
+    [pzOrdem[pos],pzOrdem[vazio]]=[pzOrdem[vazio],pzOrdem[pos]];
+    desenhaPuzzle();
+    if(pzOrdem.every((v,i)=>v===i)){ setTimeout(()=>irPasso(4),600); }
+  }
+}
 </script>
 </body>
 </html>
