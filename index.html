@@ -269,6 +269,18 @@
   .crise-plbar input::placeholder{color:#6f6296}
   .crise-plbar button{background:rgba(30,215,96,.15);border:1px solid rgba(30,215,96,.4);color:#1ed760;
     border-radius:12px;padding:9px 12px;font-size:12.5px;font-weight:600;white-space:nowrap}
+  .helper-passos{display:flex;flex-direction:column;gap:12px;width:100%;text-align:left;margin:6px 0}
+  .helper-p{display:flex;gap:12px;background:rgba(255,255,255,.04);border:1px solid rgba(180,150,255,.15);
+    border-radius:16px;padding:14px}
+  .helper-p .n{width:28px;height:28px;flex-shrink:0;border-radius:50%;background:linear-gradient(135deg,#5b3a9e,#8b5cf6);
+    color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+  .helper-p .txt{font-size:14px;color:#cdc2e8;line-height:1.5}
+  .helper-p .txt b{color:#f0eaff}
+  .helper-perg{width:100%;text-align:left;background:rgba(139,92,246,.1);border:1px solid rgba(180,150,255,.25);
+    border-radius:16px;padding:16px;margin-top:6px}
+  .helper-perg p{font-size:15px;color:#e9e2ff;margin-bottom:10px;line-height:1.5}
+  .helper-perg p:last-child{margin-bottom:0}
+  .helper-perg .cab{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:#9a8cc0;margin-bottom:10px}
 
   .carregando{min-height:100dvh;display:flex;align-items:center;justify-content:center;color:var(--txt-dim)}
   .oculto{display:none!important}
@@ -553,8 +565,37 @@
   <div class="crise-passo" data-passo="0">
     <div class="crise-luar"></div>
     <h2 class="crise-titulo">Tá tudo bem.</h2>
-    <p class="crise-sub">Vamos atravessar isso juntas, sem pressa.<br>Respira. Quando quiser, começamos.</p>
-    <button class="crise-btn" data-ir="1">Começar</button>
+    <p class="crise-sub">Vamos atravessar isso juntas, sem pressa.<br>Você está sozinha ou tem alguém te ajudando agora?</p>
+    <button class="crise-btn" data-ir="1">Estou sozinha</button>
+    <button class="crise-btn ghost" data-ir="h1">Alguém está me ajudando</button>
+  </div>
+
+  <!-- HELPER 1: nome -->
+  <div class="crise-passo oculto" data-passo="h1">
+    <div class="crise-luar"></div>
+    <h2 class="crise-titulo">Olá! 🌙</h2>
+    <p class="crise-sub">Se você está ajudando a Evellyn neste momento, obrigada por estar aqui.<br>Como é o seu nome?</p>
+    <input id="helper-nome" class="campo" style="max-width:280px;text-align:center" placeholder="seu nome"/>
+    <button class="crise-btn" id="helper-ok">Continuar</button>
+  </div>
+
+  <!-- HELPER 2: apresentação -->
+  <div class="crise-passo oculto" data-passo="h2">
+    <h2 class="crise-titulo" id="helper-ola">Olá!</h2>
+    <p class="crise-sub">Eu sou a <b>Zaia</b>, assistente da Evellyn.<br><br>
+      Neste momento ela está passando por uma crise, com os sentidos muito sensíveis.
+      Fique calmo(a) — vai ficar tudo bem. 💜<br><br>
+      Ela <b>consegue te ouvir</b>, mas talvez não consiga falar nem responder agora.
+      Vou te guiar em passos simples.</p>
+    <button class="crise-btn" data-ir="h3">Ver os passos</button>
+  </div>
+
+  <!-- HELPER 3: passos -->
+  <div class="crise-passo oculto" data-passo="h3">
+    <p class="crise-etapa">Como ajudar</p>
+    <div id="helper-passos" class="helper-passos"></div>
+    <div id="helper-perguntas" class="helper-perg oculto"></div>
+    <button class="crise-btn" id="helper-entregar">Entregar o celular a ela</button>
   </div>
 
   <div class="crise-passo oculto" data-passo="1">
@@ -661,18 +702,21 @@ onAuthStateChanged(auth, u=>{
     el('tela-app').classList.remove('oculto');
     el('fab').classList.remove('oculto');
     el('btn-crise').classList.remove('oculto');
-    const nome=(u.displayName||u.email||'E').trim();
+    const nome=apelido(u.displayName||u.email||'Eve');
     el('avatar').textContent=nome[0].toUpperCase();
-    el('user-nome').textContent=nome.split(' ')[0].split('@')[0];
+    el('user-nome').textContent=nome;
     saudacao(nome); ligarDados();
   }else{ user=null; unsub.forEach(f=>f()); unsub=[];
     tarefas=[];projetos=[];etapas=[];sinonimos=[];
     el('tela-app').classList.add('oculto'); el('fab').classList.add('oculto');
     el('btn-crise').classList.add('oculto'); el('tela-login').classList.remove('oculto'); }
 });
+function apelido(raw){ const base=raw.split('@')[0].split(' ')[0];
+  if(/evellyn|eve/i.test(base))return 'Eve';
+  return base.charAt(0).toUpperCase()+base.slice(1); }
 function saudacao(nome){ const h=new Date().getHours();
   const parte=h<5?'Boa madrugada':h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';
-  el('ola').textContent=`${parte}, ${nome.split(' ')[0].split('@')[0]} 🌙`; }
+  el('ola').textContent=`${parte}, ${nome} 🌙`; }
 
 /* DADOS */
 function ligarDados(){ const col=(n)=>query(collection(db,n), where('userId','==',user.uid));
@@ -1008,9 +1052,32 @@ async function crisePlay(){ const ctx=plContext(crisePlaylistLink); if(!ctx||!(s
 el('btn-crise').onclick=()=>{ el('crise').classList.remove('oculto'); irPasso(0); crisePlay(); };
 el('crise-sair').onclick=fecharCrise; el('crise-fim').onclick=fecharCrise;
 function fecharCrise(){ el('crise').classList.add('oculto'); pararTracar(); }
-document.querySelectorAll('#crise [data-ir]').forEach(b=>b.onclick=()=>irPasso(+b.dataset.ir));
-function irPasso(n){ document.querySelectorAll('.crise-passo').forEach(p=>p.classList.toggle('oculto',+p.dataset.passo!==n));
-  el('crise').scrollTop=0; if(n===1)iniciarAterrissagem(); if(n===2)iniciarTracar(); if(n===3)iniciarPuzzle(); }
+document.querySelectorAll('#crise [data-ir]').forEach(b=>b.onclick=()=>irPasso(b.dataset.ir));
+function irPasso(n){ const k=String(n);
+  document.querySelectorAll('.crise-passo').forEach(p=>p.classList.toggle('oculto',p.dataset.passo!==k));
+  el('crise').scrollTop=0;
+  if(k==='1')iniciarAterrissagem(); if(k==='2')iniciarTracar(); if(k==='3')iniciarPuzzle(); if(k==='h3')montarHelper(); }
+
+/* MODO ACOMPANHADA */
+const HELPER_PASSOS=[
+  'Se o ambiente estiver barulhento, leve-a para o lugar <b>mais silencioso</b> que conseguir. Se o fone dela estiver na bolsa, entregue a ela — ajuda a abafar os sons.',
+  'Ofereça algo com <b>textura</b> para ela tocar: um gelo, um tecido, qualquer objeto diferente. O toque ajuda a ancorar os sentidos.',
+  'Ajude na <b>respiração</b>: respire devagar junto com ela, para ela te acompanhar. Ofereça um pouco de <b>água</b>.',
+  'Leia as <b>perguntas abaixo</b> em voz alta, com calma. Ela pode responder com gestos ou só ouvir — não precisa falar.',
+  'Quando ela estiver um pouco mais calma, <b>entregue o celular</b> a ela. A Zaia acompanha o resto. Obrigada por cuidar dela. 💜'
+];
+el('helper-ok').onclick=()=>{ irPasso('h2');
+  const nome=el('helper-nome').value.trim();
+  el('helper-ola').textContent=nome?`Olá, ${nome}.`:'Olá.'; };
+function montarHelper(){
+  el('helper-passos').innerHTML=HELPER_PASSOS.map((t,i)=>`<div class="helper-p"><div class="n">${i+1}</div><div class="txt">${t}</div></div>`).join('');
+  el('helper-perguntas').classList.remove('oculto');
+  el('helper-perguntas').innerHTML=`<div class="cab">Perguntas para ler a ela</div>
+    <p>Pode me mostrar <b>2 coisas</b> que você está vendo agora?</p>
+    <p>E agora <b>4 coisas</b> que você vê ao seu redor?</p>
+    <p>Por último, <b>6 coisas</b> que você consegue enxergar daqui?</p>`;
+}
+el('helper-entregar').onclick=()=>irPasso('2');
 const ATER=[2,4,6]; let aterSec=0;
 function iniciarAterrissagem(){ aterSec=0; montarAter(); }
 function montarAter(){ const n=ATER[aterSec]; el('ater-sec').textContent=aterSec+1;
