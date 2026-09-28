@@ -212,6 +212,9 @@
     display:flex;align-items:center;justify-content:center;box-shadow:0 14px 30px -8px rgba(217,70,239,.7);z-index:40}
   .fab:hover{transform:translateY(-2px) rotate(90deg);transition:.25s}
 
+  /* NAV INFERIOR (só mobile) */
+  .bottom-nav{display:none}
+
   /* CHAT flutuante */
   .fab-chat{position:fixed;right:20px;bottom:92px;width:52px;height:52px;border-radius:18px;z-index:40;
     background:var(--card-solid);border:1px solid var(--stroke);display:flex;align-items:center;justify-content:center;
@@ -351,26 +354,36 @@
   /* RESPONSIVO — vira topo em telas estreitas */
   @media(max-width:820px){
     .app{flex-direction:column}
-    .sidebar{width:100%;height:auto;position:static;flex-direction:column;padding:14px 14px 4px;gap:11px}
-    .side-marca{font-size:23px;padding:0 2px}
-    .aba-nav{flex-direction:row;overflow-x:auto;gap:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-    .aba-nav::-webkit-scrollbar{display:none}
-    .aba-nav button{flex:0 0 auto;padding:9px 14px}
-    .aba-nav .lbl{display:inline}
-    .spotify{margin-top:2px}
+    .sidebar{width:100%;height:auto;position:static;flex-direction:column;padding:16px 16px 6px;gap:12px}
+    .side-marca{font-size:24px;padding:0 2px}
+    .aba-nav{display:none}                    /* nav vai pra barra inferior */
+    .spotify{margin-top:2px;order:3}
     .sp-player{display:flex;flex-direction:row;gap:10px;align-items:center;padding:10px}
-    .sp-capa{width:52px;height:52px;aspect-ratio:1}
+    .sp-capa{width:48px;height:48px;aspect-ratio:1}
     .sp-info-wrap{flex:1;min-width:0}
     .sp-musica{margin-top:0}
     .sp-ctrl{margin-top:0;flex-shrink:0}
     .sp-ctrl button{width:34px;height:34px}
-    .menu-user{position:fixed;top:12px;right:12px;z-index:60;width:auto}
+    .menu-user{position:fixed;top:14px;right:14px;z-index:60;width:auto}
     .user-linha{padding:0}
     .user-nome{display:none}
     .menu-drop{bottom:auto;top:50px;left:auto;right:0;width:210px}
-    .conteudo{padding:6px 15px 120px;max-width:100%}
+    .conteudo{padding:4px 16px 150px;max-width:100%}
     .saudacao h1{font-size:21px}
     .foco{margin-top:12px}
+    /* barra inferior */
+    .bottom-nav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:50;justify-content:space-around;
+      align-items:center;padding:9px 4px calc(9px + env(safe-area-inset-bottom));
+      background:rgba(20,12,38,.9);backdrop-filter:blur(16px);border-top:1px solid var(--stroke)}
+    .bottom-nav button{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;
+      color:var(--txt-dim);font-size:10.5px;font-weight:600;transition:.15s}
+    .bottom-nav button.ativa{color:#fff}
+    .bottom-nav svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+    .bottom-nav button.ativa svg{stroke:var(--magenta)}
+    /* botões flutuantes acima da barra */
+    .fab{bottom:82px;right:16px;width:54px;height:54px;font-size:26px}
+    .fab-chat{bottom:148px;right:18px}
+    .btn-crise{bottom:82px;left:16px;padding:13px;border-radius:50%}
   }
 </style>
 </head>
@@ -491,9 +504,6 @@
 
     <section id="aba-hoje">
       <div class="foco"><h2>✨ Foco de hoje</h2><div id="foco-motivo" class="foco-motivo"></div><div id="lista-foco"></div></div>
-      <div id="agenda-sec" class="oculto" style="margin-top:18px">
-        <button id="btn-sync-tarefas" class="mini-btn">📤 Enviar tarefas com data para a agenda</button>
-      </div>
       <div class="sec-titulo">Vencendo em breve</div>
       <div id="lista-breve"></div>
     </section>
@@ -512,6 +522,22 @@
       <div class="stats-grid" id="stats"></div>
     </section>
   </main>
+
+  <!-- NAV INFERIOR (mobile) -->
+  <nav id="bottom-nav" class="bottom-nav">
+    <button data-aba="hoje" class="ativa">
+      <svg viewBox="0 0 24 24"><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/><circle cx="12" cy="12" r="3.4"/></svg>
+      <span>Hoje</span></button>
+    <button data-aba="tarefas">
+      <svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 1.6-1.8M4 12l1 1 1.6-1.8M4 18l1 1 1.6-1.8"/></svg>
+      <span>Tarefas</span></button>
+    <button data-aba="projetos">
+      <svg viewBox="0 0 24 24"><path d="M4 7l8-3.5L20 7l-8 3.5L4 7z"/><path d="M4 12l8 3.5 8-3.5M4 17l8 3.5 8-3.5"/></svg>
+      <span>Projetos</span></button>
+    <button data-aba="voce">
+      <svg viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>
+      <span>Você</span></button>
+  </nav>
 </div>
 
 <button id="btn-crise" class="btn-crise oculto" title="Modo Crise">🌙<span>Modo Crise</span></button>
@@ -553,9 +579,6 @@
       <input id="m-data" class="campo" type="date" style="flex:1"/>
       <input id="m-hora" class="campo" type="time" style="flex:0 0 118px"/>
     </div>
-    <label id="m-gcal-linha" class="gcal-check oculto">
-      <input type="checkbox" id="m-gcal"/> 📅 Criar também na Google Agenda (com alarme)
-    </label>
     <label>Etiqueta</label>
     <input id="m-etiqueta" class="campo"/>
     <label>Anexos</label>
@@ -825,7 +848,7 @@ function saudacao(nome){ const h=new Date().getHours();
 
 /* DADOS */
 function ligarDados(){ const col=(n)=>query(collection(db,n), where('userId','==',user.uid));
-  unsub.push(onSnapshot(col('tarefas'), s=>{tarefas=docs(s);render();}, err));
+  unsub.push(onSnapshot(col('tarefas'), s=>{tarefas=docs(s);render();gcalAutoSync();}, err));
   unsub.push(onSnapshot(col('projetos'),s=>{projetos=docs(s);render();}, err));
   unsub.push(onSnapshot(col('etapas'),  s=>{etapas=docs(s);render();}, err));
   unsub.push(onSnapshot(col('sinonimos'),s=>{sinonimos=docs(s);render();}, err));
@@ -978,12 +1001,12 @@ const del=(c,id)=>deleteDoc(doc(db,c,id));
 const ABAS=['hoje','tarefas','projetos','voce'];
 let abaAtual='hoje';
 function irParaAba(name){ if(!ABAS.includes(name))return; abaAtual=name;
-  document.querySelectorAll('.aba-nav button').forEach(x=>x.classList.toggle('ativa',x.dataset.aba===name));
+  document.querySelectorAll('[data-aba]').forEach(x=>x.classList.toggle('ativa',x.dataset.aba===name));
   ABAS.forEach(a=>el('aba-'+a).classList.toggle('oculto',a!==name));
   const btn=document.querySelector(`.aba-nav button[data-aba="${name}"]`);
   if(btn)btn.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});
   const c=document.querySelector('.conteudo'); if(c){c.classList.remove('aba-anim');void c.offsetWidth;c.classList.add('aba-anim');} }
-document.querySelectorAll('.aba-nav button').forEach(b=>b.onclick=()=>irParaAba(b.dataset.aba));
+document.querySelectorAll('.aba-nav button, #bottom-nav button').forEach(b=>b.onclick=()=>irParaAba(b.dataset.aba));
 el('filtro-etq').addEventListener('click',e=>{ const b=e.target.closest('.chip'); if(!b)return;
   filtroEtq=b.dataset.etq||null; renderTarefas(); });
 /* deslizar pro lado pra trocar de aba (estilo Insta) */
@@ -1003,13 +1026,11 @@ function abrirNova(pre={}){ el('modal-titulo').textContent='Nova tarefa';
   el('m-id').value=''; el('m-titulo').value=pre.titulo||''; el('m-desc').value='';
   el('m-etiqueta').value=pre.etiqueta||''; setPrazoInputs(pre.prazo||null);
   setPrio(pre.prioridade||'importante'); anexoPend=[];anexoRem=[];renderAnexosModal();
-  el('m-gcal').checked=false; el('m-gcal-linha').classList.toggle('oculto',!gcalToken());
   el('modal-tarefa').classList.add('on'); el('m-titulo').focus(); }
 function abrirEdicao(id){ const t=tarefas.find(x=>x.id===id); if(!t)return;
   el('modal-titulo').textContent='Editar tarefa'; el('m-id').value=id; el('m-titulo').value=t.titulo;
   el('m-desc').value=t.descricao||''; el('m-etiqueta').value=t.etiqueta||''; setPrazoInputs(t.prazo||null);
   setPrio(t.prioridade); anexoPend=[];anexoRem=[];renderAnexosModal();
-  el('m-gcal').checked=false; el('m-gcal-linha').classList.toggle('oculto',!gcalToken());
   el('modal-tarefa').classList.add('on'); }
 function renderAnexosModal(){ const id=el('m-id').value;
   const ex=id?anexos.filter(a=>a.tarefaId===id&&!anexoRem.includes(a.id)):[]; let h='';
@@ -1047,8 +1068,8 @@ el('m-salvar').onclick=async()=>{ const tit=el('m-titulo').value.trim(); if(!tit
     else{ const ref=await addDoc(collection(db,'tarefas'),{...dados,userId:user.uid,concluida:false,criadaEm:Date.now()}); id=ref.id; }
     for(const aid of anexoRem){ await del('anexos',aid); }
     for(const a of anexoPend){ await addDoc(collection(db,'anexos'),{tarefaId:id,userId:user.uid,nome:a.nome,tipo:a.tipo,dados:a.dados,criadaEm:Date.now()}); }
-    if(el('m-gcal').checked && prazo && gcalToken()){ const eid=await gcalCriarEvento(tit,el('m-desc').value.trim(),prazo); if(eid&&id){try{await updateDoc(doc(db,'tarefas',id),{gcalEventId:eid});}catch(e){}} }
     el('modal-tarefa').classList.remove('on');
+    gcalAutoSync();
   }catch(err){ fala('Não consegui salvar ('+(err.code||err.message)+')',true); }
   el('m-salvar').disabled=false; };
 
@@ -1329,7 +1350,7 @@ el('btn-gcal').onclick=()=>{ if(gcalToken()){ if(confirm('Desconectar a Google A
   else gcalConectar('consent'); };
 function gcalAtualizarUI(){ const on=!!gcalToken();
   el('gcal-lbl').textContent=on?'Google Agenda ✓':'Google Agenda';
-  el('agenda-sec').classList.toggle('oculto',!on); }
+  if(on)gcalAutoSync(); }
 async function gcalFetch(url,opt={}){ const tk=gcalToken(); if(!tk)return null;
   opt.headers={...(opt.headers||{}),Authorization:'Bearer '+tk}; const r=await fetch(url,opt);
   if(r.status===401){ localStorage.removeItem('gcal_token'); localStorage.removeItem('gcal_exp'); gcalAtualizarUI(); } return r; }
@@ -1341,17 +1362,14 @@ async function gcalCriarEvento(titulo,descricao,ms){ if(!gcalToken())return null
   const r=await gcalFetch('https://www.googleapis.com/calendar/v3/calendars/primary/events',{method:'POST',
     headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
   if(r&&r.ok){ const d=await r.json(); return d.id||true; } return null; }
-el('btn-sync-tarefas').onclick=async()=>{
-  if(!gcalToken()){ fala('Conecta a Google Agenda primeiro.',true); return; }
-  const alvo=tarefas.filter(t=>!t.concluida && t.prazo && !t.gcalEventId);
-  if(!alvo.length){ el('btn-sync-tarefas').textContent='Tudo já está na agenda ✓'; setTimeout(()=>el('btn-sync-tarefas').textContent='📤 Enviar minhas tarefas para a agenda',2500); return; }
-  el('btn-sync-tarefas').disabled=true; let n=0;
-  for(const t of alvo){ el('btn-sync-tarefas').textContent=`Enviando… ${n+1}/${alvo.length}`;
-    const id=await gcalCriarEvento(t.titulo,t.descricao,t.prazo);
-    if(id){ try{ await updateDoc(doc(db,'tarefas',t.id),{gcalEventId:id}); }catch(e){} n++; } }
-  el('btn-sync-tarefas').disabled=false;
-  el('btn-sync-tarefas').textContent=`${n} enviada${n>1?'s':''} ✓`;
-  setTimeout(()=>el('btn-sync-tarefas').textContent='📤 Enviar tarefas com data para a agenda',2500); };
+/* envio automático: toda tarefa em aberto com data vai pra agenda sozinha */
+let gcalSyncing=false;
+async function gcalAutoSync(){ if(!gcalToken()||gcalSyncing)return;
+  const alvo=tarefas.filter(t=>!t.concluida&&t.prazo&&!t.gcalEventId); if(!alvo.length)return;
+  gcalSyncing=true;
+  for(const t of alvo){ const id=await gcalCriarEvento(t.titulo,t.descricao,t.prazo);
+    if(id){ try{ await updateDoc(doc(db,'tarefas',t.id),{gcalEventId:id}); }catch(e){} } }
+  gcalSyncing=false; }
 gcalInitClient(); gcalAtualizarUI();
 
 /* PWA — registra o service worker */
