@@ -267,6 +267,8 @@
   .modal-acoes{display:flex;gap:10px;margin-top:22px}
   .modal-acoes .btn{margin-top:0}
   .btn-sec{background:rgba(255,255,255,.08);color:var(--txt)}
+  .btn-excluir{width:100%;margin-top:10px;background:transparent;color:var(--urgente);font-size:13.5px;font-weight:600;padding:11px}
+  .btn-excluir:hover{background:rgba(251,90,106,.12)}
   .anexos-lista{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
   .anexo{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.22);border:1px solid var(--stroke);
     border-radius:11px;padding:8px 11px;font-size:13px}
@@ -589,6 +591,7 @@
       <button id="m-cancelar" class="btn btn-sec">Cancelar</button>
       <button id="m-salvar" class="btn btn-primario">Salvar</button>
     </div>
+    <button id="m-excluir" class="btn btn-excluir oculto">Excluir tarefa</button>
   </div>
 </div>
 
@@ -894,7 +897,6 @@ function itemTarefa(t){
       <div class="t-titulo">${priIcon(t.prioridade)}${esc(t.titulo)}</div>${desc}
       <div class="t-meta">${etq}${prazo}${anx}</div>
     </div>
-    <div class="t-acoes"><button data-edit="${t.id}">✎</button><button data-del="${t.id}">🗑</button></div>
   </div>`; }
 function renderFoco(){
   const abertas=tarefas.filter(t=>!t.concluida);
@@ -1026,12 +1028,18 @@ function abrirNova(pre={}){ el('modal-titulo').textContent='Nova tarefa';
   el('m-id').value=''; el('m-titulo').value=pre.titulo||''; el('m-desc').value='';
   el('m-etiqueta').value=pre.etiqueta||''; setPrazoInputs(pre.prazo||null);
   setPrio(pre.prioridade||'importante'); anexoPend=[];anexoRem=[];renderAnexosModal();
+  el('m-excluir').classList.add('oculto');
   el('modal-tarefa').classList.add('on'); el('m-titulo').focus(); }
 function abrirEdicao(id){ const t=tarefas.find(x=>x.id===id); if(!t)return;
   el('modal-titulo').textContent='Editar tarefa'; el('m-id').value=id; el('m-titulo').value=t.titulo;
   el('m-desc').value=t.descricao||''; el('m-etiqueta').value=t.etiqueta||''; setPrazoInputs(t.prazo||null);
   setPrio(t.prioridade); anexoPend=[];anexoRem=[];renderAnexosModal();
+  el('m-excluir').classList.remove('oculto');
   el('modal-tarefa').classList.add('on'); }
+el('m-excluir').onclick=async()=>{ const id=el('m-id').value; if(!id)return;
+  if(!confirm('Apagar essa tarefa?'))return;
+  anexos.filter(a=>a.tarefaId===id).forEach(a=>del('anexos',a.id));
+  await del('tarefas',id); el('modal-tarefa').classList.remove('on'); };
 function renderAnexosModal(){ const id=el('m-id').value;
   const ex=id?anexos.filter(a=>a.tarefaId===id&&!anexoRem.includes(a.id)):[]; let h='';
   ex.forEach(a=>{h+=`<div class="anexo"><span>📄</span><a href="${a.dados}" download="${esc(a.nome)}" target="_blank" rel="noopener">${esc(a.nome)}</a><button data-remanexo="${a.id}">✕</button></div>`;});
