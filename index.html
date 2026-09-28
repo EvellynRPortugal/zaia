@@ -133,7 +133,19 @@
   .aba-anim{animation:abaIn .22s ease}
   .foco{background:linear-gradient(135deg,rgba(139,92,246,.25),rgba(251,113,55,.15));
     border:1px solid var(--stroke);border-radius:22px;padding:18px 18px 8px;margin-top:18px;backdrop-filter:blur(10px)}
-  .foco h2{font-size:16px;display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .foco h2{font-size:16px;display:flex;align-items:center;gap:8px}
+  .foco-motivo{font-size:12px;color:var(--txt-dim);margin:2px 0 10px}
+  /* prioridade fina com símbolo */
+  .pri{display:inline-flex;align-items:center;vertical-align:middle;margin-right:6px}
+  .pri svg{width:14px;height:14px;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .pri-urgente svg{stroke:var(--urgente)} .pri-importante svg{stroke:#e0a93a} .pri-tranquilo svg{stroke:var(--tranquilo)}
+  /* filtros (chips) */
+  .filtros{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:8px;scrollbar-width:none}
+  .filtros::-webkit-scrollbar{display:none}
+  .chip{flex:0 0 auto;padding:7px 14px;border-radius:20px;font-size:13px;font-weight:600;
+    background:var(--card);border:1px solid var(--stroke);color:var(--txt-dim)}
+  .chip.on{background:linear-gradient(100deg,rgba(139,92,246,.35),rgba(217,70,239,.3));color:#fff;border-color:transparent}
+  .chip:hover{color:var(--txt)}
 
   /* TAREFA */
   .tarefa{display:flex;align-items:flex-start;gap:12px;background:var(--card);border:1px solid var(--stroke);
@@ -478,7 +490,7 @@
     </div>
 
     <section id="aba-hoje">
-      <div class="foco"><h2>✨ Foco de hoje</h2><div id="lista-foco"></div></div>
+      <div class="foco"><h2>✨ Foco de hoje</h2><div id="foco-motivo" class="foco-motivo"></div><div id="lista-foco"></div></div>
       <div id="agenda-sec" class="oculto">
         <div class="sec-titulo">📅 Sua agenda (Google)</div>
         <div id="lista-agenda"></div>
@@ -487,7 +499,10 @@
       <div id="lista-breve"></div>
     </section>
 
-    <section id="aba-tarefas" class="oculto"><div id="lista-tarefas"></div></section>
+    <section id="aba-tarefas" class="oculto">
+      <div id="filtro-etq" class="filtros"></div>
+      <div id="lista-tarefas"></div>
+    </section>
 
     <section id="aba-projetos" class="oculto">
       <button id="btn-novo-proj" class="mini-btn" style="margin-bottom:14px">+ Novo projeto</button>
@@ -535,7 +550,10 @@
       <button data-p="tranquilo">🟢 Tranquilo</button>
     </div>
     <label>Data e horário limite</label>
-    <input id="m-prazo" class="campo" type="datetime-local"/>
+    <div style="display:flex;gap:8px">
+      <input id="m-data" class="campo" type="date" style="flex:1"/>
+      <input id="m-hora" class="campo" type="time" style="flex:0 0 118px"/>
+    </div>
     <label id="m-gcal-linha" class="gcal-check oculto">
       <input type="checkbox" id="m-gcal"/> 📅 Criar também na Google Agenda (com alarme)
     </label>
@@ -851,24 +869,49 @@ function itemTarefa(t){
   return `<div class="tarefa ${t.concluida?'feita':''}">
     <button class="check ${t.concluida?'on':''}" data-check="${t.id}">✓</button>
     <div class="t-corpo" data-open="${t.id}">
-      <div class="t-titulo">${esc(t.titulo)}</div>${desc}
-      <div class="t-meta">
-        <span class="tag tag-${t.prioridade}"><span class="dot dot-${t.prioridade}"></span>${t.prioridade}</span>
-        ${etq}${prazo}${anx}
-      </div>
+      <div class="t-titulo">${priIcon(t.prioridade)}${esc(t.titulo)}</div>${desc}
+      <div class="t-meta">${etq}${prazo}${anx}</div>
     </div>
     <div class="t-acoes"><button data-edit="${t.id}">✎</button><button data-del="${t.id}">🗑</button></div>
   </div>`; }
-function renderFoco(){ const f=tarefas.filter(t=>!t.concluida).sort((a,b)=>score(b)-score(a)).slice(0,3);
-  el('lista-foco').innerHTML=f.length?f.map(itemTarefa).join(''):'<div class="vazio">Nada urgente por enquanto.</div>'; }
+function renderFoco(){
+  const abertas=tarefas.filter(t=>!t.concluida);
+  const fimHoje=hojeZero()+DIA;
+  // Critério: atrasadas + que vencem hoje + marcadas como urgentes
+  let f=abertas.filter(t=>(t.prazo&&t.prazo<fimHoje)||t.prioridade==='urgente');
+  let motivo='Atrasadas, de hoje e urgentes.';
+  if(!f.length){ f=abertas.filter(t=>t.prazo&&t.prazo<Date.now()+3*DIA); motivo='Próximas a vencer.'; }
+  if(!f.length){ f=abertas.filter(t=>t.prioridade==='importante'); motivo='Suas tarefas importantes.'; }
+  f.sort((a,b)=>score(b)-score(a)); f=f.slice(0,5);
+  el('lista-foco').innerHTML=f.length?f.map(itemTarefa).join(''):'<div class="vazio">Nada pra hoje. Aproveita. ☕</div>';
+  el('foco-motivo').textContent=f.length?motivo:''; }
 function renderBreve(){ const lim=Date.now()+7*DIA;
   const b=tarefas.filter(t=>!t.concluida&&t.prazo&&t.prazo<=lim).sort((a,b)=>a.prazo-b.prazo);
   el('lista-breve').innerHTML=b.length?b.map(itemTarefa).join(''):'<div class="vazio">Sem prazos nos próximos 7 dias.</div>'; }
-function renderTarefas(){ const ab=tarefas.filter(t=>!t.concluida).sort((a,b)=>score(b)-score(a));
-  const ft=tarefas.filter(t=>t.concluida).sort((a,b)=>(b.criadaEm||0)-(a.criadaEm||0)).slice(0,15); let h='';
-  ['urgente','importante','tranquilo'].forEach(p=>{ const g=ab.filter(t=>t.prioridade===p);
-    if(g.length)h+=`<div class="sec-titulo"><span class="dot dot-${p}"></span>${{urgente:'Urgente',importante:'Importante',tranquilo:'Tranquilo'}[p]}</div>`+g.map(itemTarefa).join(''); });
-  if(!ab.length)h='<div class="vazio">Nenhuma tarefa em aberto.</div>';
+let filtroEtq=null;
+function etiquetasExistentes(){ const s=new Set(); tarefas.forEach(t=>{ if(t.etiqueta)s.add(t.etiqueta); }); return [...s].sort(); }
+function renderFiltros(){ const etqs=etiquetasExistentes(); const box=el('filtro-etq');
+  if(!etqs.length){ box.innerHTML=''; return; }
+  let h=`<button class="chip ${!filtroEtq?'on':''}" data-etq="">Todas</button>`;
+  etqs.forEach(e=>{ h+=`<button class="chip ${filtroEtq===e?'on':''}" data-etq="${esc(e)}">${esc(e)}</button>`; });
+  box.innerHTML=h; }
+function renderTarefas(){ renderFiltros();
+  let ab=tarefas.filter(t=>!t.concluida);
+  if(filtroEtq) ab=ab.filter(t=>t.etiqueta===filtroEtq);
+  const hj=hojeZero(), fimHoje=hj+DIA, fimAmanha=hj+2*DIA, fim7=hj+7*DIA;
+  const grupos=[
+    {t:'Atrasadas', f:x=>x.prazo&&x.prazo<hj},
+    {t:'Hoje', f:x=>x.prazo&&x.prazo>=hj&&x.prazo<fimHoje},
+    {t:'Amanhã', f:x=>x.prazo&&x.prazo>=fimHoje&&x.prazo<fimAmanha},
+    {t:'Próximos 7 dias', f:x=>x.prazo&&x.prazo>=fimAmanha&&x.prazo<fim7},
+    {t:'Mais tarde', f:x=>x.prazo&&x.prazo>=fim7},
+    {t:'Sem data', f:x=>!x.prazo}
+  ];
+  let h='', usados=new Set();
+  grupos.forEach(g=>{ const lista=ab.filter(g.f).sort((a,b)=>(a.prazo||9e15)-(b.prazo||9e15)||score(b)-score(a));
+    if(lista.length){ h+=`<div class="sec-titulo">${g.t}</div>`+lista.map(t=>{usados.add(t.id);return itemTarefa(t);}).join(''); } });
+  if(!ab.length)h='<div class="vazio">Nenhuma tarefa'+(filtroEtq?' nessa etiqueta.':' em aberto.')+'</div>';
+  const ft=tarefas.filter(t=>t.concluida&&(!filtroEtq||t.etiqueta===filtroEtq)).sort((a,b)=>(b.concluidaEm||b.criadaEm||0)-(a.concluidaEm||a.criadaEm||0)).slice(0,15);
   if(ft.length)h+=`<div class="sec-titulo">Concluídas recentes</div>`+ft.map(itemTarefa).join('');
   el('lista-tarefas').innerHTML=h; }
 function renderProjetos(){ if(!projetos.length){el('lista-projetos').innerHTML='<div class="vazio">Crie um projeto para montar um cronograma.</div>';return;}
@@ -901,6 +944,14 @@ function renderSinonimos(){ const box=el('ensino-lista'); if(!box)return;
   box.innerHTML=sinonimos.length? sinonimos.map(s=>`<div class="anexo"><span style="flex:1">"${esc(s.termo)}" → ${esc(s.significado)}</span><button data-delsin="${s.id}">🗑</button></div>`).join('')
     : '<div class="vazio">Nada ensinado ainda.</div>'; }
 const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function priIcon(p){
+  const svg={
+    urgente:'<svg viewBox="0 0 16 16"><path d="M4 9l4-4 4 4M4 12.5l4-4 4 4"/></svg>',
+    importante:'<svg viewBox="0 0 16 16"><path d="M4 10l4-4 4 4"/></svg>',
+    tranquilo:'<svg viewBox="0 0 16 16"><path d="M4 6l4 4 4-4"/></svg>'
+  }[p]||'';
+  const nome={urgente:'Urgente',importante:'Importante',tranquilo:'Tranquilo'}[p]||'';
+  return `<span class="pri pri-${p}" title="${nome}">${svg}</span>`; }
 
 /* CLIQUES */
 document.body.addEventListener('click', async e=>{
@@ -934,6 +985,8 @@ function irParaAba(name){ if(!ABAS.includes(name))return; abaAtual=name;
   if(btn)btn.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});
   const c=document.querySelector('.conteudo'); if(c){c.classList.remove('aba-anim');void c.offsetWidth;c.classList.add('aba-anim');} }
 document.querySelectorAll('.aba-nav button').forEach(b=>b.onclick=()=>irParaAba(b.dataset.aba));
+el('filtro-etq').addEventListener('click',e=>{ const b=e.target.closest('.chip'); if(!b)return;
+  filtroEtq=b.dataset.etq||null; renderTarefas(); });
 /* deslizar pro lado pra trocar de aba (estilo Insta) */
 (function(){ const area=document.querySelector('.conteudo'); if(!area)return; let x0=null,y0=null;
   area.addEventListener('touchstart',e=>{ if(e.target.closest('input,textarea,button,a,.sp-ctrl')){x0=null;return;} const t=e.changedTouches[0];x0=t.clientX;y0=t.clientY; },{passive:true});
@@ -949,13 +1002,13 @@ el('m-prio').addEventListener('click',e=>{ const b=e.target.closest('button'); i
 el('fab').onclick=()=>abrirNova();
 function abrirNova(pre={}){ el('modal-titulo').textContent='Nova tarefa';
   el('m-id').value=''; el('m-titulo').value=pre.titulo||''; el('m-desc').value='';
-  el('m-etiqueta').value=pre.etiqueta||''; el('m-prazo').value=pre.prazo?paraInput(pre.prazo):'';
+  el('m-etiqueta').value=pre.etiqueta||''; setPrazoInputs(pre.prazo||null);
   setPrio(pre.prioridade||'importante'); anexoPend=[];anexoRem=[];renderAnexosModal();
   el('m-gcal').checked=false; el('m-gcal-linha').classList.toggle('oculto',!gcalToken());
   el('modal-tarefa').classList.add('on'); el('m-titulo').focus(); }
 function abrirEdicao(id){ const t=tarefas.find(x=>x.id===id); if(!t)return;
   el('modal-titulo').textContent='Editar tarefa'; el('m-id').value=id; el('m-titulo').value=t.titulo;
-  el('m-desc').value=t.descricao||''; el('m-etiqueta').value=t.etiqueta||''; el('m-prazo').value=t.prazo?paraInput(t.prazo):'';
+  el('m-desc').value=t.descricao||''; el('m-etiqueta').value=t.etiqueta||''; setPrazoInputs(t.prazo||null);
   setPrio(t.prioridade); anexoPend=[];anexoRem=[];renderAnexosModal();
   el('m-gcal').checked=false; el('m-gcal-linha').classList.toggle('oculto',!gcalToken());
   el('modal-tarefa').classList.add('on'); }
@@ -981,10 +1034,14 @@ function addAnexoPend(file){ return new Promise(res=>{ const r=new FileReader();
       anexoPend.push({nome:file.name,tipo:file.type||'arquivo',dados:r.result});res(); } };
   r.onerror=()=>res(); r.readAsDataURL(file); }); }
 function setPrio(p){prioSel=p;document.querySelectorAll('#m-prio button').forEach(x=>x.classList.toggle('sel',x.dataset.p===p));}
-const paraInput=ms=>new Date(ms-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);
+function setPrazoInputs(ms){ if(ms){ const d=new Date(ms);
+    el('m-data').value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const hh=d.getHours(),mm=d.getMinutes(); el('m-hora').value=(hh||mm)?`${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`:'';
+  } else { el('m-data').value=''; el('m-hora').value=''; } }
+function lerPrazoInputs(){ const dt=el('m-data').value; if(!dt)return null; return new Date(dt+'T'+(el('m-hora').value||'09:00')).getTime(); }
 el('m-cancelar').onclick=()=>el('modal-tarefa').classList.remove('on');
 el('m-salvar').onclick=async()=>{ const tit=el('m-titulo').value.trim(); if(!tit){fala('Dá um título pra tarefa.');return;}
-  const prazo=el('m-prazo').value?new Date(el('m-prazo').value).getTime():null;
+  const prazo=lerPrazoInputs();
   const dados={titulo:tit,descricao:el('m-desc').value.trim()||null,prioridade:prioSel,etiqueta:el('m-etiqueta').value.trim()||null,prazo,lembrete:prazo};
   let id=el('m-id').value; el('m-salvar').disabled=true;
   try{ if(id) await updateDoc(doc(db,'tarefas',id),dados);
