@@ -491,9 +491,8 @@
 
     <section id="aba-hoje">
       <div class="foco"><h2>✨ Foco de hoje</h2><div id="foco-motivo" class="foco-motivo"></div><div id="lista-foco"></div></div>
-      <div id="agenda-sec" class="oculto">
-        <div class="sec-titulo">📅 Sua agenda (Google)</div>
-        <div id="lista-agenda"></div>
+      <div id="agenda-sec" class="oculto" style="margin-top:18px">
+        <button id="btn-sync-tarefas" class="mini-btn">📤 Enviar tarefas com data para a agenda</button>
       </div>
       <div class="sec-titulo">Vencendo em breve</div>
       <div id="lista-breve"></div>
@@ -1048,7 +1047,7 @@ el('m-salvar').onclick=async()=>{ const tit=el('m-titulo').value.trim(); if(!tit
     else{ const ref=await addDoc(collection(db,'tarefas'),{...dados,userId:user.uid,concluida:false,criadaEm:Date.now()}); id=ref.id; }
     for(const aid of anexoRem){ await del('anexos',aid); }
     for(const a of anexoPend){ await addDoc(collection(db,'anexos'),{tarefaId:id,userId:user.uid,nome:a.nome,tipo:a.tipo,dados:a.dados,criadaEm:Date.now()}); }
-    if(el('m-gcal').checked && prazo && gcalToken()){ await gcalCriarEvento(tit,el('m-desc').value.trim(),prazo); gcalListar(); }
+    if(el('m-gcal').checked && prazo && gcalToken()){ const eid=await gcalCriarEvento(tit,el('m-desc').value.trim(),prazo); if(eid&&id){try{await updateDoc(doc(db,'tarefas',id),{gcalEventId:eid});}catch(e){}} }
     el('modal-tarefa').classList.remove('on');
   }catch(err){ fala('Não consegui salvar ('+(err.code||err.message)+')',true); }
   el('m-salvar').disabled=false; };
@@ -1330,24 +1329,29 @@ el('btn-gcal').onclick=()=>{ if(gcalToken()){ if(confirm('Desconectar a Google A
   else gcalConectar('consent'); };
 function gcalAtualizarUI(){ const on=!!gcalToken();
   el('gcal-lbl').textContent=on?'Google Agenda ✓':'Google Agenda';
-  el('agenda-sec').classList.toggle('oculto',!on); if(on)gcalListar(); }
+  el('agenda-sec').classList.toggle('oculto',!on); }
 async function gcalFetch(url,opt={}){ const tk=gcalToken(); if(!tk)return null;
   opt.headers={...(opt.headers||{}),Authorization:'Bearer '+tk}; const r=await fetch(url,opt);
   if(r.status===401){ localStorage.removeItem('gcal_token'); localStorage.removeItem('gcal_exp'); gcalAtualizarUI(); } return r; }
-async function gcalListar(){ const min=new Date().toISOString(),max=new Date(Date.now()+7*DIA).toISOString();
-  const r=await gcalFetch('https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin='+encodeURIComponent(min)+'&timeMax='+encodeURIComponent(max)+'&singleEvents=true&orderBy=startTime&maxResults=10');
-  if(!r||!r.ok){ el('lista-agenda').innerHTML='<div class="vazio">Não consegui ler a agenda agora.</div>'; return; }
-  const d=await r.json(),items=d.items||[];
-  el('lista-agenda').innerHTML=items.length? items.map(ev=>{ const dt=ev.start.dateTime||ev.start.date,ms=new Date(dt).getTime();
-    return `<div class="agenda-item"><div class="agenda-hora">${fmtPrazo(ms)}</div><div class="agenda-tit">${esc(ev.summary||'(sem título)')}</div></div>`; }).join('')
-    : '<div class="vazio">Nada nos próximos 7 dias.</div>'; }
-async function gcalCriarEvento(titulo,descricao,ms){ if(!gcalToken())return;
+async function gcalCriarEvento(titulo,descricao,ms){ if(!gcalToken())return null;
   const ini=new Date(ms),fim=new Date(ms+30*60000);
   const body={summary:titulo,description:descricao||'Criado pela Zaia 🌙',
     start:{dateTime:ini.toISOString(),timeZone:TZ},end:{dateTime:fim.toISOString(),timeZone:TZ},
     reminders:{useDefault:false,overrides:[{method:'popup',minutes:0},{method:'popup',minutes:10}]}};
-  await gcalFetch('https://www.googleapis.com/calendar/v3/calendars/primary/events',{method:'POST',
-    headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); }
+  const r=await gcalFetch('https://www.googleapis.com/calendar/v3/calendars/primary/events',{method:'POST',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(r&&r.ok){ const d=await r.json(); return d.id||true; } return null; }
+el('btn-sync-tarefas').onclick=async()=>{
+  if(!gcalToken()){ fala('Conecta a Google Agenda primeiro.',true); return; }
+  const alvo=tarefas.filter(t=>!t.concluida && t.prazo && !t.gcalEventId);
+  if(!alvo.length){ el('btn-sync-tarefas').textContent='Tudo já está na agenda ✓'; setTimeout(()=>el('btn-sync-tarefas').textContent='📤 Enviar minhas tarefas para a agenda',2500); return; }
+  el('btn-sync-tarefas').disabled=true; let n=0;
+  for(const t of alvo){ el('btn-sync-tarefas').textContent=`Enviando… ${n+1}/${alvo.length}`;
+    const id=await gcalCriarEvento(t.titulo,t.descricao,t.prazo);
+    if(id){ try{ await updateDoc(doc(db,'tarefas',t.id),{gcalEventId:id}); }catch(e){} n++; } }
+  el('btn-sync-tarefas').disabled=false;
+  el('btn-sync-tarefas').textContent=`${n} enviada${n>1?'s':''} ✓`;
+  setTimeout(()=>el('btn-sync-tarefas').textContent='📤 Enviar tarefas com data para a agenda',2500); };
 gcalInitClient(); gcalAtualizarUI();
 
 /* PWA — registra o service worker */
