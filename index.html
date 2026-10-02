@@ -202,7 +202,10 @@
   .proj{background:var(--card);border:1px solid var(--stroke);border-radius:20px;padding:16px 18px;
     margin-bottom:14px;backdrop-filter:blur(8px)}
   .proj-topo{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-  .proj-nome{font-size:17px;font-weight:700}
+  .proj-nome{font-size:17px;font-weight:700;text-align:left;color:var(--txt)}
+  .proj-nome:hover{color:#d9b8ff}
+  .etapa-txt{text-align:left;color:var(--txt)}
+  .etapa-txt:hover{color:#d9b8ff}
   .proj-prazo{font-size:12.5px;color:var(--txt-dim);margin-top:2px}
   .barra{height:8px;background:rgba(0,0,0,.3);border-radius:20px;overflow:hidden;margin:12px 0}
   .barra span{display:block;height:100%;border-radius:20px;background:linear-gradient(90deg,var(--laranja),var(--magenta));transition:width .4s}
@@ -636,6 +639,42 @@
   </div>
 </div>
 
+<!-- MODAL EDITAR ETAPA -->
+<div id="modal-etapa" class="modal-bg">
+  <div class="modal">
+    <h3>Editar etapa</h3>
+    <input type="hidden" id="e-id"/>
+    <label>Etapa</label>
+    <input id="e-titulo" class="campo"/>
+    <label>Data e horário</label>
+    <div style="display:flex;gap:8px">
+      <input id="e-data" type="date" class="campo" style="flex:1"/>
+      <input id="e-hora" type="time" class="campo" style="flex:0 0 118px"/>
+    </div>
+    <div class="modal-acoes">
+      <button id="e-cancelar" class="btn btn-sec">Cancelar</button>
+      <button id="e-salvar" class="btn btn-primario">Salvar</button>
+    </div>
+    <button id="e-excluir" class="btn btn-excluir">Excluir etapa</button>
+  </div>
+</div>
+
+<!-- MODAL EDITAR PROJETO -->
+<div id="modal-projedit" class="modal-bg">
+  <div class="modal">
+    <h3>Editar projeto</h3>
+    <input type="hidden" id="pe-id"/>
+    <label>Nome</label>
+    <input id="pe-nome" class="campo"/>
+    <label>Prazo final</label>
+    <input id="pe-data" type="date" class="campo"/>
+    <div class="modal-acoes">
+      <button id="pe-cancelar" class="btn btn-sec">Cancelar</button>
+      <button id="pe-salvar" class="btn btn-primario">Salvar</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL MODO ENSINO -->
 <div id="modal-ensino" class="modal-bg">
   <div class="modal">
@@ -977,18 +1016,20 @@ function renderProjetos(){ if(!projetos.length){el('lista-projetos').innerHTML='
     const es=etapas.filter(e=>e.projetoId===p.id).sort((a,b)=>(a.prazo||9e15)-(b.prazo||9e15)||(a.ordem||0)-(b.ordem||0));
     const ft=es.filter(e=>e.concluida).length, pct=es.length?Math.round(ft/es.length*100):0;
     return `<div class="proj">
-      <div class="proj-topo"><div><div class="proj-nome">${esc(p.nome)}</div>
+      <div class="proj-topo"><div>
+        <button class="proj-nome" data-editprojeto="${p.id}">${esc(p.nome)}</button>
         ${p.dataFim?`<div class="proj-prazo">🎯 entrega ${fmtPrazo(p.dataFim)}</div>`:''}</div>
         <button data-delproj="${p.id}" class="t-acoes" style="color:var(--txt-dim)">🗑</button></div>
       <div class="barra"><span style="width:${pct}%"></span></div>
       <div style="font-size:12px;color:var(--txt-dim);margin-bottom:6px">${ft}/${es.length} etapas • ${pct}%</div>
       ${es.map(e=>`<div class="etapa ${e.concluida?'feita':''}">
         <button class="check ${e.concluida?'on':''}" data-checketapa="${e.id}">✓</button>
-        <span class="etapa-txt">${esc(e.titulo)}</span>
+        <button class="etapa-txt" data-editetapa="${e.id}">${esc(e.titulo)}</button>
         ${e.prazo?`<span class="etapa-prazo ${venceu(e.prazo)&&!e.concluida?'venc':''}">${fmtPrazo(e.prazo)}</span>`:''}
         <button data-deletapa="${e.id}" style="color:var(--txt-dim);width:26px">✕</button></div>`).join('')}
       <div class="add-etapa"><input placeholder="nova etapa" data-etapa-nome="${p.id}"/>
         <input class="data" type="date" data-etapa-prazo="${p.id}"/>
+        <input class="data" type="time" data-etapa-hora="${p.id}" style="flex:0 0 96px"/>
         <button class="mini-btn" data-addetapa="${p.id}">+</button></div>
     </div>`; }).join(''); }
 function renderStats(){ const ft=tarefas.filter(t=>t.concluida).length, ab=tarefas.filter(t=>!t.concluida).length;
@@ -1021,6 +1062,8 @@ document.body.addEventListener('click', async e=>{
   if(d.remanexo){ anexoRem.push(d.remanexo); return renderAnexosModal(); }
   if(d.rempend!==undefined){ anexoPend.splice(+d.rempend,1); return renderAnexosModal(); }
   if(d.checketapa) return toggleEtapa(d.checketapa);
+  if(d.editetapa) return abrirEtapa(d.editetapa);
+  if(d.editprojeto) return abrirProjEdit(d.editprojeto);
   if(d.deletapa) return del('etapas',d.deletapa);
   if(d.delproj){ if(confirm('Apagar o projeto e todas as etapas?')){ etapas.filter(x=>x.projetoId===d.delproj).forEach(x=>del('etapas',x.id)); return del('projetos',d.delproj);} }
   if(d.delsin) return del('sinonimos',d.delsin);
@@ -1136,11 +1179,37 @@ el('p-salvar').onclick=async()=>{ const nome=el('p-nome').value.trim(); if(!nome
   const dataFim=el('p-prazo').value?new Date(el('p-prazo').value+'T12:00').getTime():null;
   await addDoc(collection(db,'projetos'),{nome,dataFim,userId:user.uid,concluido:false,criadaEm:Date.now()});
   el('modal-proj').classList.remove('on'); };
-async function addEtapaUI(pid){ const nomeI=document.querySelector(`[data-etapa-nome="${pid}"]`),prazoI=document.querySelector(`[data-etapa-prazo="${pid}"]`);
+async function addEtapaUI(pid){ const nomeI=document.querySelector(`[data-etapa-nome="${pid}"]`),prazoI=document.querySelector(`[data-etapa-prazo="${pid}"]`),horaI=document.querySelector(`[data-etapa-hora="${pid}"]`);
   const nome=nomeI.value.trim(); if(!nome)return;
-  const prazo=prazoI.value?new Date(prazoI.value+'T12:00').getTime():null;
+  const prazo=prazoI.value?new Date(prazoI.value+'T'+(horaI.value||'12:00')).getTime():null;
   await addDoc(collection(db,'etapas'),{projetoId:pid,titulo:nome,prazo,concluida:false,ordem:Date.now(),userId:user.uid});
-  nomeI.value='';prazoI.value=''; }
+  nomeI.value='';prazoI.value='';if(horaI)horaI.value=''; }
+
+/* editar etapa */
+function abrirEtapa(id){ const e=etapas.find(x=>x.id===id); if(!e)return;
+  el('e-id').value=id; el('e-titulo').value=e.titulo;
+  if(e.prazo){ const d=new Date(e.prazo);
+    el('e-data').value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const hh=d.getHours(),mm=d.getMinutes(); el('e-hora').value=(hh||mm)?`${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`:'';
+  } else { el('e-data').value=''; el('e-hora').value=''; }
+  el('modal-etapa').classList.add('on'); }
+el('e-cancelar').onclick=()=>el('modal-etapa').classList.remove('on');
+el('e-salvar').onclick=async()=>{ const id=el('e-id').value,tit=el('e-titulo').value.trim(); if(!tit)return;
+  const prazo=el('e-data').value?new Date(el('e-data').value+'T'+(el('e-hora').value||'12:00')).getTime():null;
+  await updateDoc(doc(db,'etapas',id),{titulo:tit,prazo}); el('modal-etapa').classList.remove('on'); };
+el('e-excluir').onclick=async()=>{ const id=el('e-id').value; if(!confirm('Apagar essa etapa?'))return;
+  await del('etapas',id); el('modal-etapa').classList.remove('on'); };
+
+/* editar projeto */
+function abrirProjEdit(id){ const p=projetos.find(x=>x.id===id); if(!p)return;
+  el('pe-id').value=id; el('pe-nome').value=p.nome;
+  if(p.dataFim){ const d=new Date(p.dataFim); el('pe-data').value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+  else el('pe-data').value='';
+  el('modal-projedit').classList.add('on'); }
+el('pe-cancelar').onclick=()=>el('modal-projedit').classList.remove('on');
+el('pe-salvar').onclick=async()=>{ const id=el('pe-id').value,nome=el('pe-nome').value.trim(); if(!nome)return;
+  const dataFim=el('pe-data').value?new Date(el('pe-data').value+'T12:00').getTime():null;
+  await updateDoc(doc(db,'projetos',id),{nome,dataFim}); el('modal-projedit').classList.remove('on'); };
 
 /* MODO ENSINO */
 el('ensino-add').onclick=async()=>{ const termo=el('ensino-termo').value.trim().toLowerCase(),sig=el('ensino-signif').value.trim();
