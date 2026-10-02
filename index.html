@@ -206,6 +206,7 @@
   .proj-nome:hover{color:#d9b8ff}
   .etapa-txt{text-align:left;color:var(--txt)}
   .etapa-txt:hover{color:#d9b8ff}
+  .nota-ic{font-size:11px;opacity:.8;margin-left:3px}
   .proj-prazo{font-size:12.5px;color:var(--txt-dim);margin-top:2px}
   .barra{height:8px;background:rgba(0,0,0,.3);border-radius:20px;overflow:hidden;margin:12px 0}
   .barra span{display:block;height:100%;border-radius:20px;background:linear-gradient(90deg,var(--laranja),var(--magenta));transition:width .4s}
@@ -409,6 +410,13 @@
     .fab{bottom:82px;right:16px;width:54px;height:54px;font-size:26px}
     .fab-chat{bottom:148px;right:18px}
     .btn-crise{bottom:82px;left:16px;padding:13px;border-radius:50%}
+    /* MODO CRISE no celular */
+    .crise{justify-content:flex-start;padding:64px 18px 48px}
+    .crise-titulo{font-size:22px}
+    .crise-sub{font-size:14.5px}
+    .crise-plbar{position:static;left:auto;right:auto;top:auto;width:100%;order:-1;margin-bottom:14px}
+    .crise-sair{top:12px;right:12px}
+    .crise-passo{gap:12px}
   }
 </style>
 </head>
@@ -651,6 +659,8 @@
       <input id="e-data" type="date" class="campo" style="flex:1"/>
       <input id="e-hora" type="time" class="campo" style="flex:0 0 118px"/>
     </div>
+    <label>Anotações</label>
+    <textarea id="e-nota" class="campo" rows="4" placeholder="observações, links, o que falta…"></textarea>
     <div class="modal-acoes">
       <button id="e-cancelar" class="btn btn-sec">Cancelar</button>
       <button id="e-salvar" class="btn btn-primario">Salvar</button>
@@ -1024,7 +1034,7 @@ function renderProjetos(){ if(!projetos.length){el('lista-projetos').innerHTML='
       <div style="font-size:12px;color:var(--txt-dim);margin-bottom:6px">${ft}/${es.length} etapas • ${pct}%</div>
       ${es.map(e=>`<div class="etapa ${e.concluida?'feita':''}">
         <button class="check ${e.concluida?'on':''}" data-checketapa="${e.id}">✓</button>
-        <button class="etapa-txt" data-editetapa="${e.id}">${esc(e.titulo)}</button>
+        <button class="etapa-txt" data-editetapa="${e.id}">${esc(e.titulo)}${e.nota?' <span class="nota-ic" title="tem anotação">📝</span>':''}</button>
         ${e.prazo?`<span class="etapa-prazo ${venceu(e.prazo)&&!e.concluida?'venc':''}">${fmtPrazo(e.prazo)}</span>`:''}
         <button data-deletapa="${e.id}" style="color:var(--txt-dim);width:26px">✕</button></div>`).join('')}
       <div class="add-etapa"><input placeholder="nova etapa" data-etapa-nome="${p.id}"/>
@@ -1192,11 +1202,12 @@ function abrirEtapa(id){ const e=etapas.find(x=>x.id===id); if(!e)return;
     el('e-data').value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     const hh=d.getHours(),mm=d.getMinutes(); el('e-hora').value=(hh||mm)?`${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`:'';
   } else { el('e-data').value=''; el('e-hora').value=''; }
+  el('e-nota').value=e.nota||'';
   el('modal-etapa').classList.add('on'); }
 el('e-cancelar').onclick=()=>el('modal-etapa').classList.remove('on');
 el('e-salvar').onclick=async()=>{ const id=el('e-id').value,tit=el('e-titulo').value.trim(); if(!tit)return;
   const prazo=el('e-data').value?new Date(el('e-data').value+'T'+(el('e-hora').value||'12:00')).getTime():null;
-  await updateDoc(doc(db,'etapas',id),{titulo:tit,prazo}); el('modal-etapa').classList.remove('on'); };
+  await updateDoc(doc(db,'etapas',id),{titulo:tit,prazo,nota:el('e-nota').value.trim()||null}); el('modal-etapa').classList.remove('on'); };
 el('e-excluir').onclick=async()=>{ const id=el('e-id').value; if(!confirm('Apagar essa etapa?'))return;
   await del('etapas',id); el('modal-etapa').classList.remove('on'); };
 
