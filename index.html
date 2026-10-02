@@ -177,6 +177,26 @@
   .t-acoes button{width:30px;height:30px;border-radius:9px;color:var(--txt-dim);font-size:14px}
   .t-acoes button:hover{background:rgba(255,255,255,.08);color:var(--txt)}
   .vazio{text-align:center;color:var(--txt-dim);padding:28px 16px;font-size:14px}
+  .t-corpo-wrap{flex:1;min-width:0}
+  /* subitens no cartão */
+  .sublist{display:flex;flex-direction:column;gap:2px;margin-top:8px}
+  .subitem{display:flex;align-items:center;gap:8px;text-align:left;font-size:13px;color:var(--txt-dim);
+    padding:5px 6px;border-radius:9px;width:100%}
+  .subitem:hover{background:rgba(255,255,255,.04)}
+  .subitem .subcheck{width:16px;height:16px;border-radius:5px;border:1.5px solid var(--txt-dim);flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent}
+  .subitem.ok .subcheck{background:var(--tranquilo);border-color:var(--tranquilo);color:#0b2a15}
+  .subitem.ok{text-decoration:line-through;opacity:.6}
+  /* subitens no modal */
+  .m-sublist{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+  .subedit{display:flex;align-items:center;gap:9px;background:rgba(0,0,0,.2);border:1px solid var(--stroke);
+    border-radius:11px;padding:8px 11px;font-size:14px}
+  .subedit span{flex:1}
+  .subedit span.risc{text-decoration:line-through;opacity:.55}
+  .subcheck-btn{width:20px;height:20px;border-radius:6px;border:1.6px solid var(--txt-dim);flex-shrink:0;
+    font-size:11px;color:transparent;display:flex;align-items:center;justify-content:center}
+  .subcheck-btn.ok{background:var(--tranquilo);border-color:var(--tranquilo);color:#0b2a15}
+  .subedit button[data-subpdel]{width:24px;color:var(--txt-dim);flex-shrink:0}
 
   /* PROJETOS */
   .proj{background:var(--card);border:1px solid var(--stroke);border-radius:20px;padding:16px 18px;
@@ -583,6 +603,12 @@
     </div>
     <label>Etiqueta</label>
     <input id="m-etiqueta" class="campo"/>
+    <label>Subitens (checklist)</label>
+    <div id="m-sublist" class="m-sublist"></div>
+    <div class="add-etapa">
+      <input id="m-sub-novo" placeholder="novo item"/>
+      <button id="m-sub-add" class="mini-btn" type="button">+</button>
+    </div>
     <label>Anexos</label>
     <div id="m-anexos" class="anexos-lista"></div>
     <button id="m-add-anexo" class="mini-btn" type="button">📎 Anexar arquivo</button>
@@ -790,6 +816,7 @@ const db = getFirestore(app);
 let user=null, tarefas=[], projetos=[], etapas=[], sinonimos=[], anexos=[];
 let unsub=[]; const notificadas=new Set();
 let anexoPend=[], anexoRem=[];
+let subPend=[];
 let crisePlaylistLink='';
 const el=(id)=>document.getElementById(id);
 
@@ -891,11 +918,18 @@ function itemTarefa(t){
   const nA=anexos.filter(a=>a.tarefaId===t.id).length;
   const anx=nA?`<span class="tag tag-prazo">${nA} anexo${nA>1?'s':''}</span>`:'';
   const desc=t.descricao?`<div class="t-desc">${esc(t.descricao)}</div>`:'';
+  const subs=t.subitens||[];
+  const feitosSub=subs.filter(s=>s.ok).length;
+  const subTag=subs.length?`<span class="tag tag-prazo">✓ ${feitosSub}/${subs.length}</span>`:'';
+  const subList=subs.length?`<div class="sublist">`+subs.map((s,i)=>`<button class="subitem ${s.ok?'ok':''}" data-subtoggle="${t.id}|${i}"><span class="subcheck">✓</span>${esc(s.t)}</button>`).join('')+`</div>`:'';
   return `<div class="tarefa ${t.concluida?'feita':''}">
     <button class="check ${t.concluida?'on':''}" data-check="${t.id}">✓</button>
-    <div class="t-corpo" data-open="${t.id}">
-      <div class="t-titulo">${priIcon(t.prioridade)}${esc(t.titulo)}</div>${desc}
-      <div class="t-meta">${etq}${prazo}${anx}</div>
+    <div class="t-corpo-wrap">
+      <div class="t-corpo" data-open="${t.id}">
+        <div class="t-titulo">${priIcon(t.prioridade)}${esc(t.titulo)}</div>${desc}
+        <div class="t-meta">${etq}${prazo}${anx}${subTag}</div>
+      </div>
+      ${subList}
     </div>
   </div>`; }
 function renderFoco(){
@@ -983,6 +1017,7 @@ document.body.addEventListener('click', async e=>{
   if(d.check) return toggleTarefa(d.check);
   if(d.edit) return abrirEdicao(d.edit);
   if(d.del){ if(confirm('Apagar essa tarefa?')){ anexos.filter(a=>a.tarefaId===d.del).forEach(a=>del('anexos',a.id)); return del('tarefas',d.del);} }
+  if(d.subtoggle){ const [tid,idx]=d.subtoggle.split('|'); return toggleSub(tid,+idx); }
   if(d.remanexo){ anexoRem.push(d.remanexo); return renderAnexosModal(); }
   if(d.rempend!==undefined){ anexoPend.splice(+d.rempend,1); return renderAnexosModal(); }
   if(d.checketapa) return toggleEtapa(d.checketapa);
@@ -998,6 +1033,9 @@ async function toggleTarefa(id){ const t=tarefas.find(x=>x.id===id);
 async function toggleEtapa(id){ const et=etapas.find(x=>x.id===id);
   await updateDoc(doc(db,'etapas',id),{concluida:!et.concluida}); }
 const del=(c,id)=>deleteDoc(doc(db,c,id));
+async function toggleSub(tid,idx){ const t=tarefas.find(x=>x.id===tid); if(!t||!t.subitens)return;
+  const arr=t.subitens.map((s,i)=>i===idx?{t:s.t,ok:!s.ok}:s);
+  await updateDoc(doc(db,'tarefas',tid),{subitens:arr}); }
 
 /* ABAS */
 const ABAS=['hoje','tarefas','projetos','voce'];
@@ -1028,14 +1066,24 @@ function abrirNova(pre={}){ el('modal-titulo').textContent='Nova tarefa';
   el('m-id').value=''; el('m-titulo').value=pre.titulo||''; el('m-desc').value='';
   el('m-etiqueta').value=pre.etiqueta||''; setPrazoInputs(pre.prazo||null);
   setPrio(pre.prioridade||'importante'); anexoPend=[];anexoRem=[];renderAnexosModal();
+  subPend=[];renderSubPend();
   el('m-excluir').classList.add('oculto');
   el('modal-tarefa').classList.add('on'); el('m-titulo').focus(); }
 function abrirEdicao(id){ const t=tarefas.find(x=>x.id===id); if(!t)return;
   el('modal-titulo').textContent='Editar tarefa'; el('m-id').value=id; el('m-titulo').value=t.titulo;
   el('m-desc').value=t.descricao||''; el('m-etiqueta').value=t.etiqueta||''; setPrazoInputs(t.prazo||null);
   setPrio(t.prioridade); anexoPend=[];anexoRem=[];renderAnexosModal();
+  subPend=(t.subitens||[]).map(s=>({t:s.t,ok:!!s.ok}));renderSubPend();
   el('m-excluir').classList.remove('oculto');
   el('modal-tarefa').classList.add('on'); }
+function renderSubPend(){ el('m-sublist').innerHTML=subPend.map((s,i)=>
+  `<div class="subedit"><button type="button" class="subcheck-btn ${s.ok?'ok':''}" data-subpok="${i}">✓</button><span class="${s.ok?'risc':''}">${esc(s.t)}</span><button type="button" data-subpdel="${i}">✕</button></div>`).join(''); }
+el('m-sublist').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b)return;
+  if(b.dataset.subpok!==undefined){ const i=+b.dataset.subpok; subPend[i].ok=!subPend[i].ok; renderSubPend(); }
+  if(b.dataset.subpdel!==undefined){ subPend.splice(+b.dataset.subpdel,1); renderSubPend(); } });
+function addSub(){ const v=el('m-sub-novo').value.trim(); if(!v)return; subPend.push({t:v,ok:false}); el('m-sub-novo').value=''; renderSubPend(); el('m-sub-novo').focus(); }
+el('m-sub-add').onclick=addSub;
+el('m-sub-novo').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addSub();}});
 el('m-excluir').onclick=async()=>{ const id=el('m-id').value; if(!id)return;
   if(!confirm('Apagar essa tarefa?'))return;
   anexos.filter(a=>a.tarefaId===id).forEach(a=>del('anexos',a.id));
@@ -1070,7 +1118,7 @@ function lerPrazoInputs(){ const dt=el('m-data').value; if(!dt)return null; retu
 el('m-cancelar').onclick=()=>el('modal-tarefa').classList.remove('on');
 el('m-salvar').onclick=async()=>{ const tit=el('m-titulo').value.trim(); if(!tit){fala('Dá um título pra tarefa.');return;}
   const prazo=lerPrazoInputs();
-  const dados={titulo:tit,descricao:el('m-desc').value.trim()||null,prioridade:prioSel,etiqueta:el('m-etiqueta').value.trim()||null,prazo,lembrete:prazo};
+  const dados={titulo:tit,descricao:el('m-desc').value.trim()||null,prioridade:prioSel,etiqueta:el('m-etiqueta').value.trim()||null,prazo,lembrete:prazo,subitens:subPend.map(s=>({t:s.t,ok:!!s.ok}))};
   let id=el('m-id').value; el('m-salvar').disabled=true;
   try{ if(id) await updateDoc(doc(db,'tarefas',id),dados);
     else{ const ref=await addDoc(collection(db,'tarefas'),{...dados,userId:user.uid,concluida:false,criadaEm:Date.now()}); id=ref.id; }
