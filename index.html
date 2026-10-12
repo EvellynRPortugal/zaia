@@ -1728,9 +1728,9 @@ el('lv-busca').addEventListener('input',()=>{ clearTimeout(lvTimer); const q=el(
   if(q.length<2){el('lv-resultados').innerHTML='';return;} lvTimer=setTimeout(()=>buscarLivro(q),400); });
 const gbCapa=v=>{ const c=v.imageLinks&&(v.imageLinks.thumbnail||v.imageLinks.smallThumbnail); return c?c.replace(/^http:/,'https:').replace(/&edge=curl/,''):null; };
 async function buscarLivro(q){
-  try{ let r=await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=10&langRestrict=pt&country=BR`);
+  try{ let r=await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=12&langRestrict=pt`);
     let items=((await r.json()).items)||[];
-    if(!items.length){ r=await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=10&country=BR`); items=((await r.json()).items)||[]; }
+    if(!items.length){ r=await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=12`); items=((await r.json()).items)||[]; }
     lvUltima=items;
     el('lv-resultados').innerHTML=items.length?items.map(x=>{ const v=x.volumeInfo||{}; const aut=(v.authors||[]).slice(0,1).join(', '), ano=(v.publishedDate||'').slice(0,4), cv=gbCapa(v);
       return `<button type="button" class="md-res-item" data-lvpick="${x.id}">
