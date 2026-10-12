@@ -352,6 +352,7 @@
   .det-head-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;padding-right:30px}
   .det-head-info h3{font-size:18px;margin:0}
   .det-status{font-size:12px;color:#8ab4f8;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+  .lvd-autor{font-size:13px;color:var(--txt-dim)}
   .det-sinopse{font-size:13px;color:var(--txt-dim);line-height:1.5;margin:2px 0;
     display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
   .det-sinopse:empty{display:none}
@@ -590,6 +591,9 @@
       <button data-aba="assistir">
         <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16.5V20"/><path d="M10.6 8.3l3.2 2.2-3.2 2.2z"/></svg>
         <span class="lbl">Assistir</span></button>
+      <button data-aba="livros">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M4 5.5C5.8 4.6 8 4.5 12 5.5c4-1 6.2-.9 8 0V19c-1.8-.9-4-1-8 0-4-1-6.2-.9-8 0V5.5z"/><path d="M12 5.5V19"/></svg>
+        <span class="lbl">Livros</span></button>
     </nav>
 
     <div id="spotify" class="spotify oculto">
@@ -654,6 +658,12 @@
       <div id="filtro-midia" class="filtros"></div>
       <div id="lista-midia"></div>
     </section>
+
+    <section id="aba-livros" class="oculto">
+      <button id="btn-novo-livro" class="mini-btn" style="margin-bottom:12px">+ Adicionar</button>
+      <div id="filtro-livro" class="filtros"></div>
+      <div id="lista-livro"></div>
+    </section>
   </main>
 
   <!-- NAV INFERIOR (mobile) -->
@@ -670,6 +680,9 @@
     <button data-aba="assistir">
       <svg viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16.5V20"/><path d="M10.6 8.3l3.2 2.2-3.2 2.2z"/></svg>
       <span>Assistir</span></button>
+    <button data-aba="livros">
+      <svg viewBox="0 0 24 24"><path d="M4 5.5C5.8 4.6 8 4.5 12 5.5c4-1 6.2-.9 8 0V19c-1.8-.9-4-1-8 0-4-1-6.2-.9-8 0V5.5z"/><path d="M12 5.5V19"/></svg>
+      <span>Livros</span></button>
   </nav>
 </div>
 
@@ -789,6 +802,48 @@
     <textarea id="det-nota" class="campo" rows="3" placeholder="o que você achou…"></textarea>
     <div class="modal-acoes"><button id="det-salvar-nota" class="btn btn-primario">Salvar e fechar</button></div>
     <button id="det-excluir" class="btn btn-excluir">Excluir da lista</button>
+  </div>
+</div>
+
+<!-- MODAL BUSCAR LIVRO -->
+<div id="modal-busca-livro" class="modal-bg">
+  <div class="modal">
+    <h3>Adicionar livro</h3>
+    <input id="lv-busca" class="campo" placeholder="buscar por título ou autor…" autocomplete="off"/>
+    <div id="lv-resultados" class="md-res"></div>
+    <div class="modal-acoes"><button id="lv-busca-cancelar" class="btn btn-sec">Fechar</button></div>
+  </div>
+</div>
+
+<!-- MODAL DETALHE LIVRO -->
+<div id="modal-livro" class="modal-bg">
+  <div class="modal">
+    <button id="lvd-fechar" class="det-x">✕</button>
+    <div class="det-head">
+      <img id="lvd-capa" class="det-poster" alt=""/>
+      <div class="det-head-info">
+        <h3 id="lvd-titulo"></h3>
+        <div id="lvd-autor" class="lvd-autor"></div>
+        <div id="lvd-status" class="det-status"></div>
+        <p id="lvd-sinopse" class="det-sinopse"></p>
+        <div id="lvd-estrelas" class="estrelas"></div>
+        <button id="lvd-fav" class="det-fav">♡ Favorito</button>
+      </div>
+    </div>
+    <div id="lvd-prog" class="det-prog"></div>
+    <label>Página atual / total</label>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input id="lvd-pag" class="campo" type="number" min="0" placeholder="página" style="flex:1"/>
+      <span style="color:var(--txt-dim)">de</span>
+      <input id="lvd-total" class="campo" type="number" min="0" placeholder="total" style="flex:1"/>
+    </div>
+    <button id="lvd-lido" class="det-visto" style="margin-top:10px">Marcar como lido</button>
+    <label>Quantas vezes li</label>
+    <input id="lvd-vezes" class="campo" type="number" min="0"/>
+    <label>Anotações</label>
+    <textarea id="lvd-nota" class="campo" rows="3" placeholder="trechos, o que achei…"></textarea>
+    <div class="modal-acoes"><button id="lvd-salvar" class="btn btn-primario">Salvar e fechar</button></div>
+    <button id="lvd-excluir" class="btn btn-excluir">Excluir da lista</button>
   </div>
 </div>
 
@@ -926,6 +981,9 @@
     <h4>Assistir (séries e filmes)</h4>
     <p>Na aba <b>Assistir</b>, toque em <b>+ Adicionar</b> e busque o filme/série (a Zaia puxa capa, temporadas e episódios da TMDB). Toque no pôster pra abrir: nas séries você <b>marca os episódios</b> que assistiu (o progresso e o status se ajustam sozinhos — marcou algum = Assistindo, todos = Concluído, nenhum = Quero ver); nos filmes é só "Marcar como assistido". Dá pra dar <b>nota em estrelas</b>, marcar <b>favorito</b>, contar quantas vezes assistiu e escrever anotações. Os filtros no topo (Assistindo / Quero ver / Concluídos / Favoritos) organizam sua estante.</p>
 
+    <h4>Livros</h4>
+    <p>Na aba <b>Livros</b>, toque em <b>+ Adicionar</b> e busque o livro (capa, autor e sinopse vêm da Open Library). Toque na capa pra abrir: registre a <b>página atual</b> e o <b>total</b> (o status vira Lendo / Lido sozinho), quantas vezes leu, nota, favorito e anotações. Os filtros organizam: Lendo / Quero ler / Lidos / Favoritos.</p>
+
     <h4>Spotify</h4>
     <p>No painel à esquerda, conecte o Spotify para ver o que está tocando e controlar (precisa do app aberto em algum aparelho). A conexão é por aparelho.</p>
 
@@ -1045,7 +1103,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let user=null, tarefas=[], projetos=[], etapas=[], sinonimos=[], anexos=[], rotinas=[], midias=[];
+let user=null, tarefas=[], projetos=[], etapas=[], sinonimos=[], anexos=[], rotinas=[], midias=[], livros=[];
 let unsub=[]; const notificadas=new Set(), notifRotina=new Set();
 let anexoPend=[], anexoRem=[];
 let subPend=[];
@@ -1117,6 +1175,7 @@ function ligarDados(){ const col=(n)=>query(collection(db,n), where('userId','==
   unsub.push(onSnapshot(col('anexos'), s=>{anexos=docs(s);render();}, err));
   unsub.push(onSnapshot(col('rotinas'), s=>{rotinas=docs(s);render();}, err));
   unsub.push(onSnapshot(col('midias'), s=>{midias=docs(s);render();}, err));
+  unsub.push(onSnapshot(col('livros'), s=>{livros=docs(s);render();}, err));
   unsub.push(onSnapshot(doc(db,'perfil',user.uid), s=>{ const d=s.exists()?s.data():{};
     aplicarFoto(d.foto||null); crisePlaylistLink=d.crisePlaylist||''; if(el('crise-pl'))el('crise-pl').value=crisePlaylistLink; }, ()=>{}));
 }
@@ -1145,7 +1204,7 @@ function score(t){ const peso={urgente:100,importante:50,tranquilo:10}[t.priorid
 /* RENDER */
 const KW_COMPROMISSO=/\b(terapia|consulta|reuni[ãa]o|m[ée]dic[oa]|dentista|anivers[áa]rio|compromisso|encontro|entrevista|audi[êe]ncia|cabeleireiro|sal[ãa]o|exame|vacina)\b/i;
 function ehCompromisso(t){ return t.tipo==='compromisso' || (!t.tipo && KW_COMPROMISSO.test(t.titulo||'')); }
-function render(){ renderTarefas();renderProjetos();renderSinonimos();renderRotina();renderMidia();
+function render(){ renderTarefas();renderProjetos();renderSinonimos();renderRotina();renderMidia();renderLivro();
   const ab=tarefas.filter(t=>!t.concluida).length;
   el('resumo-linha').textContent=ab?`Você tem ${ab} tarefa${ab>1?'s':''} em aberto.`:'Tudo em dia por aqui.'; }
 const hojeStr=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
@@ -1285,6 +1344,7 @@ document.body.addEventListener('click', async e=>{
   if(d.rottoggle) return toggleRotina(d.rottoggle);
   if(d.rotedit) return abrirRotina(d.rotedit);
   if(d.midabrir) return abrirDet(d.midabrir);
+  if(d.lvabrir) return abrirLivro(d.lvabrir);
   if(d.subtoggle){ const [tid,idx]=d.subtoggle.split('|'); return toggleSub(tid,+idx); }
   if(d.remanexo){ anexoRem.push(d.remanexo); return renderAnexosModal(); }
   if(d.rempend!==undefined){ anexoPend.splice(+d.rempend,1); return renderAnexosModal(); }
@@ -1299,7 +1359,8 @@ document.body.addEventListener('click', async e=>{
 document.body.addEventListener('click',e=>{ if(e.target.closest('button'))return;
   const o=e.target.closest('[data-open]'); if(o)return abrirEdicao(o.dataset.open);
   const r=e.target.closest('[data-rotedit]'); if(r)return abrirRotina(r.dataset.rotedit);
-  const md=e.target.closest('[data-midabrir]'); if(md)return abrirDet(md.dataset.midabrir); });
+  const md=e.target.closest('[data-midabrir]'); if(md)return abrirDet(md.dataset.midabrir);
+  const lv=e.target.closest('[data-lvabrir]'); if(lv)return abrirLivro(lv.dataset.lvabrir); });
 async function toggleTarefa(id){ const t=tarefas.find(x=>x.id===id);
   await updateDoc(doc(db,'tarefas',id),{concluida:!t.concluida,concluidaEm:!t.concluida?Date.now():null}); }
 async function toggleEtapa(id){ const et=etapas.find(x=>x.id===id);
@@ -1310,7 +1371,7 @@ async function toggleSub(tid,idx){ const t=tarefas.find(x=>x.id===tid); if(!t||!
   await updateDoc(doc(db,'tarefas',tid),{subitens:arr}); }
 
 /* ABAS */
-const ABAS=['tarefas','rotina','projetos','assistir'];
+const ABAS=['tarefas','rotina','projetos','assistir','livros'];
 let abaAtual='tarefas';
 function irParaAba(name){ if(!ABAS.includes(name))return; abaAtual=name;
   document.querySelectorAll('[data-aba]').forEach(x=>x.classList.toggle('ativa',x.dataset.aba===name));
@@ -1493,8 +1554,13 @@ function totalEps(m){ return (m.temporadas||[]).reduce((s,t)=>s+(t.eps||0),0); }
 function mapAssist(m){ const a=m.assistidos; if(!a)return {}; if(Array.isArray(a)){const o={};a.forEach(k=>o[k]=1);return o;} return {...a}; }
 function epsVistos(m){ const o=mapAssist(m); return Object.keys(o).filter(k=>o[k]>0).length; }
 function statusMidia(m){ if(m.tipo==='filme')return m.visto?'concluido':'quero';
-  const tot=totalEps(m), feitos=epsVistos(m);
-  if(feitos===0)return 'quero'; if(tot&&feitos>=tot)return 'concluido'; return 'assistindo'; }
+  const tot=totalEps(m); if(!tot)return epsVistos(m)?'assistindo':'quero';
+  const o=mapAssist(m), counts=[];
+  (m.temporadas||[]).forEach(t=>{ for(let i=1;i<=t.eps;i++)counts.push(o[`${t.n}-${i}`]||0); });
+  const min=Math.min(...counts), max=Math.max(...counts);
+  if(max===0)return 'quero';
+  if(min>=1 && min===max)return 'concluido';  // ciclo completo e parelho
+  return 'assistindo'; }                        // uns à frente = revendo
 const rotuloStatus=s=>({assistindo:'Assistindo',quero:'Quero ver',concluido:'Concluído'}[s]||'');
 function renderFiltroMidia(){ el('filtro-midia').innerHTML=MIDIA_FILTROS.map(([k,l])=>`<button class="chip ${filtroMidia===k?'on':''}" data-mf="${k}">${l}</button>`).join(''); }
 function midiaCard(m){ const serie=m.tipo==='serie';
@@ -1632,8 +1698,96 @@ el('det-fechar').onclick=()=>el('modal-det').classList.remove('on');
 el('det-salvar-nota').onclick=async()=>{ try{ await updateDoc(doc(db,'midias',detId),{nota_txt:el('det-nota').value.trim()||null}); }catch(e){} el('modal-det').classList.remove('on'); };
 el('det-excluir').onclick=async()=>{ if(!confirm('Excluir da sua lista?'))return; await del('midias',detId); el('modal-det').classList.remove('on'); };
 
+/* LIVROS (Open Library — sem chave) */
+const LIVRO_FILTROS=[['lendo','Lendo'],['quero','Quero ler'],['lido','Lidos'],['fav','Favoritos']];
+let filtroLivro='lendo';
+function statusLivro(l){ if(l.lido)return 'lido'; if(l.pagTotal&&l.pagAtual>=l.pagTotal)return 'lido';
+  if(l.pagAtual&&l.pagAtual>0)return 'lendo'; return 'quero'; }
+const rotuloLivro=s=>({lendo:'Lendo',quero:'Quero ler',lido:'Lido'}[s]||'');
+function renderFiltroLivro(){ el('filtro-livro').innerHTML=LIVRO_FILTROS.map(([k,l])=>`<button class="chip ${filtroLivro===k?'on':''}" data-lf="${k}">${l}</button>`).join(''); }
+function livroCard(l){ const st=statusLivro(l);
+  const prog=(l.pagTotal&&l.pagAtual)?`${l.pagAtual}/${l.pagTotal} pág`:(l.vezes>1?`lido ${l.vezes}x`:'');
+  return `<button class="poster-card" data-lvabrir="${l.id}">
+    ${l.capa?`<img src="${l.capa}" alt="">`:`<div class="poster-ph">📖</div>`}
+    ${l.fav?'<span class="poster-fav">♥</span>':''}
+    <div class="poster-tit">${esc(l.titulo)}</div>
+    ${prog?`<div class="poster-sub">${prog}</div>`:(l.autor?`<div class="poster-sub">${esc(l.autor)}</div>`:'')}
+  </button>`; }
+function renderLivro(){ renderFiltroLivro();
+  let lista=livros.slice();
+  if(filtroLivro==='fav')lista=lista.filter(l=>l.fav); else lista=lista.filter(l=>statusLivro(l)===filtroLivro);
+  lista.sort((a,b)=>(b.criadaEm||0)-(a.criadaEm||0));
+  el('lista-livro').innerHTML=lista.length?`<div class="poster-grid">${lista.map(livroCard).join('')}</div>`:'<div class="vazio">Nada aqui ainda.</div>'; }
+el('filtro-livro').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;filtroLivro=b.dataset.lf;renderLivro();});
+
+/* buscar na Open Library */
+let lvTimer=null, lvUltima=[];
+el('btn-novo-livro').onclick=()=>{ el('lv-busca').value='';el('lv-resultados').innerHTML=''; el('modal-busca-livro').classList.add('on'); el('lv-busca').focus(); };
+el('lv-busca-cancelar').onclick=()=>el('modal-busca-livro').classList.remove('on');
+el('lv-busca').addEventListener('input',()=>{ clearTimeout(lvTimer); const q=el('lv-busca').value.trim();
+  if(q.length<2){el('lv-resultados').innerHTML='';return;} lvTimer=setTimeout(()=>buscarLivro(q),400); });
+async function buscarLivro(q){
+  try{ const r=await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(q)}&fields=key,title,author_name,cover_i,first_publish_year,number_of_pages_median&limit=8&language=por`);
+    const d=await r.json(); let res=(d.docs||[]);
+    if(!res.length){ const r2=await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(q)}&fields=key,title,author_name,cover_i,first_publish_year,number_of_pages_median&limit=8`); res=((await r2.json()).docs||[]); }
+    lvUltima=res;
+    el('lv-resultados').innerHTML=res.length?res.map(x=>{ const aut=(x.author_name||[]).slice(0,1).join(', '), ano=x.first_publish_year||'';
+      const cv=x.cover_i?`https://covers.openlibrary.org/b/id/${x.cover_i}-S.jpg`:'';
+      return `<button type="button" class="md-res-item" data-lvpick="${esc(x.key)}">
+        ${cv?`<img src="${cv}" alt="">`:'<div class="md-res-ph">📖</div>'}
+        <div><div class="md-res-t">${esc(x.title||'')}</div><div class="md-res-y">${esc(aut)}${ano?' · '+ano:''}</div></div></button>`;
+    }).join(''):'<div class="vazio" style="padding:10px">Nada encontrado.</div>';
+  }catch(e){ el('lv-resultados').innerHTML='<div class="vazio" style="padding:10px">Erro na busca.</div>'; }
+}
+el('lv-resultados').addEventListener('click',async e=>{ const b=e.target.closest('[data-lvpick]'); if(!b)return; b.style.opacity='.5';
+  const key=b.dataset.lvpick; const x=lvUltima.find(i=>i.key===key); if(!x)return;
+  const capa=x.cover_i?`https://covers.openlibrary.org/b/id/${x.cover_i}-L.jpg`:null;
+  let sinopse='';
+  try{ const r=await fetch(`https://openlibrary.org${key}.json`); const d=await r.json();
+    sinopse=typeof d.description==='string'?d.description:(d.description&&d.description.value)||''; }catch(err){}
+  const dados={titulo:x.title||'(sem título)',autor:(x.author_name||[])[0]||null,capa,olKey:key,sinopse:sinopse||null,
+    pagTotal:x.number_of_pages_median||null,pagAtual:0,vezes:0,lido:false,nota:null,nota_txt:null,fav:false,userId:user.uid,criadaEm:Date.now()};
+  const ref=await addDoc(collection(db,'livros'),dados);
+  el('modal-busca-livro').classList.remove('on'); abrirLivro(ref.id); });
+
+/* detalhe do livro */
+let lvId=null, lvNota=0;
+function abrirLivro(id){ const l=livros.find(x=>x.id===id); if(!l)return; lvId=id;
+  el('lvd-capa').src=l.capa||''; el('lvd-capa').style.display=l.capa?'':'none';
+  el('lvd-titulo').textContent=l.titulo; el('lvd-autor').textContent=l.autor||'';
+  el('lvd-sinopse').textContent=l.sinopse||'';
+  lvNota=l.nota||0; pintaLvEstrelas(); el('lvd-nota').value=l.nota_txt||'';
+  el('lvd-fav').classList.toggle('on',!!l.fav); el('lvd-fav').innerHTML=l.fav?'♥ Favorito':'♡ Favorito';
+  el('lvd-pag').value=l.pagAtual||''; el('lvd-total').value=l.pagTotal||''; el('lvd-vezes').value=l.vezes||0;
+  el('lvd-lido').classList.toggle('on',statusLivro(l)==='lido'); el('lvd-lido').textContent=statusLivro(l)==='lido'?'✓ Lido':'Marcar como lido';
+  lvProg(l);
+  el('modal-livro').classList.add('on'); }
+function lvProg(l){ const st=statusLivro(l);
+  el('lvd-status').textContent=rotuloLivro(st);
+  el('lvd-prog').innerHTML=(l.pagTotal&&l.pagAtual)?`<div class="det-prog-txt">${l.pagAtual}/${l.pagTotal} páginas (${Math.round(l.pagAtual/l.pagTotal*100)}%)</div><div class="barra"><span style="width:${Math.min(100,Math.round(l.pagAtual/l.pagTotal*100))}%"></span></div>`:''; }
+function pintaLvEstrelas(){ el('lvd-estrelas').innerHTML=[1,2,3,4,5].map(n=>`<button type="button" data-lvstar="${n}" class="${n<=lvNota?'on':''}">★</button>`).join(''); }
+el('lvd-estrelas').addEventListener('click',async e=>{ const b=e.target.closest('button'); if(!b)return; const n=+b.dataset.lvstar;
+  lvNota=lvNota===n?0:n; pintaLvEstrelas(); try{ await updateDoc(doc(db,'livros',lvId),{nota:lvNota||null}); }catch(err){} });
+el('lvd-fav').onclick=async()=>{ const l=livros.find(x=>x.id===lvId); const novo=!l.fav; l.fav=novo;
+  el('lvd-fav').classList.toggle('on',novo); el('lvd-fav').innerHTML=novo?'♥ Favorito':'♡ Favorito';
+  try{ await updateDoc(doc(db,'livros',lvId),{fav:novo}); }catch(e){} };
+function lvAtualiza(){ const l=livros.find(x=>x.id===lvId); if(!l)return;
+  l.pagAtual=+el('lvd-pag').value||0; l.pagTotal=+el('lvd-total').value||null; lvProg(l);
+  el('lvd-lido').classList.toggle('on',statusLivro(l)==='lido'); el('lvd-lido').textContent=statusLivro(l)==='lido'?'✓ Lido':'Marcar como lido'; }
+el('lvd-pag').addEventListener('input',lvAtualiza);
+el('lvd-total').addEventListener('input',lvAtualiza);
+el('lvd-lido').onclick=()=>{ const l=livros.find(x=>x.id===lvId); const vira=statusLivro(l)!=='lido';
+  l.lido=vira; if(vira){ if(l.pagTotal)el('lvd-pag').value=l.pagTotal; if(!l.vezes||l.vezes<1){l.vezes=1;el('lvd-vezes').value=1;} }
+  lvAtualiza(); };
+el('lvd-fechar').onclick=()=>el('modal-livro').classList.remove('on');
+el('lvd-salvar').onclick=async()=>{ const l=livros.find(x=>x.id===lvId); if(!l)return;
+  const dados={pagAtual:+el('lvd-pag').value||0,pagTotal:+el('lvd-total').value||null,vezes:+el('lvd-vezes').value||0,
+    lido:!!l.lido,nota:lvNota||null,nota_txt:el('lvd-nota').value.trim()||null,fav:!!l.fav};
+  try{ await updateDoc(doc(db,'livros',lvId),dados); }catch(e){} el('modal-livro').classList.remove('on'); };
+el('lvd-excluir').onclick=async()=>{ if(!confirm('Excluir da sua lista?'))return; await del('livros',lvId); el('modal-livro').classList.remove('on'); };
+
 /* EXPORTAR */
-el('btn-exportar').onclick=()=>{ const dump={exportadoEm:new Date().toISOString(),tarefas,projetos,etapas,sinonimos,anexos,rotinas,midias};
+el('btn-exportar').onclick=()=>{ const dump={exportadoEm:new Date().toISOString(),tarefas,projetos,etapas,sinonimos,anexos,rotinas,midias,livros};
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(dump,null,2)],{type:'application/json'}));
   a.download='zaia-backup-'+new Date().toISOString().slice(0,10)+'.json'; a.click(); };
 
