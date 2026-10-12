@@ -1728,21 +1728,26 @@ el('lv-busca').addEventListener('input',()=>{ clearTimeout(lvTimer); const q=el(
   if(q.length<2){el('lv-resultados').innerHTML='';return;} lvTimer=setTimeout(()=>buscarLivro(q),400); });
 const gbCapa=v=>{ const c=v.imageLinks&&(v.imageLinks.thumbnail||v.imageLinks.smallThumbnail); return c?c.replace(/^http:/,'https:').replace(/&edge=curl/,''):null; };
 async function buscarLivro(q){
-  try{ let r=await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=12&langRestrict=pt`);
-    let items=((await r.json()).items)||[];
-    if(!items.length){ r=await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=12`); items=((await r.json()).items)||[]; }
-    lvUltima=items;
-    el('lv-resultados').innerHTML=items.length?items.map(x=>{ const v=x.volumeInfo||{}; const aut=(v.authors||[]).slice(0,1).join(', '), ano=(v.publishedDate||'').slice(0,4), cv=gbCapa(v);
-      return `<button type="button" class="md-res-item" data-lvpick="${x.id}">
-        ${cv?`<img src="${cv}" alt="">`:'<div class="md-res-ph">📖</div>'}
-        <div><div class="md-res-t">${esc(v.title||'')}</div><div class="md-res-y">${esc(aut)}${ano?' · '+ano:''}</div></div></button>`;
-    }).join(''):'<div class="vazio" style="padding:10px">Nada encontrado.</div>';
-  }catch(e){ el('lv-resultados').innerHTML='<div class="vazio" style="padding:10px">Erro na busca.</div>'; }
+  let norm=[];
+  try{ const r=await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=12`);
+    const d=await r.json(); (d.items||[]).forEach(x=>{ const v=x.volumeInfo||{}; const cv=gbCapa(v);
+      norm.push({id:'gb:'+x.id,titulo:v.title||'',autor:(v.authors||[])[0]||'',ano:(v.publishedDate||'').slice(0,4),
+        capaS:cv,capaL:cv,paginas:v.pageCount||null,sinopse:v.description||'',src:'gb'}); }); }catch(e){}
+  if(!norm.length){ try{ const r=await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(q)}&limit=12&fields=key,title,author_name,cover_i,first_publish_year,number_of_pages_median`);
+    const d=await r.json(); (d.docs||[]).forEach(x=>{ const cv=x.cover_i;
+      norm.push({id:'ol:'+x.key,titulo:x.title||'',autor:(x.author_name||[])[0]||'',ano:x.first_publish_year||'',
+        capaS:cv?`https://covers.openlibrary.org/b/id/${cv}-S.jpg`:'',capaL:cv?`https://covers.openlibrary.org/b/id/${cv}-L.jpg`:'',
+        paginas:x.number_of_pages_median||null,sinopse:'',olKey:x.key,src:'ol'}); }); }catch(e){} }
+  lvUltima=norm;
+  el('lv-resultados').innerHTML=norm.length?norm.map(x=>`<button type="button" class="md-res-item" data-lvpick="${esc(x.id)}">${x.capaS?`<img src="${x.capaS}" alt="">`:'<div class="md-res-ph">📖</div>'}<div><div class="md-res-t">${esc(x.titulo)}</div><div class="md-res-y">${esc(x.autor)}${x.ano?' · '+x.ano:''}</div></div></button>`).join(''):'<div class="vazio" style="padding:10px">Nada encontrado.</div>';
 }
 el('lv-resultados').addEventListener('click',async e=>{ const b=e.target.closest('[data-lvpick]'); if(!b)return; b.style.opacity='.5';
-  const x=lvUltima.find(i=>i.id===b.dataset.lvpick); if(!x)return; const v=x.volumeInfo||{};
-  const dados={titulo:v.title||'(sem título)',autor:(v.authors||[])[0]||null,capa:gbCapa(v),gbId:x.id,sinopse:v.description||null,
-    pagTotal:v.pageCount||null,pagAtual:0,vezes:0,lido:false,nota:null,nota_txt:null,fav:false,userId:user.uid,criadaEm:Date.now()};
+  const x=lvUltima.find(i=>i.id===b.dataset.lvpick); if(!x)return;
+  let sinopse=x.sinopse||'';
+  if(!sinopse && x.src==='ol' && x.olKey){ try{ const r=await fetch(`https://openlibrary.org${x.olKey}.json`); const d=await r.json();
+    sinopse=typeof d.description==='string'?d.description:(d.description&&d.description.value)||''; }catch(e){} }
+  const dados={titulo:x.titulo||'(sem título)',autor:x.autor||null,capa:x.capaL||x.capaS||null,sinopse:sinopse||null,
+    pagTotal:x.paginas||null,pagAtual:0,vezes:0,lido:false,nota:null,nota_txt:null,fav:false,userId:user.uid,criadaEm:Date.now()};
   const ref=await addDoc(collection(db,'livros'),dados);
   el('modal-busca-livro').classList.remove('on'); abrirLivro(ref.id); });
 
