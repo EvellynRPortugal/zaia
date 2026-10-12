@@ -307,7 +307,11 @@
   .hab-corpo{flex:1;min-width:0;cursor:pointer}
   .hab-tit{font-size:15px;font-weight:500}
   .hab-meta{font-size:12px;color:var(--txt-dim);margin-top:3px}
-  .hab-grupo{font-size:12.5px;font-weight:700;color:var(--txt-dim);margin:14px 4px 8px}
+  .hab-grupo{font-size:12.5px;font-weight:700;color:var(--txt-dim);margin:16px 4px 9px;
+    display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:1px}
+  .hab-grupo svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  #r-momento button{display:flex;align-items:center;justify-content:center;gap:6px}
+  #r-momento svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
   .anexos-lista{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
   .anexo{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.22);border:1px solid var(--stroke);
     border-radius:11px;padding:8px 11px;font-size:13px}
@@ -686,9 +690,9 @@
     <input id="r-titulo" class="campo" placeholder="ex: tomar remédio"/>
     <label>Quando no dia?</label>
     <div class="prio-pick" id="r-momento">
-      <button data-m="manha" class="sel">🌅 Manhã</button>
-      <button data-m="tarde">☀️ Tarde</button>
-      <button data-m="noite">🌙 Noite</button>
+      <button data-m="manha" class="sel"><svg viewBox="0 0 24 24"><path d="M3 18h18M8 18a4 4 0 018 0"/><path d="M12 4v2M4.5 9.5l1.4 1.4M19.5 9.5l-1.4 1.4"/></svg>Manhã</button>
+      <button data-m="tarde"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/></svg>Tarde</button>
+      <button data-m="noite"><svg viewBox="0 0 24 24"><path d="M20 14a8 8 0 11-9.5-10 6.5 6.5 0 009.5 10z"/></svg>Noite</button>
     </div>
     <label>Dias</label>
     <div class="dias-pick" id="r-dias">
@@ -1026,23 +1030,27 @@ function render(){ renderFoco();renderBreve();renderTarefas();renderProjetos();r
   el('resumo-linha').textContent=ab?`Você tem ${ab} tarefa${ab>1?'s':''} em aberto.`:'Tudo em dia por aqui.'; }
 const hojeStr=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
 function rotinaHoje(r){ const hj=new Date().getDay(); return r.dias==='todos'||(Array.isArray(r.dias)&&r.dias.includes(hj)); }
-const MOMENTOS=[['manha','🌅 Manhã'],['tarde','☀️ Tarde'],['noite','🌙 Noite']];
+const IC_MANHA='<svg viewBox="0 0 24 24"><path d="M3 18h18M8 18a4 4 0 018 0"/><path d="M12 4v2M4.5 9.5l1.4 1.4M19.5 9.5l-1.4 1.4"/></svg>';
+const IC_TARDE='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/></svg>';
+const IC_NOITE='<svg viewBox="0 0 24 24"><path d="M20 14a8 8 0 11-9.5-10 6.5 6.5 0 009.5 10z"/></svg>';
+const MOMENTOS=[['manha','Manhã',IC_MANHA],['tarde','Tarde',IC_TARDE],['noite','Noite',IC_NOITE]];
+const DIAS_ABBR=['dom','seg','ter','qua','qui','sex','sáb'];
+function diasTexto(r){ if(r.dias==='todos')return 'todo dia';
+  if(Array.isArray(r.dias)&&r.dias.length)return [...r.dias].sort((a,b)=>a-b).map(d=>DIAS_ABBR[d]).join(' · ');
+  return 'todo dia'; }
 function habitoItem(r){ const ok=r.feitoEm===hojeStr();
-  const meta=[r.hora?`⏰ ${r.hora}`:'', r.dias==='todos'?'todo dia':'dias selecionados'].filter(Boolean).join(' · ');
+  const meta=[r.hora?`${r.hora}`:'', diasTexto(r)].filter(Boolean).join('  ·  ');
   return `<div class="habito ${ok?'ok':''}">
     <button class="check ${ok?'on':''}" data-rottoggle="${r.id}">✓</button>
     <div class="hab-corpo" data-rotedit="${r.id}"><div class="hab-tit">${esc(r.titulo)}</div><div class="hab-meta">${meta}</div></div>
   </div>`; }
+function grupos(lista){ let h=''; MOMENTOS.forEach(([m,lbl,ic])=>{ const g=lista.filter(r=>(r.momento||'manha')===m).sort((a,b)=>(a.hora||'').localeCompare(b.hora||''));
+    if(g.length)h+=`<div class="hab-grupo">${ic}${lbl}</div>`+g.map(habitoItem).join(''); }); return h; }
 function renderRotinaHoje(){ const hoje=rotinas.filter(rotinaHoje);
   el('rotina-hoje-sec').classList.toggle('oculto',!hoje.length);
-  if(!hoje.length){el('rotina-hoje').innerHTML='';return;}
-  let h=''; MOMENTOS.forEach(([m,lbl])=>{ const g=hoje.filter(r=>(r.momento||'manha')===m).sort((a,b)=>(a.hora||'').localeCompare(b.hora||''));
-    if(g.length)h+=`<div class="hab-grupo">${lbl}</div>`+g.map(habitoItem).join(''); });
-  el('rotina-hoje').innerHTML=h; }
+  el('rotina-hoje').innerHTML=hoje.length?grupos(hoje):''; }
 function renderRotina(){ if(!rotinas.length){el('lista-rotina').innerHTML='<div class="vazio">Sem hábitos ainda. Crie o primeiro — algo pequeno do seu dia.</div>';return;}
-  let h=''; MOMENTOS.forEach(([m,lbl])=>{ const g=rotinas.filter(r=>(r.momento||'manha')===m).sort((a,b)=>(a.hora||'').localeCompare(b.hora||''));
-    if(g.length)h+=`<div class="hab-grupo">${lbl}</div>`+g.map(habitoItem).join(''); });
-  el('lista-rotina').innerHTML=h; }
+  el('lista-rotina').innerHTML=grupos(rotinas); }
 function itemTarefa(t){
   const prazo=t.prazo?`<span class="tag tag-prazo ${venceu(t.prazo)&&!t.concluida?'venc':''}">${fmtPrazo(t.prazo)}</span>`:'';
   const etq=t.etiqueta?`<span class="tag tag-etiqueta">${esc(t.etiqueta)}</span>`:'';
@@ -1163,8 +1171,9 @@ document.body.addEventListener('click', async e=>{
   if(d.delsin) return del('sinonimos',d.delsin);
   if(d.addetapa) return addEtapaUI(d.addetapa);
 });
-document.body.addEventListener('click',e=>{ const o=e.target.closest('[data-open]');
-  if(o&&!e.target.closest('button'))abrirEdicao(o.dataset.open); });
+document.body.addEventListener('click',e=>{ if(e.target.closest('button'))return;
+  const o=e.target.closest('[data-open]'); if(o)return abrirEdicao(o.dataset.open);
+  const r=e.target.closest('[data-rotedit]'); if(r)return abrirRotina(r.dataset.rotedit); });
 async function toggleTarefa(id){ const t=tarefas.find(x=>x.id===id);
   await updateDoc(doc(db,'tarefas',id),{concluida:!t.concluida,concluidaEm:!t.concluida?Date.now():null}); }
 async function toggleEtapa(id){ const et=etapas.find(x=>x.id===id);
@@ -1404,38 +1413,52 @@ function criarPorTexto(bruto){ let txt=bruto; const low=txt.toLowerCase(); let p
     else if(/\b(mercado|boleto|conta|casa|m[ãa]e|rem[ée]dio|farm[áa]cia|comprar|limpeza)\b/.test(low))etiqueta='casa'; }
   const {data,limpo}=parseData(txt);
   let titulo=(limpo||txt)
-    .replace(/\b(na minha agenda|na agenda|pra agenda|para a agenda)\b/ig,'')
-    .replace(/^(criar?|adiciona[r]?|anota[r]?|marca[r]?|marque|lembra[r]? de|preciso|tenho que|me lembra de|coloca[r]?|coloque|bota[r]?|bote|agenda[r]?|agende|p[õo]e)\s+/i,'')
+    .replace(/\b(na minha agenda|na agenda|pra agenda|para a agenda|na agenda do google|no meu calend[áa]rio)\b/ig,'')
+    .replace(/^(criar?|adicione?|adiciona[r]?|anota[r]?|anote|marca[r]?|marque|lembra[r]? de|lembre de|preciso|tenho que|me lembra de|coloca[r]?|coloque|bota[r]?|bote|agenda[r]?|agende|p[õo]e)\s+/i,'')
     .replace(/\b(urgente|sem pressa|tranquilo|qualquer hora|quando der|asap)\b/ig,'')
-    .replace(/\s{2,}/g,' ').replace(/\s+(de|da|do|às?|para|pra|pro|no dia|em)\s*$/i,'').trim();
+    .replace(/["']/g,'')
+    .replace(/\s{2,}/g,' ').trim();
+  // remove conectores soltos nas pontas (de, no, para, às...) que sobraram
+  let antes; do{ antes=titulo;
+    titulo=titulo.replace(/^(?:de|da|do|no|na|em|às|as|para|pra|pro|a|o|e)\s+/i,'')
+                 .replace(/\s+(?:de|da|do|no|na|em|às|as|para|pra|pro|a|o|e)$/i,'').trim();
+  }while(titulo!==antes);
   titulo=titulo.charAt(0).toUpperCase()+titulo.slice(1);
   if(!titulo){fala('Não peguei bem — abri o formulário pra você.');return abrirNova({prioridade});}
   const prazo=data?data.getTime():null;
   addDoc(collection(db,'tarefas'),{titulo,descricao:null,prioridade,etiqueta,prazo,lembrete:prazo,userId:user.uid,concluida:false,criadaEm:Date.now()});
   const quando=prazo?` pra ${fmtPrazo(prazo)}`:''; const et=etiqueta?` [${etiqueta}]`:'';
   fala(`Anotei “${titulo}”${quando}${et}.`); }
-function parseData(texto){ let s=texto,low=texto.toLowerCase(),data=null,tirar=[]; const agora=new Date();
+function parseData(texto){ let low=texto.toLowerCase(),data=null,tirar=[]; const agora=new Date();
   const mk=(dd)=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+dd);return d;};
-  let mhora=low.match(/\bàs\s*(\d{1,2})(?:[:h](\d{2}))?/)||low.match(/\b(\d{1,2})[:h](\d{2})\b/)||low.match(/\b(\d{1,2})\s*h(?:oras?)?\b/);
-  if(/\bdepois de amanh[ãa]\b/.test(low)){data=mk(2);tirar.push(/depois de amanh[ãa]/i);}
-  else if(/\bamanh[ãa]\b/.test(low)){data=mk(1);tirar.push(/amanh[ãa]/i);}
-  else if(/\bhoje\b/.test(low)){data=mk(0);tirar.push(/hoje/i);}
-  else if(/\bsemana que vem\b|\bpr[óo]xima semana\b/.test(low)){data=mk(7);tirar.push(/semana que vem|pr[óo]xima semana/i);}
+  // relativos (consome a preposição junto, ex.: "para amanhã")
+  if(/\bdepois de amanh[ãa]\b/.test(low)){data=mk(2);tirar.push(/\b(?:para |pra |pro )?depois de amanh[ãa]\b/i);}
+  else if(/\bamanh[ãa]\b/.test(low)){data=mk(1);tirar.push(/\b(?:para |pra |pro )?amanh[ãa]\b/i);}
+  else if(/\bhoje\b/.test(low)){data=mk(0);tirar.push(/\b(?:para |pra |pro )?hoje\b/i);}
+  else if(/\bsemana que vem\b|\bpr[óo]xima semana\b/.test(low)){data=mk(7);tirar.push(/\b(?:na |para a |pra )?(?:semana que vem|pr[óo]xima semana)\b/i);}
+  // dia da semana
   if(!data){ for(const [nome,idx] of Object.entries(DIAS_SEM)){ if(new RegExp(`\\b${nome}\\b`).test(low)){
-    let dif=(idx-agora.getDay()+7)%7; if(dif===0)dif=7; data=mk(dif);tirar.push(new RegExp(`(?:na |próxima |pr[óo]xima )?${nome}(?:-feira)?`,'i'));break; } } }
+    let dif=(idx-agora.getDay()+7)%7; if(dif===0)dif=7; data=mk(dif);
+    tirar.push(new RegExp(`\\b(?:na |no |para |pra |pro |pr[óo]xima )?${nome}(?:-feira)?\\b`,'i'));break; } } }
+  // dd/mm(/aaaa)
   let mdata=low.match(/\b(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?\b/);
   if(!data&&mdata){ let ano=mdata[3]?(mdata[3].length===2?2000+ +mdata[3]:+mdata[3]):agora.getFullYear();
     data=new Date(ano,+mdata[2]-1,+mdata[1]);data.setHours(0,0,0,0);
-    if(!mdata[3]&&data.getTime()<hojeZero())data.setFullYear(ano+1); tirar.push(new RegExp(mdata[0].replace(/\//g,'\\/'))); }
+    if(!mdata[3]&&data.getTime()<hojeZero())data.setFullYear(ano+1);
+    tirar.push(new RegExp(`\\b(?:no dia |em |dia )?${mdata[0].replace(/\//g,'\\/')}`,'i')); }
+  // "dia N"
   let mdia=low.match(/\bdia\s+(\d{1,2})\b/);
   if(!data&&mdia){ let dnum=+mdia[1],d=new Date();d.setHours(0,0,0,0);d.setDate(dnum);
-    if(d.getTime()<hojeZero())d.setMonth(d.getMonth()+1); data=d;tirar.push(/dia\s+\d{1,2}/i); }
-  if(mhora){ let hh=+mhora[1],mm=mhora[2]?+mhora[2]:0;
-    if(hh>=0&&hh<=23){ if(!data)data=mk(0); data.setHours(hh,mm,0,0); tirar.push(new RegExp(mhora[0].replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i'));
+    if(d.getTime()<hojeZero())d.setMonth(d.getMonth()+1); data=d; }
+  if(mdia) tirar.push(/\b(?:no |para o |pro )?dia\s+\d{1,2}\b/i);
+  // hora (consome "às/as/de" antes do número)
+  let mh=low.match(/\b(?:às|as|de)?\s*(\d{1,2})[:h](\d{2})\b/)||low.match(/\b(?:às|as|de)?\s*(\d{1,2})\s*h(?:oras?)?\b/)||low.match(/\bàs\s*(\d{1,2})\b/);
+  if(mh){ let hh=+mh[1],mm=mh[2]?+mh[2]:0;
+    if(hh>=0&&hh<=23){ if(!data)data=mk(0); data.setHours(hh,mm,0,0);
+      tirar.push(new RegExp(mh[0].replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i'));
       if(data.getTime()<Date.now()-60000 && !mdata && !mdia && !/amanh|hoje|semana|segunda|ter[çc]a|quarta|quinta|sexta|s[áa]bado|domingo/.test(low)) data.setDate(data.getDate()+1); } }
-  let limpo=s; tirar.forEach(rx=>limpo=limpo.replace(rx,''));
-  limpo=limpo.replace(/\b(às?|para|pra|pro|no dia|em)\b/ig,'').replace(/\s{2,}/g,' ').trim();
-  return {data,limpo}; }
+  let limpo=texto; tirar.forEach(rx=>limpo=limpo.replace(rx,''));
+  return {data,limpo:limpo.replace(/\s{2,}/g,' ').trim()}; }
 
 /* LEMBRETES */
 el('btn-notif').onclick=async()=>{ if(!('Notification'in window))return fala('Seu navegador não suporta notificações.');
