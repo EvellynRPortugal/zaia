@@ -330,8 +330,46 @@
   .midia-meta{font-size:12.5px;color:var(--txt-dim);margin-top:3px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
   .midia-estrelas{color:var(--laranja-claro);font-size:13px;letter-spacing:1px;margin-top:4px}
   .estrelas{display:flex;gap:6px}
-  .estrelas button{font-size:26px;color:#4a3b70;line-height:1;background:none;transition:.1s}
+  .estrelas button{font-size:24px;color:#4a3b70;line-height:1;background:none;transition:.1s}
   .estrelas button.on{color:var(--laranja-claro)}
+  /* grade de pôsteres */
+  .poster-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px}
+  .poster-card{position:relative;text-align:left;background:none;display:flex;flex-direction:column;gap:6px}
+  .poster-card img,.poster-ph{width:100%;aspect-ratio:2/3;border-radius:12px;object-fit:cover;
+    background:linear-gradient(140deg,rgba(139,92,246,.3),rgba(217,70,239,.2));display:flex;align-items:center;justify-content:center;font-size:26px;
+    border:1px solid var(--stroke);transition:.15s}
+  .poster-card:hover img,.poster-card:hover .poster-ph{transform:translateY(-3px);box-shadow:0 12px 26px -10px rgba(0,0,0,.6)}
+  .poster-fav{position:absolute;top:7px;right:7px;background:rgba(0,0,0,.5);color:#ff7a95;border-radius:50%;width:24px;height:24px;
+    display:flex;align-items:center;justify-content:center;font-size:13px}
+  .poster-tit{font-size:13px;font-weight:600;line-height:1.3;color:var(--txt);
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .poster-sub{font-size:11.5px;color:var(--txt-dim);margin-top:-2px}
+  /* detalhe */
+  .det-x{position:absolute;top:14px;right:16px;width:32px;height:32px;border-radius:10px;color:var(--txt-dim);font-size:15px;z-index:2}
+  .det-x:hover{background:rgba(255,255,255,.08);color:var(--txt)}
+  .det-head{display:flex;gap:14px;margin-bottom:14px}
+  .det-poster{width:92px;aspect-ratio:2/3;border-radius:12px;object-fit:cover;flex-shrink:0;background:rgba(0,0,0,.3)}
+  .det-head-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;padding-right:30px}
+  .det-head-info h3{font-size:18px;margin:0}
+  .det-status{font-size:12px;color:#8ab4f8;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+  .det-fav{align-self:flex-start;background:rgba(255,255,255,.06);border:1px solid var(--stroke);border-radius:20px;
+    padding:6px 14px;font-size:13px;color:var(--txt-dim)}
+  .det-fav.on{color:#ff7a95;border-color:#ff7a95;background:rgba(255,122,149,.1)}
+  .det-visto{width:100%;background:rgba(74,222,128,.14);border:1px solid rgba(74,222,128,.4);color:var(--tranquilo);
+    border-radius:14px;padding:12px;font-size:14px;font-weight:600;margin-bottom:6px}
+  .det-visto.on{background:rgba(74,222,128,.25)}
+  .det-prog{margin-bottom:14px}
+  .det-prog-txt{font-size:13px;color:var(--txt-dim);margin-bottom:6px}
+  .temp{border:1px solid var(--stroke);border-radius:14px;margin-bottom:8px;overflow:hidden}
+  .temp-head{width:100%;display:flex;justify-content:space-between;align-items:center;padding:12px 14px;
+    background:rgba(255,255,255,.03);font-size:14px;font-weight:600;color:var(--txt)}
+  .temp-head:hover{background:rgba(255,255,255,.07)}
+  .temp-cont{font-size:12.5px;color:var(--txt-dim);font-weight:500}
+  .temp-eps{padding:12px 14px}
+  .ep-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:7px;margin-top:10px}
+  .ep{aspect-ratio:1;border-radius:10px;border:1px solid var(--stroke);background:rgba(0,0,0,.2);
+    color:var(--txt-dim);font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center}
+  .ep.on{background:linear-gradient(135deg,var(--roxo),var(--magenta));color:#fff;border-color:transparent}
   .hab-grupo{font-size:12.5px;font-weight:700;color:var(--txt-dim);margin:16px 4px 9px;
     display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:1px}
   .hab-grupo svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
@@ -523,21 +561,15 @@
   <aside class="sidebar">
     <div class="side-marca">Zaia</div>
     <nav class="aba-nav">
-      <button data-aba="hoje" class="ativa">
-        <svg class="ic" viewBox="0 0 24 24"><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/><circle cx="12" cy="12" r="3.4"/></svg>
-        <span class="lbl">Hoje</span></button>
+      <button data-aba="tarefas" class="ativa">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 1.6-1.8M4 12l1 1 1.6-1.8M4 18l1 1 1.6-1.8"/></svg>
+        <span class="lbl">Tarefas</span></button>
       <button data-aba="rotina">
         <svg class="ic" viewBox="0 0 24 24"><path d="M3 11a8 8 0 0114-5.3L21 9"/><path d="M21 4v5h-5"/><path d="M21 13a8 8 0 01-14 5.3L3 15"/><path d="M3 20v-5h5"/></svg>
         <span class="lbl">Rotina</span></button>
-      <button data-aba="tarefas">
-        <svg class="ic" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 1.6-1.8M4 12l1 1 1.6-1.8M4 18l1 1 1.6-1.8"/></svg>
-        <span class="lbl">Tarefas</span></button>
       <button data-aba="projetos">
         <svg class="ic" viewBox="0 0 24 24"><path d="M4 7l8-3.5L20 7l-8 3.5L4 7z"/><path d="M4 12l8 3.5 8-3.5M4 17l8 3.5 8-3.5"/></svg>
         <span class="lbl">Projetos</span></button>
-      <button data-aba="voce">
-        <svg class="ic" viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>
-        <span class="lbl">Você</span></button>
       <button data-aba="assistir">
         <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16.5V20"/><path d="M10.6 8.3l3.2 2.2-3.2 2.2z"/></svg>
         <span class="lbl">Assistir</span></button>
@@ -585,26 +617,12 @@
       <p id="resumo-linha"></p>
     </div>
 
-    <section id="aba-hoje">
-      <div class="foco"><h2>✨ Foco de hoje</h2><div id="foco-motivo" class="foco-motivo"></div><div id="lista-foco"></div></div>
-      <div id="compromissos-sec" class="oculto">
-        <div class="sec-titulo"><svg class="sec-ic" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2"/><path d="M3.5 9h17M8 3v3M16 3v3"/></svg>Compromissos de hoje</div>
-        <div id="lista-compromissos"></div>
-      </div>
-      <div id="rotina-hoje-sec" class="oculto">
-        <div class="sec-titulo"><svg class="sec-ic" viewBox="0 0 24 24"><path d="M3 11a8 8 0 0114-5.3L21 9"/><path d="M21 4v5h-5"/><path d="M21 13a8 8 0 01-14 5.3L3 15"/><path d="M3 20v-5h5"/></svg>Rotina de hoje</div>
-        <div id="rotina-hoje"></div>
-      </div>
-      <div class="sec-titulo">Vencendo em breve</div>
-      <div id="lista-breve"></div>
-    </section>
-
     <section id="aba-rotina" class="oculto">
       <button id="btn-nova-rotina" class="mini-btn" style="margin-bottom:14px">+ Novo hábito</button>
       <div id="lista-rotina"></div>
     </section>
 
-    <section id="aba-tarefas" class="oculto">
+    <section id="aba-tarefas">
       <div id="filtro-etq" class="filtros"></div>
       <div id="lista-tarefas"></div>
     </section>
@@ -612,10 +630,6 @@
     <section id="aba-projetos" class="oculto">
       <button id="btn-novo-proj" class="mini-btn" style="margin-bottom:14px">+ Novo projeto</button>
       <div id="lista-projetos"></div>
-    </section>
-
-    <section id="aba-voce" class="oculto">
-      <div class="stats-grid" id="stats"></div>
     </section>
 
     <section id="aba-assistir" class="oculto">
@@ -627,21 +641,15 @@
 
   <!-- NAV INFERIOR (mobile) -->
   <nav id="bottom-nav" class="bottom-nav">
-    <button data-aba="hoje" class="ativa">
-      <svg viewBox="0 0 24 24"><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/><circle cx="12" cy="12" r="3.4"/></svg>
-      <span>Hoje</span></button>
+    <button data-aba="tarefas" class="ativa">
+      <svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 1.6-1.8M4 12l1 1 1.6-1.8M4 18l1 1 1.6-1.8"/></svg>
+      <span>Tarefas</span></button>
     <button data-aba="rotina">
       <svg viewBox="0 0 24 24"><path d="M3 11a8 8 0 0114-5.3L21 9"/><path d="M21 4v5h-5"/><path d="M21 13a8 8 0 01-14 5.3L3 15"/><path d="M3 20v-5h5"/></svg>
       <span>Rotina</span></button>
-    <button data-aba="tarefas">
-      <svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 1.6-1.8M4 12l1 1 1.6-1.8M4 18l1 1 1.6-1.8"/></svg>
-      <span>Tarefas</span></button>
     <button data-aba="projetos">
       <svg viewBox="0 0 24 24"><path d="M4 7l8-3.5L20 7l-8 3.5L4 7z"/><path d="M4 12l8 3.5 8-3.5M4 17l8 3.5 8-3.5"/></svg>
       <span>Projetos</span></button>
-    <button data-aba="voce">
-      <svg viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>
-      <span>Você</span></button>
     <button data-aba="assistir">
       <svg viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16.5V20"/><path d="M10.6 8.3l3.2 2.2-3.2 2.2z"/></svg>
       <span>Assistir</span></button>
@@ -727,48 +735,42 @@
   </div>
 </div>
 
-<!-- MODAL MÍDIA (séries/filmes) -->
-<div id="modal-midia" class="modal-bg">
+<!-- MODAL BUSCAR (adicionar) -->
+<div id="modal-busca" class="modal-bg">
   <div class="modal">
-    <h3 id="midia-titulo-modal">Adicionar</h3>
-    <input type="hidden" id="md-id"/>
-    <label>Buscar filme ou série</label>
-    <input id="md-busca" class="campo" placeholder="digite o nome…" autocomplete="off"/>
+    <h3>Adicionar</h3>
+    <input id="md-busca" class="campo" placeholder="buscar filme ou série…" autocomplete="off"/>
     <div id="md-resultados" class="md-res"></div>
-    <label>Tipo</label>
-    <div class="prio-pick" id="md-tipo">
-      <button data-tp="serie" class="sel">📺 Série</button>
-      <button data-tp="filme">🎬 Filme</button>
-    </div>
-    <label>Título</label>
-    <input id="md-titulo" class="campo"/>
-    <label>Status</label>
-    <div class="prio-pick" id="md-status">
-      <button data-st="assistindo" class="sel">Assistindo</button>
-      <button data-st="quero">Quero ver</button>
-      <button data-st="concluido">Concluído</button>
-    </div>
-    <div id="md-serie-campos">
-      <label>Onde parei</label>
-      <div style="display:flex;gap:8px">
-        <input id="md-temp" class="campo" type="number" min="1" placeholder="Temporada" style="flex:1"/>
-        <input id="md-ep" class="campo" type="number" min="1" placeholder="Episódio" style="flex:1"/>
+    <div class="modal-acoes"><button id="busca-cancelar" class="btn btn-sec">Fechar</button></div>
+  </div>
+</div>
+
+<!-- MODAL DETALHE (marcar eps) -->
+<div id="modal-det" class="modal-bg">
+  <div class="modal">
+    <button id="det-fechar" class="det-x">✕</button>
+    <div class="det-head">
+      <img id="det-poster" class="det-poster" alt=""/>
+      <div class="det-head-info">
+        <h3 id="det-titulo"></h3>
+        <div id="det-status" class="det-status"></div>
+        <div id="det-estrelas" class="estrelas"></div>
+        <button id="det-fav" class="det-fav">♡ Favorito</button>
       </div>
     </div>
-    <label>Quantas vezes assisti</label>
-    <input id="md-vezes" class="campo" type="number" min="0" value="1"/>
-    <label>Nota</label>
-    <div id="md-estrelas" class="estrelas"></div>
-    <label>Anotações (o que achei)</label>
-    <textarea id="md-nota" class="campo" rows="3" placeholder="o que você achou, cenas favoritas…"></textarea>
-    <label class="gcal-check" style="cursor:pointer">
-      <input type="checkbox" id="md-fav"/> ⭐ Marcar como favorito
-    </label>
-    <div class="modal-acoes">
-      <button id="md-cancelar" class="btn btn-sec">Cancelar</button>
-      <button id="md-salvar" class="btn btn-primario">Salvar</button>
+    <div id="det-filme" class="oculto">
+      <button id="det-visto" class="det-visto">Marcar como assistido</button>
+      <label>Quantas vezes assisti</label>
+      <input id="det-vezes" class="campo" type="number" min="0"/>
     </div>
-    <button id="md-excluir" class="btn btn-excluir oculto">Excluir</button>
+    <div id="det-serie" class="oculto">
+      <div id="det-prog" class="det-prog"></div>
+      <div id="det-temporadas"></div>
+    </div>
+    <label>Anotações</label>
+    <textarea id="det-nota" class="campo" rows="3" placeholder="o que você achou…"></textarea>
+    <div class="modal-acoes"><button id="det-salvar-nota" class="btn btn-primario">Salvar e fechar</button></div>
+    <button id="det-excluir" class="btn btn-excluir">Excluir da lista</button>
   </div>
 </div>
 
@@ -886,16 +888,16 @@
       <li>🟡 <b>Importante</b> — importa, mas tem folga.</li>
       <li>🟢 <b>Tranquilo</b> — pode esperar.</li>
     </ul>
-    <p>O "Foco de hoje" escolhe sozinho suas <b>entregas</b> atrasadas, de hoje e urgentes.</p>
+    <p>As tarefas na aba Tarefas ficam agrupadas por data (atrasadas, hoje, amanhã…).</p>
 
     <h4>Tarefa x Compromisso</h4>
-    <p>Ao criar algo, escolha o tipo: <b>📝 Tarefa/entrega</b> (algo que você precisa fazer ou entregar) ou <b>📅 Compromisso</b> (hora marcada: terapia, consulta, reunião). O Foco de hoje mostra só entregas; compromissos aparecem separados em "Compromissos de hoje". No chat, a Zaia já classifica sozinha (terapia, reunião ou "coloque na agenda" viram compromisso).</p>
+    <p>Ao criar algo, escolha o tipo: <b>📝 Tarefa/entrega</b> (algo que você precisa fazer ou entregar) ou <b>📅 Compromisso</b> (hora marcada: terapia, consulta, reunião). No chat, a Zaia já classifica sozinha (terapia, reunião ou "coloque na agenda" viram compromisso).</p>
 
     <h4>Projetos e cronograma</h4>
     <p>Na aba <b>Projetos</b>, crie algo grande (como o TCC) e adicione etapas com prazo. A barra mostra o progresso e as etapas alimentam seu dia.</p>
 
     <h4>Rotina (hábitos do dia a dia)</h4>
-    <p>Na aba <b>Rotina</b>, cadastre hábitos que se repetem (tomar remédio, beber água, academia). Escolha o momento (manhã/tarde/noite), os dias e um horário de lembrete. Eles aparecem em "Rotina de hoje" na tela Hoje, você marca conforme faz, e tudo se renova sozinho no dia seguinte. Os hábitos <b>não</b> vão para a Google Agenda — ficam só aqui.</p>
+    <p>Na aba <b>Rotina</b>, cadastre hábitos que se repetem (tomar remédio, beber água, academia). Escolha o momento (manhã/tarde/noite), os dias e um horário de lembrete. Você marca conforme faz, e tudo se renova sozinho no dia seguinte. Os hábitos <b>não</b> vão para a Google Agenda — ficam só aqui.</p>
 
     <h4>Modo Ensino</h4>
     <p>No menu, ensine termos seus (ex.: "academia" = casa). A Zaia guarda e passa a te entender melhor.</p>
@@ -904,7 +906,7 @@
     <p>Botão 🌙 sempre visível. Abre uma trilha calma: aterrissagem (coisas que você vê), traçar padrões e um quebra-cabeça. Você pode deixar uma playlist do Spotify fixa para tocar ao entrar.</p>
 
     <h4>Assistir (séries e filmes)</h4>
-    <p>Na aba <b>Assistir</b>, registre tudo que você vê. Para cada título: tipo (série/filme), status (assistindo / quero ver / concluído), em que <b>temporada e episódio</b> você parou, quantas <b>vezes</b> assistiu, uma <b>nota em estrelas</b>, se é <b>favorito</b> e anotações do que achou. Use os filtros no topo pra ver cada lista, e toque num título pra editar.</p>
+    <p>Na aba <b>Assistir</b>, toque em <b>+ Adicionar</b> e busque o filme/série (a Zaia puxa capa, temporadas e episódios da TMDB). Toque no pôster pra abrir: nas séries você <b>marca os episódios</b> que assistiu (o progresso e o status se ajustam sozinhos — marcou algum = Assistindo, todos = Concluído, nenhum = Quero ver); nos filmes é só "Marcar como assistido". Dá pra dar <b>nota em estrelas</b>, marcar <b>favorito</b>, contar quantas vezes assistiu e escrever anotações. Os filtros no topo (Assistindo / Quero ver / Concluídos / Favoritos) organizam sua estante.</p>
 
     <h4>Spotify</h4>
     <p>No painel à esquerda, conecte o Spotify para ver o que está tocando e controlar (precisa do app aberto em algum aparelho). A conexão é por aparelho.</p>
@@ -1125,7 +1127,7 @@ function score(t){ const peso={urgente:100,importante:50,tranquilo:10}[t.priorid
 /* RENDER */
 const KW_COMPROMISSO=/\b(terapia|consulta|reuni[ãa]o|m[ée]dic[oa]|dentista|anivers[áa]rio|compromisso|encontro|entrevista|audi[êe]ncia|cabeleireiro|sal[ãa]o|exame|vacina)\b/i;
 function ehCompromisso(t){ return t.tipo==='compromisso' || (!t.tipo && KW_COMPROMISSO.test(t.titulo||'')); }
-function render(){ renderFoco();renderBreve();renderCompromissos();renderTarefas();renderProjetos();renderStats();renderSinonimos();renderRotina();renderRotinaHoje();renderMidia();
+function render(){ renderTarefas();renderProjetos();renderSinonimos();renderRotina();renderMidia();
   const ab=tarefas.filter(t=>!t.concluida).length;
   el('resumo-linha').textContent=ab?`Você tem ${ab} tarefa${ab>1?'s':''} em aberto.`:'Tudo em dia por aqui.'; }
 const hojeStr=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
@@ -1278,7 +1280,7 @@ document.body.addEventListener('click', async e=>{
 document.body.addEventListener('click',e=>{ if(e.target.closest('button'))return;
   const o=e.target.closest('[data-open]'); if(o)return abrirEdicao(o.dataset.open);
   const r=e.target.closest('[data-rotedit]'); if(r)return abrirRotina(r.dataset.rotedit);
-  const md=e.target.closest('[data-midedit]'); if(md)return abrirMidia(md.dataset.midedit); });
+  const md=e.target.closest('[data-midabrir]'); if(md)return abrirDet(md.dataset.midabrir); });
 async function toggleTarefa(id){ const t=tarefas.find(x=>x.id===id);
   await updateDoc(doc(db,'tarefas',id),{concluida:!t.concluida,concluidaEm:!t.concluida?Date.now():null}); }
 async function toggleEtapa(id){ const et=etapas.find(x=>x.id===id);
@@ -1289,8 +1291,8 @@ async function toggleSub(tid,idx){ const t=tarefas.find(x=>x.id===tid); if(!t||!
   await updateDoc(doc(db,'tarefas',tid),{subitens:arr}); }
 
 /* ABAS */
-const ABAS=['hoje','rotina','tarefas','projetos','voce','assistir'];
-let abaAtual='hoje';
+const ABAS=['tarefas','rotina','projetos','assistir'];
+let abaAtual='tarefas';
 function irParaAba(name){ if(!ABAS.includes(name))return; abaAtual=name;
   document.querySelectorAll('[data-aba]').forEach(x=>x.classList.toggle('ativa',x.dataset.aba===name));
   ABAS.forEach(a=>el('aba-'+a).classList.toggle('oculto',a!==name));
@@ -1464,74 +1466,106 @@ el('r-salvar').onclick=async()=>{ const tit=el('r-titulo').value.trim(); if(!tit
 el('r-excluir').onclick=async()=>{ const id=el('r-id').value; if(!confirm('Apagar esse hábito?'))return;
   await del('rotinas',id); el('modal-rotina').classList.remove('on'); };
 
-/* ASSISTIR (séries e filmes) */
+/* ASSISTIR (séries e filmes — estilo TV Time) */
+const TMDB_KEY='1865483d95385a0fdfa0a55d4e8aae1a';
 const MIDIA_FILTROS=[['assistindo','Assistindo'],['quero','Quero ver'],['concluido','Concluídos'],['fav','Favoritos']];
 let filtroMidia='assistindo';
-const estrelasTxt=n=>'★'.repeat(n||0)+'☆'.repeat(5-(n||0));
+function totalEps(m){ return (m.temporadas||[]).reduce((s,t)=>s+(t.eps||0),0); }
+function statusMidia(m){ if(m.tipo==='filme')return m.visto?'concluido':'quero';
+  const tot=totalEps(m), feitos=(m.assistidos||[]).length;
+  if(feitos===0)return 'quero'; if(tot&&feitos>=tot)return 'concluido'; return 'assistindo'; }
+const rotuloStatus=s=>({assistindo:'Assistindo',quero:'Quero ver',concluido:'Concluído'}[s]||'');
 function renderFiltroMidia(){ el('filtro-midia').innerHTML=MIDIA_FILTROS.map(([k,l])=>`<button class="chip ${filtroMidia===k?'on':''}" data-mf="${k}">${l}</button>`).join(''); }
-function midiaItem(m){ const serie=m.tipo==='serie';
-  const prog=serie&&(m.temp||m.ep)?`T${m.temp||1} · E${m.ep||1}`:'';
-  const vezes=(m.vezes&&m.vezes>1)?`${m.vezes}x`:'';
-  const meta=[serie?'Série':'Filme',prog,vezes].filter(Boolean).join('  ·  ');
-  const estr=m.nota?`<div class="midia-estrelas">${estrelasTxt(m.nota)}</div>`:'';
-  const cap=m.poster?`<img class="midia-cap" src="${m.poster}" alt="">`:`<div class="midia-cap">${m.fav?'⭐':(serie?'📺':'🎬')}</div>`;
-  return `<div class="midia" data-midedit="${m.id}">
-    ${cap}
-    <div class="midia-corpo"><div class="midia-tit">${esc(m.titulo)}${m.fav?' ⭐':''}</div><div class="midia-meta">${meta}</div>${estr}</div>
-  </div>`; }
+function midiaCard(m){ const serie=m.tipo==='serie';
+  const prog=serie?`${(m.assistidos||[]).length}/${totalEps(m)||'?'} eps`:(m.vezes>1?`assistido ${m.vezes}x`:'');
+  return `<button class="poster-card" data-midabrir="${m.id}">
+    ${m.poster?`<img src="${m.poster}" alt="">`:`<div class="poster-ph">${serie?'📺':'🎬'}</div>`}
+    ${m.fav?'<span class="poster-fav">♥</span>':''}
+    <div class="poster-tit">${esc(m.titulo)}</div>
+    ${prog?`<div class="poster-sub">${prog}</div>`:''}
+  </button>`; }
 function renderMidia(){ renderFiltroMidia();
   let lista=midias.slice();
-  if(filtroMidia==='fav')lista=lista.filter(m=>m.fav); else lista=lista.filter(m=>(m.status||'assistindo')===filtroMidia);
+  if(filtroMidia==='fav')lista=lista.filter(m=>m.fav); else lista=lista.filter(m=>statusMidia(m)===filtroMidia);
   lista.sort((a,b)=>(b.criadaEm||0)-(a.criadaEm||0));
-  el('lista-midia').innerHTML=lista.length?lista.map(midiaItem).join(''):'<div class="vazio">Nada aqui ainda.</div>'; }
+  el('lista-midia').innerHTML=lista.length?`<div class="poster-grid">${lista.map(midiaCard).join('')}</div>`:'<div class="vazio">Nada aqui ainda.</div>'; }
 el('filtro-midia').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;filtroMidia=b.dataset.mf;renderMidia();});
-const TMDB_KEY='1865483d95385a0fdfa0a55d4e8aae1a';
-let mdTipo='serie', mdStatus='assistindo', mdNota=0, mdPoster='';
+
+/* adicionar (busca TMDB) */
 let buscaTimer=null;
+el('btn-nova-midia').onclick=()=>{ el('md-busca').value='';el('md-resultados').innerHTML=''; el('modal-busca').classList.add('on'); el('md-busca').focus(); };
+el('busca-cancelar').onclick=()=>el('modal-busca').classList.remove('on');
 el('md-busca').addEventListener('input',()=>{ clearTimeout(buscaTimer); const q=el('md-busca').value.trim();
   if(q.length<2){el('md-resultados').innerHTML='';return;} buscaTimer=setTimeout(()=>buscarTMDB(q),350); });
 async function buscarTMDB(q){
   try{ const r=await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_KEY}&language=pt-BR&query=${encodeURIComponent(q)}`);
-    const d=await r.json(); const res=(d.results||[]).filter(x=>x.media_type==='movie'||x.media_type==='tv').slice(0,6);
+    const d=await r.json(); const res=(d.results||[]).filter(x=>x.media_type==='movie'||x.media_type==='tv').slice(0,8);
     el('md-resultados').innerHTML=res.length?res.map(x=>{ const t=x.title||x.name, ano=(x.release_date||x.first_air_date||'').slice(0,4);
       const pp=x.poster_path?`https://image.tmdb.org/t/p/w92${x.poster_path}`:'', tp=x.media_type==='tv'?'serie':'filme';
-      return `<button type="button" class="md-res-item" data-pick="${tp}|${encodeURIComponent(t)}|${x.poster_path||''}">
+      return `<button type="button" class="md-res-item" data-pick="${tp}|${x.id}|${encodeURIComponent(t)}|${x.poster_path||''}">
         ${pp?`<img src="${pp}" alt="">`:'<div class="md-res-ph">🎬</div>'}
         <div><div class="md-res-t">${esc(t)}</div><div class="md-res-y">${tp==='serie'?'Série':'Filme'}${ano?' · '+ano:''}</div></div></button>`;
     }).join(''):'<div class="vazio" style="padding:10px">Nada encontrado.</div>';
   }catch(e){ el('md-resultados').innerHTML='<div class="vazio" style="padding:10px">Erro na busca.</div>'; }
 }
-el('md-resultados').addEventListener('click',e=>{ const b=e.target.closest('[data-pick]'); if(!b)return;
-  const [tp,tenc,pp]=b.dataset.pick.split('|');
-  el('md-titulo').value=decodeURIComponent(tenc); mdTipo=tp; pintaMdTipo();
-  mdPoster=pp?`https://image.tmdb.org/t/p/w500${pp}`:'';
-  el('md-resultados').innerHTML=''; el('md-busca').value=''; });
-el('btn-nova-midia').onclick=()=>abrirMidia();
-function abrirMidia(id){ el('midia-titulo-modal').textContent=id?'Editar':'Adicionar';
-  if(id){ const m=midias.find(x=>x.id===id); if(!m)return;
-    el('md-id').value=id; el('md-titulo').value=m.titulo; mdTipo=m.tipo||'serie'; mdStatus=m.status||'assistindo';
-    el('md-temp').value=m.temp||''; el('md-ep').value=m.ep||''; el('md-vezes').value=m.vezes??1;
-    mdNota=m.nota||0; el('md-nota').value=m.nota_txt||''; el('md-fav').checked=!!m.fav; mdPoster=m.poster||''; el('md-excluir').classList.remove('oculto');
-  } else { el('md-id').value='';el('md-titulo').value='';mdTipo='serie';mdStatus='assistindo';
-    el('md-temp').value='';el('md-ep').value='';el('md-vezes').value=1;mdNota=0;el('md-nota').value='';el('md-fav').checked=false;mdPoster='';el('md-excluir').classList.add('oculto'); }
-  el('md-busca').value='';el('md-resultados').innerHTML='';
-  pintaMdTipo();pintaMdStatus();pintaEstrelas();el('modal-midia').classList.add('on');el('md-busca').focus(); }
-function pintaMdTipo(){ document.querySelectorAll('#md-tipo button').forEach(b=>b.classList.toggle('sel',b.dataset.tp===mdTipo));
-  el('md-serie-campos').style.display=mdTipo==='serie'?'':'none'; }
-function pintaMdStatus(){ document.querySelectorAll('#md-status button').forEach(b=>b.classList.toggle('sel',b.dataset.st===mdStatus)); }
-function pintaEstrelas(){ el('md-estrelas').innerHTML=[1,2,3,4,5].map(n=>`<button type="button" data-star="${n}" class="${n<=mdNota?'on':''}">★</button>`).join(''); }
-el('md-tipo').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;mdTipo=b.dataset.tp;pintaMdTipo();});
-el('md-status').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;mdStatus=b.dataset.st;pintaMdStatus();});
-el('md-estrelas').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const n=+b.dataset.star;mdNota=(mdNota===n?0:n);pintaEstrelas();});
-el('md-cancelar').onclick=()=>el('modal-midia').classList.remove('on');
-el('md-salvar').onclick=async()=>{ const tit=el('md-titulo').value.trim(); if(!tit)return;
-  const dados={titulo:tit,tipo:mdTipo,status:mdStatus,temp:+el('md-temp').value||null,ep:+el('md-ep').value||null,
-    vezes:+el('md-vezes').value||0,nota:mdNota||null,nota_txt:el('md-nota').value.trim()||null,fav:el('md-fav').checked,poster:mdPoster||null};
-  const id=el('md-id').value;
-  if(id) await updateDoc(doc(db,'midias',id),dados);
-  else await addDoc(collection(db,'midias'),{...dados,userId:user.uid,criadaEm:Date.now()});
-  el('modal-midia').classList.remove('on'); };
-el('md-excluir').onclick=async()=>{ const id=el('md-id').value; if(!confirm('Excluir da sua lista?'))return; await del('midias',id); el('modal-midia').classList.remove('on'); };
+el('md-resultados').addEventListener('click',async e=>{ const b=e.target.closest('[data-pick]'); if(!b)return;
+  b.style.opacity='.5';
+  const [tp,id,tenc,pp]=b.dataset.pick.split('|'); const titulo=decodeURIComponent(tenc);
+  let temporadas=null;
+  if(tp==='serie'){ try{ const r=await fetch(`https://api.themoviedb.org/3/tv/${id}?api_key=${TMDB_KEY}&language=pt-BR`); const d=await r.json();
+    temporadas=(d.seasons||[]).filter(s=>s.season_number>=1&&s.episode_count>0).map(s=>({n:s.season_number,eps:s.episode_count,nome:s.name})); }catch(err){} }
+  const dados={titulo,tipo:tp,tmdbId:+id||null,poster:pp?`https://image.tmdb.org/t/p/w500${pp}`:null,
+    temporadas:temporadas||null,assistidos:[],visto:false,vezes:0,nota:null,nota_txt:null,fav:false,userId:user.uid,criadaEm:Date.now()};
+  const ref=await addDoc(collection(db,'midias'),dados);
+  el('modal-busca').classList.remove('on'); abrirDet(ref.id); });
+
+/* detalhe (marcar episódios) */
+let detId=null, detNota=0;
+function abrirDet(id){ const m=midias.find(x=>x.id===id); if(!m)return; detId=id;
+  el('det-poster').src=m.poster||''; el('det-poster').style.display=m.poster?'':'none';
+  el('det-titulo').textContent=m.titulo;
+  detNota=m.nota||0; pintaDetEstrelas(); el('det-nota').value=m.nota_txt||'';
+  el('det-fav').classList.toggle('on',!!m.fav); el('det-fav').innerHTML=m.fav?'♥ Favorito':'♡ Favorito';
+  if(m.tipo==='filme'){ el('det-filme').classList.remove('oculto'); el('det-serie').classList.add('oculto');
+    el('det-visto').classList.toggle('on',!!m.visto); el('det-visto').textContent=m.visto?'✓ Assistido':'Marcar como assistido';
+    el('det-vezes').value=m.vezes||0;
+  } else { el('det-serie').classList.remove('oculto'); el('det-filme').classList.add('oculto'); renderTemporadas(m); }
+  el('det-status').textContent=rotuloStatus(statusMidia(m));
+  el('modal-det').classList.add('on'); }
+function renderTemporadas(m){ const assist=new Set(m.assistidos||[]); const tot=totalEps(m), feitos=assist.size;
+  el('det-prog').innerHTML=tot?`<div class="det-prog-txt">${feitos}/${tot} episódios</div><div class="barra"><span style="width:${Math.round(feitos/tot*100)}%"></span></div>`:'';
+  el('det-temporadas').innerHTML=(m.temporadas||[]).map(t=>{ const marc=[...Array(t.eps).keys()].filter(i=>assist.has(`${t.n}-${i+1}`)).length;
+    return `<div class="temp">
+      <button class="temp-head" data-temp="${t.n}"><span>${esc(t.nome||('Temporada '+t.n))}</span><span class="temp-cont">${marc}/${t.eps}</span></button>
+      <div class="temp-eps oculto" data-eps="${t.n}">
+        <button class="mini-btn" data-tempall="${t.n}">marcar/desmarcar temporada</button>
+        <div class="ep-grid">${[...Array(t.eps).keys()].map(i=>{const k=`${t.n}-${i+1}`;return `<button class="ep ${assist.has(k)?'on':''}" data-ep="${k}">${i+1}</button>`;}).join('')}</div>
+      </div></div>`; }).join('') || '<div class="vazio">Sem temporadas cadastradas.</div>'; }
+el('det-temporadas').addEventListener('click',async e=>{ const b=e.target.closest('button'); if(!b)return;
+  const m=midias.find(x=>x.id===detId); if(!m)return;
+  if(b.dataset.temp){ el('det-temporadas').querySelector(`[data-eps="${b.dataset.temp}"]`).classList.toggle('oculto'); return; }
+  let assist=new Set(m.assistidos||[]);
+  if(b.dataset.ep){ const k=b.dataset.ep; assist.has(k)?assist.delete(k):assist.add(k); }
+  if(b.dataset.tempall){ const n=+b.dataset.tempall, t=(m.temporadas||[]).find(x=>x.n===n);
+    const todos=[...Array(t.eps).keys()].map(i=>`${n}-${i+1}`), faltam=todos.some(k=>!assist.has(k));
+    todos.forEach(k=>faltam?assist.add(k):assist.delete(k)); }
+  m.assistidos=[...assist]; renderTemporadas(m); el('det-status').textContent=rotuloStatus(statusMidia(m));
+  try{ await updateDoc(doc(db,'midias',detId),{assistidos:m.assistidos}); }catch(err){} });
+el('det-visto').onclick=async()=>{ const m=midias.find(x=>x.id===detId); const novo=!m.visto; m.visto=novo;
+  el('det-visto').classList.toggle('on',novo); el('det-visto').textContent=novo?'✓ Assistido':'Marcar como assistido';
+  if(novo&&(!m.vezes||m.vezes<1)){m.vezes=1;el('det-vezes').value=1;}
+  el('det-status').textContent=rotuloStatus(statusMidia(m));
+  try{ await updateDoc(doc(db,'midias',detId),{visto:novo,vezes:m.vezes||0}); }catch(e){} };
+el('det-vezes').onchange=async()=>{ try{ await updateDoc(doc(db,'midias',detId),{vezes:+el('det-vezes').value||0}); }catch(e){} };
+el('det-fav').onclick=async()=>{ const m=midias.find(x=>x.id===detId); const novo=!m.fav; m.fav=novo;
+  el('det-fav').classList.toggle('on',novo); el('det-fav').innerHTML=novo?'♥ Favorito':'♡ Favorito';
+  try{ await updateDoc(doc(db,'midias',detId),{fav:novo}); }catch(e){} };
+function pintaDetEstrelas(){ el('det-estrelas').innerHTML=[1,2,3,4,5].map(n=>`<button type="button" data-dstar="${n}" class="${n<=detNota?'on':''}">★</button>`).join(''); }
+el('det-estrelas').addEventListener('click',async e=>{ const b=e.target.closest('button'); if(!b)return; const n=+b.dataset.dstar;
+  detNota=detNota===n?0:n; pintaDetEstrelas(); try{ await updateDoc(doc(db,'midias',detId),{nota:detNota||null}); }catch(err){} });
+el('det-fechar').onclick=()=>el('modal-det').classList.remove('on');
+el('det-salvar-nota').onclick=async()=>{ try{ await updateDoc(doc(db,'midias',detId),{nota_txt:el('det-nota').value.trim()||null}); }catch(e){} el('modal-det').classList.remove('on'); };
+el('det-excluir').onclick=async()=>{ if(!confirm('Excluir da sua lista?'))return; await del('midias',detId); el('modal-det').classList.remove('on'); };
 
 /* EXPORTAR */
 el('btn-exportar').onclick=()=>{ const dump={exportadoEm:new Date().toISOString(),tarefas,projetos,etapas,sinonimos,anexos,rotinas,midias};
@@ -1557,8 +1591,8 @@ const DIAS_SEM={'domingo':0,'segunda':1,'terça':2,'terca':2,'quarta':3,'quinta'
 async function processar(){ const bruto=el('cmd').value.trim(); if(!bruto)return; const txt=bruto.toLowerCase(); el('cmd').value='';
   chatAdd('user',bruto);
   if(/\b(foco|o que|oq|tenho).*(hoje|agora|fazer)\b/.test(txt)||/\bhoje\?$/.test(txt)){
-    const f=tarefas.filter(t=>!t.concluida).sort((a,b)=>score(b)-score(a)).slice(0,3);
-    document.querySelector('.aba-nav button[data-aba="hoje"]').click();
+    const f=tarefas.filter(t=>!t.concluida&&!ehCompromisso(t)).sort((a,b)=>score(b)-score(a)).slice(0,3);
+    irParaAba('tarefas');
     return fala(f.length?`Seu foco: ${f.map(t=>'“'+t.titulo+'”').join(', ')}.`:'Nada na fila.'); }
   if(/\b(resumo|como (eu )?estou|progresso|quanto falta)\b/.test(txt)){
     const ab=tarefas.filter(t=>!t.concluida).length,at=tarefas.filter(t=>!t.concluida&&venceu(t.prazo)).length;
