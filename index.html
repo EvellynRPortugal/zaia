@@ -352,7 +352,8 @@
   .det-head-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;padding-right:30px}
   .det-head-info h3{font-size:18px;margin:0}
   .det-status{font-size:12px;color:#8ab4f8;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
-  .det-sinopse{font-size:13.5px;color:var(--txt-dim);line-height:1.55;margin-bottom:14px}
+  .det-sinopse{font-size:13px;color:var(--txt-dim);line-height:1.5;margin:2px 0;
+    display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
   .det-sinopse:empty{display:none}
   .ep-list{display:flex;flex-direction:column;gap:5px;margin-top:10px}
   .ep-row{display:flex;align-items:center;gap:10px;text-align:left;padding:9px 11px;border-radius:11px;
@@ -373,15 +374,19 @@
   .det-prog{margin-bottom:14px}
   .det-prog-txt{font-size:13px;color:var(--txt-dim);margin-bottom:6px}
   .temp{border:1px solid var(--stroke);border-radius:14px;margin-bottom:8px;overflow:hidden}
-  .temp-head{width:100%;display:flex;justify-content:space-between;align-items:center;padding:12px 14px;
+  .temp-head{width:100%;display:flex;align-items:center;gap:11px;padding:12px 14px;cursor:pointer;
     background:rgba(255,255,255,.03);font-size:14px;font-weight:600;color:var(--txt)}
   .temp-head:hover{background:rgba(255,255,255,.07)}
+  .temp-nome{flex:1}
   .temp-cont{font-size:12.5px;color:var(--txt-dim);font-weight:500}
-  .temp-eps{padding:12px 14px}
-  .ep-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:7px;margin-top:10px}
-  .ep{aspect-ratio:1;border-radius:10px;border:1px solid var(--stroke);background:rgba(0,0,0,.2);
-    color:var(--txt-dim);font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center}
-  .ep.on{background:linear-gradient(135deg,var(--roxo),var(--magenta));color:#fff;border-color:transparent}
+  .temp-eps{padding:4px 14px 12px}
+  .sea-dot{width:26px;height:26px;border-radius:50%;flex-shrink:0;border:2px solid var(--txt-dim);
+    background:rgba(0,0,0,.2);color:transparent;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .sea-dot.on{background:linear-gradient(135deg,var(--roxo),var(--magenta));border-color:transparent;color:#fff}
+  .ep-check{width:22px;height:22px;border-radius:50%;border:1.8px solid var(--txt-dim);flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent}
+  .ep-row.on .ep-check{background:linear-gradient(135deg,var(--roxo),var(--magenta));border-color:transparent;color:#fff}
+  .dot-num{font-size:11px;font-weight:700}
   .hab-grupo{font-size:12.5px;font-weight:700;color:var(--txt-dim);margin:16px 4px 9px;
     display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:1px}
   .hab-grupo svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
@@ -766,11 +771,11 @@
       <div class="det-head-info">
         <h3 id="det-titulo"></h3>
         <div id="det-status" class="det-status"></div>
+        <p id="det-sinopse" class="det-sinopse"></p>
         <div id="det-estrelas" class="estrelas"></div>
         <button id="det-fav" class="det-fav">♡ Favorito</button>
       </div>
     </div>
-    <p id="det-sinopse" class="det-sinopse"></p>
     <div id="det-filme" class="oculto">
       <button id="det-visto" class="det-visto">Marcar como assistido</button>
       <label>Quantas vezes assisti</label>
@@ -1485,13 +1490,15 @@ const TMDB_KEY='1865483d95385a0fdfa0a55d4e8aae1a';
 const MIDIA_FILTROS=[['assistindo','Assistindo'],['quero','Quero ver'],['concluido','Concluídos'],['fav','Favoritos']];
 let filtroMidia='assistindo';
 function totalEps(m){ return (m.temporadas||[]).reduce((s,t)=>s+(t.eps||0),0); }
+function mapAssist(m){ const a=m.assistidos; if(!a)return {}; if(Array.isArray(a)){const o={};a.forEach(k=>o[k]=1);return o;} return {...a}; }
+function epsVistos(m){ const o=mapAssist(m); return Object.keys(o).filter(k=>o[k]>0).length; }
 function statusMidia(m){ if(m.tipo==='filme')return m.visto?'concluido':'quero';
-  const tot=totalEps(m), feitos=(m.assistidos||[]).length;
+  const tot=totalEps(m), feitos=epsVistos(m);
   if(feitos===0)return 'quero'; if(tot&&feitos>=tot)return 'concluido'; return 'assistindo'; }
 const rotuloStatus=s=>({assistindo:'Assistindo',quero:'Quero ver',concluido:'Concluído'}[s]||'');
 function renderFiltroMidia(){ el('filtro-midia').innerHTML=MIDIA_FILTROS.map(([k,l])=>`<button class="chip ${filtroMidia===k?'on':''}" data-mf="${k}">${l}</button>`).join(''); }
 function midiaCard(m){ const serie=m.tipo==='serie';
-  const prog=serie?`${(m.assistidos||[]).length}/${totalEps(m)||'?'} eps`:(m.vezes>1?`assistido ${m.vezes}x`:'');
+  const prog=serie?`${epsVistos(m)}/${totalEps(m)||'?'} eps`:(m.vezes>1?`assistido ${m.vezes}x`:'');
   return `<button class="poster-card" data-midabrir="${m.id}">
     ${m.poster?`<img src="${m.poster}" alt="">`:`<div class="poster-ph">${serie?'📺':'🎬'}</div>`}
     ${m.fav?'<span class="poster-fav">♥</span>':''}
@@ -1543,6 +1550,9 @@ function abrirDet(id){ const m=midias.find(x=>x.id===id); if(!m)return; detId=id
   el('det-poster').src=m.poster||''; el('det-poster').style.display=m.poster?'':'none';
   el('det-titulo').textContent=m.titulo;
   el('det-sinopse').textContent=m.sinopse||'';
+  if(!m.sinopse && m.tmdbId){ const tipo=m.tipo==='serie'?'tv':'movie';
+    fetch(`https://api.themoviedb.org/3/${tipo}/${m.tmdbId}?api_key=${TMDB_KEY}&language=pt-BR`).then(r=>r.json()).then(d=>{
+      if(d.overview){ if(detId===id)el('det-sinopse').textContent=d.overview; updateDoc(doc(db,'midias',id),{sinopse:d.overview}).catch(()=>{}); } }).catch(()=>{}); }
   detNota=m.nota||0; pintaDetEstrelas(); el('det-nota').value=m.nota_txt||'';
   el('det-fav').classList.toggle('on',!!m.fav); el('det-fav').innerHTML=m.fav?'♥ Favorito':'♡ Favorito';
   if(m.tipo==='filme'){ el('det-filme').classList.remove('oculto'); el('det-serie').classList.add('oculto');
@@ -1552,40 +1562,60 @@ function abrirDet(id){ const m=midias.find(x=>x.id===id); if(!m)return; detId=id
   el('det-status').textContent=rotuloStatus(statusMidia(m));
   el('modal-det').classList.add('on'); }
 const epCache={};
-function atualizaContadores(m){ const assist=new Set(m.assistidos||[]); const tot=totalEps(m),feitos=assist.size;
+const epInner=c=>c>1?`<span class="dot-num">${c}</span>`:(c>=1?'✓':'');
+function salvarAssist(m){ try{ updateDoc(doc(db,'midias',detId),{assistidos:m.assistidos}); }catch(e){} }
+function seaInfo(m,n){ const o=mapAssist(m),t=(m.temporadas||[]).find(x=>x.n===n);
+  const counts=[...Array(t.eps).keys()].map(i=>o[`${n}-${i+1}`]||0);
+  return {marc:counts.filter(c=>c>=1).length, total:t.eps, allW:counts.every(c=>c>=1), min:Math.min(...counts)}; }
+function seaDotHtml(m,n){ const s=seaInfo(m,n);
+  return `<button class="sea-dot ${s.allW?'on':''}" data-sea="${n}">${s.allW?(s.min>1?s.min:'✓'):''}</button>`; }
+function atualizaSeasonDot(m,n){ const old=el('det-temporadas').querySelector(`.sea-dot[data-sea="${n}"]`);
+  if(old)old.outerHTML=seaDotHtml(m,n); }
+function atualizaContadores(m){ const tot=totalEps(m),feitos=epsVistos(m);
   el('det-prog').innerHTML=tot?`<div class="det-prog-txt">${feitos}/${tot} episódios</div><div class="barra"><span style="width:${Math.round(feitos/tot*100)}%"></span></div>`:'';
-  (m.temporadas||[]).forEach(t=>{ const marc=[...Array(t.eps).keys()].filter(i=>assist.has(`${t.n}-${i+1}`)).length;
-    const c=el('det-temporadas').querySelector(`.temp-cont[data-tc="${t.n}"]`); if(c)c.textContent=`${marc}/${t.eps}`; });
+  (m.temporadas||[]).forEach(t=>{ const s=seaInfo(m,t.n); const c=el('det-temporadas').querySelector(`.temp-cont[data-tc="${t.n}"]`); if(c)c.textContent=`${s.marc}/${s.total}`; });
   el('det-status').textContent=rotuloStatus(statusMidia(m)); }
 function renderTemporadas(m){ atualizaContadores(m);
-  el('det-temporadas').innerHTML=(m.temporadas||[]).map(t=>{ const assist=new Set(m.assistidos||[]);
-    const marc=[...Array(t.eps).keys()].filter(i=>assist.has(`${t.n}-${i+1}`)).length;
-    return `<div class="temp">
-      <button class="temp-head" data-temp="${t.n}"><span>${esc(t.nome||('Temporada '+t.n))}</span><span class="temp-cont" data-tc="${t.n}">${marc}/${t.eps}</span></button>
+  el('det-temporadas').innerHTML=(m.temporadas||[]).map(t=>{ const s=seaInfo(m,t.n);
+    return `<div class="temp"><div class="temp-head" data-temp="${t.n}">
+      ${seaDotHtml(m,t.n)}
+      <span class="temp-nome">${esc(t.nome||('Temporada '+t.n))}</span>
+      <span class="temp-cont" data-tc="${t.n}">${s.marc}/${s.total}</span></div>
       <div class="temp-eps oculto" data-eps="${t.n}"></div></div>`; }).join('') || '<div class="vazio">Sem temporadas cadastradas.</div>'; }
 async function carregarEps(m,n,box){ box.dataset.loaded='1'; box.innerHTML='<div class="ep-carregando">carregando episódios…</div>';
   const key=`${m.tmdbId}-${n}`; let eps=epCache[key];
   if(!eps){ try{ const r=await fetch(`https://api.themoviedb.org/3/tv/${m.tmdbId}/season/${n}?api_key=${TMDB_KEY}&language=pt-BR`);
     const d=await r.json(); eps=(d.episodes||[]).map(e=>({n:e.episode_number,nome:e.name})); epCache[key]=eps; }catch(e){ eps=[]; } }
   if(!eps.length){ const t=(m.temporadas||[]).find(x=>x.n===n); eps=[...Array(t?t.eps:0).keys()].map(i=>({n:i+1,nome:''})); }
-  const assist=new Set(m.assistidos||[]);
-  box.innerHTML=`<button class="mini-btn" data-tempall="${n}">marcar/desmarcar temporada</button>
-    <div class="ep-list">${eps.map(e=>{const k=`${n}-${e.n}`;return `<button class="ep-row ${assist.has(k)?'on':''}" data-ep="${k}"><span class="ep-check">✓</span><span class="ep-num">E${e.n}</span><span>${esc(e.nome||'')}</span></button>`;}).join('')}</div>`; }
-el('det-temporadas').addEventListener('click',async e=>{ const b=e.target.closest('button'); if(!b)return;
+  const o=mapAssist(m);
+  box.innerHTML=`<div class="ep-list">${eps.map(e=>{const k=`${n}-${e.n}`,c=o[k]||0;return `<button class="ep-row ${c>=1?'on':''}" data-ep="${k}"><span class="ep-check">${epInner(c)}</span><span class="ep-num">E${e.n}</span><span>${esc(e.nome||'')}</span></button>`;}).join('')}</div>`; }
+function incEp(m,k){ let o=mapAssist(m); o[k]=(o[k]||0)+1; m.assistidos=o;
+  const row=el('det-temporadas').querySelector(`.ep-row[data-ep="${k}"]`);
+  if(row){ row.classList.add('on'); row.querySelector('.ep-check').innerHTML=epInner(o[k]); }
+  const n=+k.split('-')[0]; atualizaContadores(m); atualizaSeasonDot(m,n); salvarAssist(m); }
+function marcarTemporada(m,n){ let o=mapAssist(m); const t=(m.temporadas||[]).find(x=>x.n===n);
+  const keys=[...Array(t.eps).keys()].map(i=>`${n}-${i+1}`), counts=keys.map(k=>o[k]||0);
+  if(counts.some(c=>c===0)) keys.forEach(k=>{ if(!(o[k]>0))o[k]=1; });
+  else keys.forEach(k=>o[k]=(o[k]||0)+1);
+  m.assistidos=o;
+  const box=el('det-temporadas').querySelector(`[data-eps="${n}"]`);
+  if(box&&box.dataset.loaded)box.querySelectorAll('.ep-row').forEach(row=>{ const c=o[row.dataset.ep]||0; row.classList.toggle('on',c>=1); row.querySelector('.ep-check').innerHTML=epInner(c); });
+  atualizaContadores(m); atualizaSeasonDot(m,n); salvarAssist(m); }
+function zerar(m,b){ let o=mapAssist(m);
+  if(b.dataset.ep){ delete o[b.dataset.ep]; }
+  if(b.dataset.sea){ const n=+b.dataset.sea,t=(m.temporadas||[]).find(x=>x.n===n); [...Array(t.eps).keys()].forEach(i=>delete o[`${n}-${i+1}`]); }
+  m.assistidos=o; salvarAssist(m); renderTemporadas(m); }
+/* clique = +1 ; segurar = zerar */
+let lpTimer=null, lpFired=false;
+el('det-temporadas').addEventListener('pointerdown',e=>{ const b=e.target.closest('[data-ep],[data-sea]'); if(!b)return;
+  lpFired=false; lpTimer=setTimeout(()=>{ lpFired=true; const m=midias.find(x=>x.id===detId); if(m)zerar(m,b); }, 550); });
+['pointerup','pointerleave','pointercancel'].forEach(ev=>el('det-temporadas').addEventListener(ev,()=>clearTimeout(lpTimer)));
+el('det-temporadas').addEventListener('click',e=>{ if(lpFired){ lpFired=false; return; }
   const m=midias.find(x=>x.id===detId); if(!m)return;
-  if(b.dataset.temp){ const box=el('det-temporadas').querySelector(`[data-eps="${b.dataset.temp}"]`);
-    const abrir=box.classList.contains('oculto'); box.classList.toggle('oculto');
-    if(abrir && !box.dataset.loaded) carregarEps(m,+b.dataset.temp,box); return; }
-  let assist=new Set(m.assistidos||[]);
-  if(b.dataset.ep){ const k=b.dataset.ep; assist.has(k)?assist.delete(k):assist.add(k); m.assistidos=[...assist];
-    b.classList.toggle('on'); atualizaContadores(m);
-    try{ await updateDoc(doc(db,'midias',detId),{assistidos:m.assistidos}); }catch(err){} return; }
-  if(b.dataset.tempall){ const n=+b.dataset.tempall, t=(m.temporadas||[]).find(x=>x.n===n);
-    const todos=[...Array(t.eps).keys()].map(i=>`${n}-${i+1}`), faltam=todos.some(k=>!assist.has(k));
-    todos.forEach(k=>faltam?assist.add(k):assist.delete(k)); m.assistidos=[...assist];
-    const box=el('det-temporadas').querySelector(`[data-eps="${n}"]`);
-    if(box)box.querySelectorAll('.ep-row').forEach(row=>row.classList.toggle('on',assist.has(row.dataset.ep)));
-    atualizaContadores(m); try{ await updateDoc(doc(db,'midias',detId),{assistidos:m.assistidos}); }catch(err){} return; } });
+  const sea=e.target.closest('[data-sea]'); if(sea)return marcarTemporada(m,+sea.dataset.sea);
+  const ep=e.target.closest('[data-ep]'); if(ep)return incEp(m,ep.dataset.ep);
+  const head=e.target.closest('.temp-head'); if(head){ const n=head.dataset.temp, box=el('det-temporadas').querySelector(`[data-eps="${n}"]`);
+    const abrir=box.classList.contains('oculto'); box.classList.toggle('oculto'); if(abrir&&!box.dataset.loaded)carregarEps(m,+n,box); } });
 el('det-visto').onclick=async()=>{ const m=midias.find(x=>x.id===detId); const novo=!m.visto; m.visto=novo;
   el('det-visto').classList.toggle('on',novo); el('det-visto').textContent=novo?'✓ Assistido':'Marcar como assistido';
   if(novo&&(!m.vezes||m.vezes<1)){m.vezes=1;el('det-vezes').value=1;}
