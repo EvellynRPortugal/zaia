@@ -172,6 +172,7 @@
   .dot-urgente{background:var(--urgente)} .dot-importante{background:var(--importante)} .dot-tranquilo{background:var(--tranquilo)}
   .sec-titulo .dot{margin-right:7px;vertical-align:middle}
   .tag-etiqueta{background:rgba(139,92,246,.2);color:#c4b5fd}
+  .tag-compromisso{background:rgba(138,180,248,.18);color:#8ab4f8}
   .tag-prazo{background:rgba(255,255,255,.08);color:var(--txt-dim)}
   .tag-prazo.venc{background:rgba(251,90,106,.22);color:var(--urgente)}
   .t-acoes{display:flex;gap:4px;flex-shrink:0}
@@ -289,6 +290,7 @@
   .prio-pick button.sel[data-p="urgente"]{background:rgba(251,90,106,.25);color:var(--urgente);border-color:var(--urgente)}
   .prio-pick button.sel[data-p="importante"]{background:rgba(251,191,36,.2);color:var(--importante);border-color:var(--importante)}
   .prio-pick button.sel[data-p="tranquilo"]{background:rgba(74,222,128,.18);color:var(--tranquilo);border-color:var(--tranquilo)}
+  #m-tipo button.sel{background:rgba(139,92,246,.3);color:#fff;border-color:var(--magenta)}
   .modal-acoes{display:flex;gap:10px;margin-top:22px}
   .modal-acoes .btn{margin-top:0}
   .btn-sec{background:rgba(255,255,255,.08);color:var(--txt)}
@@ -559,6 +561,10 @@
 
     <section id="aba-hoje">
       <div class="foco"><h2>✨ Foco de hoje</h2><div id="foco-motivo" class="foco-motivo"></div><div id="lista-foco"></div></div>
+      <div id="compromissos-sec" class="oculto">
+        <div class="sec-titulo">📅 Compromissos de hoje</div>
+        <div id="lista-compromissos"></div>
+      </div>
       <div id="rotina-hoje-sec" class="oculto">
         <div class="sec-titulo">🔁 Rotina de hoje</div>
         <div id="rotina-hoje"></div>
@@ -631,6 +637,11 @@
   <div class="modal">
     <h3 id="modal-titulo">Nova tarefa</h3>
     <input type="hidden" id="m-id"/>
+    <label>Tipo</label>
+    <div class="prio-pick" id="m-tipo">
+      <button data-tp="tarefa" class="sel">📝 Tarefa / entrega</button>
+      <button data-tp="compromisso">📅 Compromisso</button>
+    </div>
     <label>Título</label>
     <input id="m-titulo" class="campo"/>
     <label>Descrição</label>
@@ -795,7 +806,10 @@
       <li>🟡 <b>Importante</b> — importa, mas tem folga.</li>
       <li>🟢 <b>Tranquilo</b> — pode esperar.</li>
     </ul>
-    <p>O "Foco de hoje" escolhe sozinho as 3 tarefas mais urgentes combinando prioridade + prazo.</p>
+    <p>O "Foco de hoje" escolhe sozinho suas <b>entregas</b> atrasadas, de hoje e urgentes.</p>
+
+    <h4>Tarefa x Compromisso</h4>
+    <p>Ao criar algo, escolha o tipo: <b>📝 Tarefa/entrega</b> (algo que você precisa fazer ou entregar) ou <b>📅 Compromisso</b> (hora marcada: terapia, consulta, reunião). O Foco de hoje mostra só entregas; compromissos aparecem separados em "Compromissos de hoje". No chat, a Zaia já classifica sozinha (terapia, reunião ou "coloque na agenda" viram compromisso).</p>
 
     <h4>Projetos e cronograma</h4>
     <p>Na aba <b>Projetos</b>, crie algo grande (como o TCC) e adicione etapas com prazo. A barra mostra o progresso e as etapas alimentam seu dia.</p>
@@ -1025,7 +1039,9 @@ function score(t){ const peso={urgente:100,importante:50,tranquilo:10}[t.priorid
   return peso+p; }
 
 /* RENDER */
-function render(){ renderFoco();renderBreve();renderTarefas();renderProjetos();renderStats();renderSinonimos();renderRotina();renderRotinaHoje();
+const KW_COMPROMISSO=/\b(terapia|consulta|reuni[ãa]o|m[ée]dic[oa]|dentista|anivers[áa]rio|compromisso|encontro|entrevista|audi[êe]ncia|cabeleireiro|sal[ãa]o|exame|vacina)\b/i;
+function ehCompromisso(t){ return t.tipo==='compromisso' || (!t.tipo && KW_COMPROMISSO.test(t.titulo||'')); }
+function render(){ renderFoco();renderBreve();renderCompromissos();renderTarefas();renderProjetos();renderStats();renderSinonimos();renderRotina();renderRotinaHoje();
   const ab=tarefas.filter(t=>!t.concluida).length;
   el('resumo-linha').textContent=ab?`Você tem ${ab} tarefa${ab>1?'s':''} em aberto.`:'Tudo em dia por aqui.'; }
 const hojeStr=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
@@ -1066,24 +1082,28 @@ function itemTarefa(t){
     <div class="t-corpo-wrap">
       <div class="t-corpo" data-open="${t.id}">
         <div class="t-titulo">${priIcon(t.prioridade)}${esc(t.titulo)}</div>${desc}
-        <div class="t-meta">${etq}${prazo}${anx}${subTag}</div>
+        <div class="t-meta">${ehCompromisso(t)?'<span class="tag tag-compromisso">compromisso</span>':''}${etq}${prazo}${anx}${subTag}</div>
       </div>
       ${subList}
     </div>
   </div>`; }
 function renderFoco(){
-  const abertas=tarefas.filter(t=>!t.concluida);
+  // Foco = só entregas/atividades (compromissos ficam fora)
+  const abertas=tarefas.filter(t=>!t.concluida && !ehCompromisso(t));
   const fimHoje=hojeZero()+DIA;
-  // Critério: atrasadas + que vencem hoje + marcadas como urgentes
   let f=abertas.filter(t=>(t.prazo&&t.prazo<fimHoje)||t.prioridade==='urgente');
-  let motivo='Atrasadas, de hoje e urgentes.';
-  if(!f.length){ f=abertas.filter(t=>t.prazo&&t.prazo<Date.now()+3*DIA); motivo='Próximas a vencer.'; }
-  if(!f.length){ f=abertas.filter(t=>t.prioridade==='importante'); motivo='Suas tarefas importantes.'; }
+  let motivo='Entregas atrasadas, de hoje e urgentes.';
+  if(!f.length){ f=abertas.filter(t=>t.prazo&&t.prazo<Date.now()+3*DIA); motivo='Entregas próximas a vencer.'; }
+  if(!f.length){ f=abertas.filter(t=>t.prioridade==='importante'); motivo='Suas entregas importantes.'; }
   f.sort((a,b)=>score(b)-score(a)); f=f.slice(0,5);
-  el('lista-foco').innerHTML=f.length?f.map(itemTarefa).join(''):'<div class="vazio">Nada pra hoje. Aproveita. ☕</div>';
+  el('lista-foco').innerHTML=f.length?f.map(itemTarefa).join(''):'<div class="vazio">Nenhuma entrega pra hoje. Aproveita. ☕</div>';
   el('foco-motivo').textContent=f.length?motivo:''; }
+function renderCompromissos(){ const hj=hojeZero(),fim=hj+DIA;
+  const c=tarefas.filter(t=>!t.concluida&&ehCompromisso(t)&&t.prazo&&t.prazo>=hj&&t.prazo<fim).sort((a,b)=>a.prazo-b.prazo);
+  el('compromissos-sec').classList.toggle('oculto',!c.length);
+  el('lista-compromissos').innerHTML=c.map(itemTarefa).join(''); }
 function renderBreve(){ const lim=Date.now()+7*DIA;
-  const b=tarefas.filter(t=>!t.concluida&&t.prazo&&t.prazo<=lim).sort((a,b)=>a.prazo-b.prazo);
+  const b=tarefas.filter(t=>!t.concluida&&!ehCompromisso(t)&&t.prazo&&t.prazo<=lim).sort((a,b)=>a.prazo-b.prazo);
   el('lista-breve').innerHTML=b.length?b.map(itemTarefa).join(''):'<div class="vazio">Sem prazos nos próximos 7 dias.</div>'; }
 let filtroEtq=null;
 function etiquetasExistentes(){ const s=new Set(); tarefas.forEach(t=>{ if(t.etiqueta)s.add(t.etiqueta); }); return [...s].sort(); }
@@ -1204,21 +1224,24 @@ el('filtro-etq').addEventListener('click',e=>{ const b=e.target.closest('.chip')
     x0=null;y0=null; },{passive:true}); })();
 
 /* MODAL TAREFA */
-let prioSel='importante';
+let prioSel='importante', tipoSel='tarefa';
 el('m-prio').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b)return;
   document.querySelectorAll('#m-prio button').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); prioSel=b.dataset.p; });
+el('m-tipo').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b)return;
+  document.querySelectorAll('#m-tipo button').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); tipoSel=b.dataset.tp; });
+function setTipo(tp){ tipoSel=tp; document.querySelectorAll('#m-tipo button').forEach(x=>x.classList.toggle('sel',x.dataset.tp===tp)); }
 el('fab').onclick=()=>abrirNova();
 function abrirNova(pre={}){ el('modal-titulo').textContent='Nova tarefa';
   el('m-id').value=''; el('m-titulo').value=pre.titulo||''; el('m-desc').value='';
   el('m-etiqueta').value=pre.etiqueta||''; setPrazoInputs(pre.prazo||null);
-  setPrio(pre.prioridade||'importante'); anexoPend=[];anexoRem=[];renderAnexosModal();
+  setPrio(pre.prioridade||'importante'); setTipo(pre.tipo||'tarefa'); anexoPend=[];anexoRem=[];renderAnexosModal();
   subPend=[];renderSubPend();
   el('m-excluir').classList.add('oculto');
   el('modal-tarefa').classList.add('on'); el('m-titulo').focus(); }
 function abrirEdicao(id){ const t=tarefas.find(x=>x.id===id); if(!t)return;
   el('modal-titulo').textContent='Editar tarefa'; el('m-id').value=id; el('m-titulo').value=t.titulo;
   el('m-desc').value=t.descricao||''; el('m-etiqueta').value=t.etiqueta||''; setPrazoInputs(t.prazo||null);
-  setPrio(t.prioridade); anexoPend=[];anexoRem=[];renderAnexosModal();
+  setPrio(t.prioridade); setTipo(ehCompromisso(t)?'compromisso':'tarefa'); anexoPend=[];anexoRem=[];renderAnexosModal();
   subPend=(t.subitens||[]).map(s=>({t:s.t,ok:!!s.ok}));renderSubPend();
   el('m-excluir').classList.remove('oculto');
   el('modal-tarefa').classList.add('on'); }
@@ -1264,7 +1287,7 @@ function lerPrazoInputs(){ const dt=el('m-data').value; if(!dt)return null; retu
 el('m-cancelar').onclick=()=>el('modal-tarefa').classList.remove('on');
 el('m-salvar').onclick=async()=>{ const tit=el('m-titulo').value.trim(); if(!tit){fala('Dá um título pra tarefa.');return;}
   const prazo=lerPrazoInputs();
-  const dados={titulo:tit,descricao:el('m-desc').value.trim()||null,prioridade:prioSel,etiqueta:el('m-etiqueta').value.trim()||null,prazo,lembrete:prazo,subitens:subPend.map(s=>({t:s.t,ok:!!s.ok}))};
+  const dados={titulo:tit,descricao:el('m-desc').value.trim()||null,prioridade:prioSel,tipo:tipoSel,etiqueta:el('m-etiqueta').value.trim()||null,prazo,lembrete:prazo,subitens:subPend.map(s=>({t:s.t,ok:!!s.ok}))};
   let id=el('m-id').value; el('m-salvar').disabled=true;
   try{ if(id) await updateDoc(doc(db,'tarefas',id),dados);
     else{ const ref=await addDoc(collection(db,'tarefas'),{...dados,userId:user.uid,concluida:false,criadaEm:Date.now()}); id=ref.id; }
@@ -1411,6 +1434,9 @@ function criarPorTexto(bruto){ let txt=bruto; const low=txt.toLowerCase(); let p
   if(!etiqueta){ if(/\b(tcc|prova|aula|faculdade|uni|monografia|artigo|professora?|mestrado)\b/.test(low))etiqueta='faculdade';
     else if(/\b(reuni[ãa]o|relat[óo]rio|planilha|chefe|trabalho|projeto|entrega|e-?mail)\b/.test(low))etiqueta='trabalho';
     else if(/\b(mercado|boleto|conta|casa|m[ãa]e|rem[ée]dio|farm[áa]cia|comprar|limpeza)\b/.test(low))etiqueta='casa'; }
+  // compromisso? (terapia, reunião, ou "coloque na agenda")
+  let tipo='tarefa';
+  if(KW_COMPROMISSO.test(low) || /\b(coloca[r]?|coloque|agenda[r]?|agende|marque|marca[r]?)\b[^.]*\bagenda\b/i.test(low)) tipo='compromisso';
   const {data,limpo}=parseData(txt);
   let titulo=(limpo||txt)
     .replace(/\b(na minha agenda|na agenda|pra agenda|para a agenda|na agenda do google|no meu calend[áa]rio)\b/ig,'')
@@ -1426,9 +1452,9 @@ function criarPorTexto(bruto){ let txt=bruto; const low=txt.toLowerCase(); let p
   titulo=titulo.charAt(0).toUpperCase()+titulo.slice(1);
   if(!titulo){fala('Não peguei bem — abri o formulário pra você.');return abrirNova({prioridade});}
   const prazo=data?data.getTime():null;
-  addDoc(collection(db,'tarefas'),{titulo,descricao:null,prioridade,etiqueta,prazo,lembrete:prazo,userId:user.uid,concluida:false,criadaEm:Date.now()});
+  addDoc(collection(db,'tarefas'),{titulo,descricao:null,prioridade,tipo,etiqueta,prazo,lembrete:prazo,userId:user.uid,concluida:false,criadaEm:Date.now()});
   const quando=prazo?` pra ${fmtPrazo(prazo)}`:''; const et=etiqueta?` [${etiqueta}]`:'';
-  fala(`Anotei “${titulo}”${quando}${et}.`); }
+  fala(`Anotei ${tipo==='compromisso'?'o compromisso':''}“${titulo}”${quando}${et}.`); }
 function parseData(texto){ let low=texto.toLowerCase(),data=null,tirar=[]; const agora=new Date();
   const mk=(dd)=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+dd);return d;};
   // relativos (consome a preposição junto, ex.: "para amanhã")
