@@ -352,6 +352,18 @@
   .det-head-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;padding-right:30px}
   .det-head-info h3{font-size:18px;margin:0}
   .det-status{font-size:12px;color:#8ab4f8;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+  .det-sinopse{font-size:13.5px;color:var(--txt-dim);line-height:1.55;margin-bottom:14px}
+  .det-sinopse:empty{display:none}
+  .ep-list{display:flex;flex-direction:column;gap:5px;margin-top:10px}
+  .ep-row{display:flex;align-items:center;gap:10px;text-align:left;padding:9px 11px;border-radius:11px;
+    background:rgba(0,0,0,.2);border:1px solid var(--stroke);font-size:13.5px;color:var(--txt-dim);width:100%}
+  .ep-row:hover{background:rgba(255,255,255,.05)}
+  .ep-row.on{color:var(--txt)}
+  .ep-row.on .ep-check{background:var(--tranquilo);border-color:var(--tranquilo);color:#0b2a15}
+  .ep-check{width:19px;height:19px;border-radius:6px;border:1.6px solid var(--txt-dim);flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent}
+  .ep-num{color:#8ab4f8;font-weight:700;flex-shrink:0}
+  .ep-carregando{font-size:12.5px;color:var(--txt-dim);padding:8px 0}
   .det-fav{align-self:flex-start;background:rgba(255,255,255,.06);border:1px solid var(--stroke);border-radius:20px;
     padding:6px 14px;font-size:13px;color:var(--txt-dim)}
   .det-fav.on{color:#ff7a95;border-color:#ff7a95;background:rgba(255,122,149,.1)}
@@ -758,6 +770,7 @@
         <button id="det-fav" class="det-fav">♡ Favorito</button>
       </div>
     </div>
+    <p id="det-sinopse" class="det-sinopse"></p>
     <div id="det-filme" class="oculto">
       <button id="det-visto" class="det-visto">Marcar como assistido</button>
       <label>Quantas vezes assisti</label>
@@ -1266,6 +1279,7 @@ document.body.addEventListener('click', async e=>{
   if(d.del){ if(confirm('Apagar essa tarefa?')){ anexos.filter(a=>a.tarefaId===d.del).forEach(a=>del('anexos',a.id)); return del('tarefas',d.del);} }
   if(d.rottoggle) return toggleRotina(d.rottoggle);
   if(d.rotedit) return abrirRotina(d.rotedit);
+  if(d.midabrir) return abrirDet(d.midabrir);
   if(d.subtoggle){ const [tid,idx]=d.subtoggle.split('|'); return toggleSub(tid,+idx); }
   if(d.remanexo){ anexoRem.push(d.remanexo); return renderAnexosModal(); }
   if(d.rempend!==undefined){ anexoPend.splice(+d.rempend,1); return renderAnexosModal(); }
@@ -1497,9 +1511,11 @@ el('btn-nova-midia').onclick=()=>{ el('md-busca').value='';el('md-resultados').i
 el('busca-cancelar').onclick=()=>el('modal-busca').classList.remove('on');
 el('md-busca').addEventListener('input',()=>{ clearTimeout(buscaTimer); const q=el('md-busca').value.trim();
   if(q.length<2){el('md-resultados').innerHTML='';return;} buscaTimer=setTimeout(()=>buscarTMDB(q),350); });
+let ultimaBusca=[];
 async function buscarTMDB(q){
   try{ const r=await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_KEY}&language=pt-BR&query=${encodeURIComponent(q)}`);
     const d=await r.json(); const res=(d.results||[]).filter(x=>x.media_type==='movie'||x.media_type==='tv').slice(0,8);
+    ultimaBusca=res;
     el('md-resultados').innerHTML=res.length?res.map(x=>{ const t=x.title||x.name, ano=(x.release_date||x.first_air_date||'').slice(0,4);
       const pp=x.poster_path?`https://image.tmdb.org/t/p/w92${x.poster_path}`:'', tp=x.media_type==='tv'?'serie':'filme';
       return `<button type="button" class="md-res-item" data-pick="${tp}|${x.id}|${encodeURIComponent(t)}|${x.poster_path||''}">
@@ -1511,10 +1527,12 @@ async function buscarTMDB(q){
 el('md-resultados').addEventListener('click',async e=>{ const b=e.target.closest('[data-pick]'); if(!b)return;
   b.style.opacity='.5';
   const [tp,id,tenc,pp]=b.dataset.pick.split('|'); const titulo=decodeURIComponent(tenc);
-  let temporadas=null;
+  const item=ultimaBusca.find(x=>String(x.id)===id && (x.media_type==='tv')===(tp==='serie'));
+  let temporadas=null, sinopse=item&&item.overview?item.overview:'';
   if(tp==='serie'){ try{ const r=await fetch(`https://api.themoviedb.org/3/tv/${id}?api_key=${TMDB_KEY}&language=pt-BR`); const d=await r.json();
-    temporadas=(d.seasons||[]).filter(s=>s.season_number>=1&&s.episode_count>0).map(s=>({n:s.season_number,eps:s.episode_count,nome:s.name})); }catch(err){} }
-  const dados={titulo,tipo:tp,tmdbId:+id||null,poster:pp?`https://image.tmdb.org/t/p/w500${pp}`:null,
+    temporadas=(d.seasons||[]).filter(s=>s.season_number>=1&&s.episode_count>0).map(s=>({n:s.season_number,eps:s.episode_count,nome:s.name}));
+    if(d.overview)sinopse=d.overview; }catch(err){} }
+  const dados={titulo,tipo:tp,tmdbId:+id||null,poster:pp?`https://image.tmdb.org/t/p/w500${pp}`:null,sinopse:sinopse||null,
     temporadas:temporadas||null,assistidos:[],visto:false,vezes:0,nota:null,nota_txt:null,fav:false,userId:user.uid,criadaEm:Date.now()};
   const ref=await addDoc(collection(db,'midias'),dados);
   el('modal-busca').classList.remove('on'); abrirDet(ref.id); });
@@ -1524,6 +1542,7 @@ let detId=null, detNota=0;
 function abrirDet(id){ const m=midias.find(x=>x.id===id); if(!m)return; detId=id;
   el('det-poster').src=m.poster||''; el('det-poster').style.display=m.poster?'':'none';
   el('det-titulo').textContent=m.titulo;
+  el('det-sinopse').textContent=m.sinopse||'';
   detNota=m.nota||0; pintaDetEstrelas(); el('det-nota').value=m.nota_txt||'';
   el('det-fav').classList.toggle('on',!!m.fav); el('det-fav').innerHTML=m.fav?'♥ Favorito':'♡ Favorito';
   if(m.tipo==='filme'){ el('det-filme').classList.remove('oculto'); el('det-serie').classList.add('oculto');
@@ -1532,25 +1551,41 @@ function abrirDet(id){ const m=midias.find(x=>x.id===id); if(!m)return; detId=id
   } else { el('det-serie').classList.remove('oculto'); el('det-filme').classList.add('oculto'); renderTemporadas(m); }
   el('det-status').textContent=rotuloStatus(statusMidia(m));
   el('modal-det').classList.add('on'); }
-function renderTemporadas(m){ const assist=new Set(m.assistidos||[]); const tot=totalEps(m), feitos=assist.size;
+const epCache={};
+function atualizaContadores(m){ const assist=new Set(m.assistidos||[]); const tot=totalEps(m),feitos=assist.size;
   el('det-prog').innerHTML=tot?`<div class="det-prog-txt">${feitos}/${tot} episódios</div><div class="barra"><span style="width:${Math.round(feitos/tot*100)}%"></span></div>`:'';
-  el('det-temporadas').innerHTML=(m.temporadas||[]).map(t=>{ const marc=[...Array(t.eps).keys()].filter(i=>assist.has(`${t.n}-${i+1}`)).length;
+  (m.temporadas||[]).forEach(t=>{ const marc=[...Array(t.eps).keys()].filter(i=>assist.has(`${t.n}-${i+1}`)).length;
+    const c=el('det-temporadas').querySelector(`.temp-cont[data-tc="${t.n}"]`); if(c)c.textContent=`${marc}/${t.eps}`; });
+  el('det-status').textContent=rotuloStatus(statusMidia(m)); }
+function renderTemporadas(m){ atualizaContadores(m);
+  el('det-temporadas').innerHTML=(m.temporadas||[]).map(t=>{ const assist=new Set(m.assistidos||[]);
+    const marc=[...Array(t.eps).keys()].filter(i=>assist.has(`${t.n}-${i+1}`)).length;
     return `<div class="temp">
-      <button class="temp-head" data-temp="${t.n}"><span>${esc(t.nome||('Temporada '+t.n))}</span><span class="temp-cont">${marc}/${t.eps}</span></button>
-      <div class="temp-eps oculto" data-eps="${t.n}">
-        <button class="mini-btn" data-tempall="${t.n}">marcar/desmarcar temporada</button>
-        <div class="ep-grid">${[...Array(t.eps).keys()].map(i=>{const k=`${t.n}-${i+1}`;return `<button class="ep ${assist.has(k)?'on':''}" data-ep="${k}">${i+1}</button>`;}).join('')}</div>
-      </div></div>`; }).join('') || '<div class="vazio">Sem temporadas cadastradas.</div>'; }
+      <button class="temp-head" data-temp="${t.n}"><span>${esc(t.nome||('Temporada '+t.n))}</span><span class="temp-cont" data-tc="${t.n}">${marc}/${t.eps}</span></button>
+      <div class="temp-eps oculto" data-eps="${t.n}"></div></div>`; }).join('') || '<div class="vazio">Sem temporadas cadastradas.</div>'; }
+async function carregarEps(m,n,box){ box.dataset.loaded='1'; box.innerHTML='<div class="ep-carregando">carregando episódios…</div>';
+  const key=`${m.tmdbId}-${n}`; let eps=epCache[key];
+  if(!eps){ try{ const r=await fetch(`https://api.themoviedb.org/3/tv/${m.tmdbId}/season/${n}?api_key=${TMDB_KEY}&language=pt-BR`);
+    const d=await r.json(); eps=(d.episodes||[]).map(e=>({n:e.episode_number,nome:e.name})); epCache[key]=eps; }catch(e){ eps=[]; } }
+  if(!eps.length){ const t=(m.temporadas||[]).find(x=>x.n===n); eps=[...Array(t?t.eps:0).keys()].map(i=>({n:i+1,nome:''})); }
+  const assist=new Set(m.assistidos||[]);
+  box.innerHTML=`<button class="mini-btn" data-tempall="${n}">marcar/desmarcar temporada</button>
+    <div class="ep-list">${eps.map(e=>{const k=`${n}-${e.n}`;return `<button class="ep-row ${assist.has(k)?'on':''}" data-ep="${k}"><span class="ep-check">✓</span><span class="ep-num">E${e.n}</span><span>${esc(e.nome||'')}</span></button>`;}).join('')}</div>`; }
 el('det-temporadas').addEventListener('click',async e=>{ const b=e.target.closest('button'); if(!b)return;
   const m=midias.find(x=>x.id===detId); if(!m)return;
-  if(b.dataset.temp){ el('det-temporadas').querySelector(`[data-eps="${b.dataset.temp}"]`).classList.toggle('oculto'); return; }
+  if(b.dataset.temp){ const box=el('det-temporadas').querySelector(`[data-eps="${b.dataset.temp}"]`);
+    const abrir=box.classList.contains('oculto'); box.classList.toggle('oculto');
+    if(abrir && !box.dataset.loaded) carregarEps(m,+b.dataset.temp,box); return; }
   let assist=new Set(m.assistidos||[]);
-  if(b.dataset.ep){ const k=b.dataset.ep; assist.has(k)?assist.delete(k):assist.add(k); }
+  if(b.dataset.ep){ const k=b.dataset.ep; assist.has(k)?assist.delete(k):assist.add(k); m.assistidos=[...assist];
+    b.classList.toggle('on'); atualizaContadores(m);
+    try{ await updateDoc(doc(db,'midias',detId),{assistidos:m.assistidos}); }catch(err){} return; }
   if(b.dataset.tempall){ const n=+b.dataset.tempall, t=(m.temporadas||[]).find(x=>x.n===n);
     const todos=[...Array(t.eps).keys()].map(i=>`${n}-${i+1}`), faltam=todos.some(k=>!assist.has(k));
-    todos.forEach(k=>faltam?assist.add(k):assist.delete(k)); }
-  m.assistidos=[...assist]; renderTemporadas(m); el('det-status').textContent=rotuloStatus(statusMidia(m));
-  try{ await updateDoc(doc(db,'midias',detId),{assistidos:m.assistidos}); }catch(err){} });
+    todos.forEach(k=>faltam?assist.add(k):assist.delete(k)); m.assistidos=[...assist];
+    const box=el('det-temporadas').querySelector(`[data-eps="${n}"]`);
+    if(box)box.querySelectorAll('.ep-row').forEach(row=>row.classList.toggle('on',assist.has(row.dataset.ep)));
+    atualizaContadores(m); try{ await updateDoc(doc(db,'midias',detId),{assistidos:m.assistidos}); }catch(err){} return; } });
 el('det-visto').onclick=async()=>{ const m=midias.find(x=>x.id===detId); const novo=!m.visto; m.visto=novo;
   el('det-visto').classList.toggle('on',novo); el('det-visto').textContent=novo?'✓ Assistido':'Marcar como assistido';
   if(novo&&(!m.vezes||m.vezes<1)){m.vezes=1;el('det-vezes').value=1;}
@@ -1850,7 +1885,28 @@ el('btn-gcal').onclick=()=>{ if(gcalToken()){ if(confirm('Desconectar a Google A
   else gcalConectar('consent'); };
 function gcalAtualizarUI(){ const on=!!gcalToken();
   el('gcal-lbl').textContent=on?'Google Agenda ✓':'Google Agenda';
-  if(on)gcalAutoSync(); }
+  if(on){ gcalAutoSync(); gcalImportar(); } }
+/* importa eventos criados na Google Agenda (ex.: convites aceitos) como compromissos */
+let gcalImporting=false;
+async function gcalImportar(){ if(!gcalToken()||gcalImporting)return; gcalImporting=true;
+  try{
+    const min=new Date().toISOString(), max=new Date(Date.now()+60*DIA).toISOString();
+    const r=await gcalFetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${encodeURIComponent(min)}&timeMax=${encodeURIComponent(max)}&singleEvents=true&orderBy=startTime&maxResults=50`);
+    if(r&&r.ok){ const d=await r.json();
+      const jaTem=new Set(tarefas.map(t=>t.gcalEventId).filter(Boolean));
+      for(const ev of (d.items||[])){
+        if(!ev.id||jaTem.has(ev.id)||ev.status==='cancelled')continue;
+        const meu=(ev.attendees||[]).find(a=>a.self); if(meu&&meu.responseStatus==='declined')continue;
+        const dt=ev.start&&(ev.start.dateTime||ev.start.date); if(!dt)continue;
+        const prazo=new Date(dt).getTime();
+        await addDoc(collection(db,'tarefas'),{titulo:ev.summary||'(sem título)',descricao:ev.description||null,
+          prioridade:'importante',tipo:'compromisso',etiqueta:null,prazo,lembrete:prazo,gcalEventId:ev.id,
+          origem:'google',userId:user.uid,concluida:false,criadaEm:Date.now()});
+        jaTem.add(ev.id);
+      }
+    }
+  }catch(e){} gcalImporting=false; }
+setInterval(()=>{ if(gcalToken())gcalImportar(); }, 10*60000);
 async function gcalFetch(url,opt={}){ const tk=gcalToken(); if(!tk)return null;
   opt.headers={...(opt.headers||{}),Authorization:'Bearer '+tk}; const r=await fetch(url,opt);
   if(r.status===401){ localStorage.removeItem('gcal_token'); localStorage.removeItem('gcal_exp'); gcalAtualizarUI(); } return r; }
