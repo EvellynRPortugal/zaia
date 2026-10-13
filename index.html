@@ -226,7 +226,7 @@
   /* STATS */
   .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:10px;margin-top:4px}
   .stat{background:var(--card);border:1px solid var(--stroke);border-radius:18px;padding:18px;text-align:center;backdrop-filter:blur(8px)}
-  .stat .num{font-size:30px;font-weight:800;background:linear-gradient(100deg,var(--laranja-claro),var(--magenta));
+  .stat .num{font-size:30px;font-weight:800;line-height:1.15;background:linear-gradient(100deg,var(--laranja-claro),var(--magenta));
     -webkit-background-clip:text;background-clip:text;color:transparent}
   .stat .lbl{font-size:12.5px;color:var(--txt-dim);margin-top:4px}
 
@@ -484,6 +484,11 @@
     .side-marca{font-size:24px;padding:0 2px}
     .aba-nav{display:none}                    /* nav vai pra barra inferior */
     .sp-mini{left:12px;right:12px;bottom:78px;width:auto;max-width:none}
+    /* painel de estatísticas cabe no celular */
+    .stats-grid{grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:8px}
+    .stat{padding:12px 8px}
+    .stat .num{font-size:22px;line-height:1.1}
+    .stat .lbl{font-size:10.5px;line-height:1.25}
     .menu-user{position:fixed;top:14px;right:14px;z-index:60;width:auto}
     .user-linha{padding:0}
     .user-nome{display:none}
