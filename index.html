@@ -664,6 +664,12 @@ body.calmo .fab:hover,body.calmo .btn-primario:hover{transform:none}
 }
 @media(max-width:390px){.conteudo{padding-left:12px;padding-right:12px}.tag{font-size:11px}.t-titulo{font-size:15px}}
 
+
+/* ZAIA V3 — saudação integrada aos componentes, menos destaque que o conteúdo */
+.saudacao{padding:3px 0 2px;margin-bottom:14px}
+.saudacao h1{font-family:'Nunito',system-ui,sans-serif;font-size:clamp(20px,2vw,23px);font-weight:700;line-height:1.35;letter-spacing:0;color:var(--lilas);text-shadow:none}
+.saudacao p{font-size:13.5px;font-weight:500;color:var(--txt-dim);margin-top:3px;margin-bottom:0;text-shadow:none}
+@media(max-width:820px){.saudacao h1{font-size:21px}.saudacao p{font-size:13px}}
 </style>
 </head>
 <body>
@@ -1309,9 +1315,9 @@ el('btn-limpar-dup').onclick=async(e)=>{ e.stopPropagation(); el('menu-drop').cl
   let apagar=[];
   Object.values(grupos).forEach(g=>{ if(g.length>1){ g.sort((a,b)=>(a.criadaEm||0)-(b.criadaEm||0)); apagar.push(...g.slice(1)); } });
   if(!apagar.length){ alert('Nenhuma tarefa duplicada por aqui 🎉'); return; }
-  if(!confirm(`Encontrei ${apagar.length} cópia(s) duplicada(s). Apagar as cópias e manter uma de cada?`))return;
+  if(!confirm(`Encontrei ${apagar.length} possível(is) duplicata(s) nas tarefas da Zaia. Isso NÃO apaga eventos no Google Agenda. Faça backup antes de continuar. Manter o registro mais antigo e apagar os demais?`))return;
   let ok=0; for(const t of apagar){ try{ await del('tarefas',t.id); ok++; }catch(err){} }
-  alert(`Pronto! ${ok} duplicada(s) removida(s).`); };
+  alert(`${ok} registro(s) removido(s) da Zaia. Confira o Google Agenda separadamente: nenhum evento foi apagado lá.`); };
 el('btn-foto').onclick=()=>el('foto-input').click();
 el('foto-input').onchange=e=>{ const file=e.target.files[0]; if(!file)return;
   const r=new FileReader();
@@ -2329,7 +2335,7 @@ el('btn-gcal').onclick=()=>{ if(gcalConectado()){ if(confirm('Desconectar a Goog
   else gcalConectar(); };
 function gcalAtualizarUI(){ const on=gcalConectado();
   el('gcal-lbl').textContent=on?'Google Agenda ✓':'Google Agenda';
-  if(on){ gcalAutoSync(); gcalImportar(); } }
+  if(on){ gcalAutoSync(); } } // Importação automática desabilitada para impedir loop Google → Firebase → Google
 /* importa eventos criados na Google Agenda (ex.: convites aceitos) como compromissos */
 let gcalImporting=false;
 async function gcalImportar(){ if(!gcalConectado()||gcalImporting)return; gcalImporting=true;
@@ -2357,7 +2363,7 @@ async function gcalImportar(){ if(!gcalConectado()||gcalImporting)return; gcalIm
       }
     }
   }catch(e){} gcalImporting=false; }
-setInterval(()=>{ if(gcalConectado())gcalImportar(); }, 10*60000);
+// Importação periódica desativada. Não importar sem ação explícita e deduplicação transacional.
 async function gcalFetch(url,opt={}){ let tk=await gcalEnsure(); if(!tk)return null;
   opt.headers={...(opt.headers||{}),Authorization:'Bearer '+tk}; let r=await fetch(url,opt);
   if(r.status===401){ tk=await gcalPedir(''); if(tk){ opt.headers.Authorization='Bearer '+tk; r=await fetch(url,opt); } } return r; }
@@ -2378,12 +2384,12 @@ async function gcalCriarEvento(titulo,descricao,ms,eventId){ if(!gcalConectado()
 /* envio automático: toda tarefa em aberto com data vai pra agenda sozinha */
 let gcalSyncing=false;
 async function gcalAutoSync(){ if(!gcalConectado()||gcalSyncing)return;
-  const alvo=tarefas.filter(t=>!t.concluida&&t.prazo&&!t.gcalEventId); if(!alvo.length)return;
+  const alvo=tarefas.filter(t=>!t.concluida&&t.prazo&&!t.gcalEventId&&t.origem!=='google'); if(!alvo.length)return;
   gcalSyncing=true;
-  for(const t of alvo){ const eid=gcalIdEvento(t.id);
+  try { for(const t of alvo){ const eid=gcalIdEvento(t.id);
     const id=await gcalCriarEvento(t.titulo,t.descricao,t.prazo,eid);
     if(id){ try{ await updateDoc(doc(db,'tarefas',t.id),{gcalEventId:id}); }catch(e){} } }
-  gcalSyncing=false; }
+  } finally { gcalSyncing=false; } }
 gcalInitClient(); gcalAtualizarUI();
 
 /* PWA — registra o service worker */
