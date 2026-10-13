@@ -2055,25 +2055,32 @@ function tentaMover(pos){ const vazio=pzOrdem.indexOf(8);
 const GCAL_CLIENT='630026852696-86odicp8vh49pujg8ablrn18ih1r681o.apps.googleusercontent.com';
 const GCAL_SCOPE='https://www.googleapis.com/auth/calendar.events';
 const TZ='America/Sao_Paulo';
-let gcalTokenClient=null;
+let gcalTokenClient=null, gcalResolve=null;
+const gcalConectado=()=>localStorage.getItem('gcal_conn')==='1';
 function gcalToken(){ const t=localStorage.getItem('gcal_token'),e=+localStorage.getItem('gcal_exp')||0; return (t&&Date.now()<e)?t:null; }
-function gcalInitClient(cb){
-  if(!window.google||!google.accounts||!google.accounts.oauth2){ setTimeout(()=>gcalInitClient(cb),400); return; }
-  if(!gcalTokenClient){ gcalTokenClient=google.accounts.oauth2.initTokenClient({client_id:GCAL_CLIENT,scope:GCAL_SCOPE,
-    callback:(resp)=>{ if(resp.access_token){ localStorage.setItem('gcal_token',resp.access_token);
-      localStorage.setItem('gcal_exp',Date.now()+((resp.expires_in||3600)-60)*1000); gcalAtualizarUI();} }}); }
-  if(cb)cb();
-}
-function gcalConectar(prompt){ if(!gcalTokenClient){ gcalInitClient(()=>gcalConectar(prompt)); return; }
-  gcalTokenClient.requestAccessToken({prompt:prompt||''}); }
-el('btn-gcal').onclick=()=>{ if(gcalToken()){ if(confirm('Desconectar a Google Agenda?')){ localStorage.removeItem('gcal_token');localStorage.removeItem('gcal_exp'); gcalAtualizarUI(); } }
-  else gcalConectar('consent'); };
-function gcalAtualizarUI(){ const on=!!gcalToken();
+function gcalInitClient(){
+  if(!window.google||!google.accounts||!google.accounts.oauth2){ setTimeout(gcalInitClient,500); return; }
+  if(gcalTokenClient){ gcalAtualizarUI(); return; }
+  gcalTokenClient=google.accounts.oauth2.initTokenClient({client_id:GCAL_CLIENT,scope:GCAL_SCOPE,
+    callback:(resp)=>{ if(resp&&resp.access_token){ localStorage.setItem('gcal_token',resp.access_token);
+      localStorage.setItem('gcal_exp',Date.now()+((resp.expires_in||3600)-60)*1000); localStorage.setItem('gcal_conn','1'); gcalAtualizarUI(); }
+      if(gcalResolve){ gcalResolve(resp&&resp.access_token||null); gcalResolve=null; } }});
+  gcalAtualizarUI(); }
+function gcalPedir(prompt){ return new Promise(res=>{ if(!gcalTokenClient){ gcalInitClient(); }
+  if(!gcalTokenClient){ res(null); return; }
+  let done=false; gcalResolve=(v)=>{ if(done)return; done=true; res(v); };
+  setTimeout(()=>{ if(!done){ done=true; gcalResolve=null; res(null); } }, 10000);
+  try{ gcalTokenClient.requestAccessToken({prompt:prompt||''}); }catch(e){ if(!done){ done=true; gcalResolve=null; res(null); } } }); }
+async function gcalEnsure(){ const t=gcalToken(); if(t)return t; if(!gcalConectado())return null; return await gcalPedir(''); }
+function gcalConectar(){ gcalPedir('consent'); }
+el('btn-gcal').onclick=()=>{ if(gcalConectado()){ if(confirm('Desconectar a Google Agenda?')){ ['gcal_token','gcal_exp','gcal_conn'].forEach(k=>localStorage.removeItem(k)); gcalAtualizarUI(); } }
+  else gcalConectar(); };
+function gcalAtualizarUI(){ const on=gcalConectado();
   el('gcal-lbl').textContent=on?'Google Agenda ✓':'Google Agenda';
   if(on){ gcalAutoSync(); gcalImportar(); } }
 /* importa eventos criados na Google Agenda (ex.: convites aceitos) como compromissos */
 let gcalImporting=false;
-async function gcalImportar(){ if(!gcalToken()||gcalImporting)return; gcalImporting=true;
+async function gcalImportar(){ if(!gcalConectado()||gcalImporting)return; gcalImporting=true;
   try{
     const min=new Date().toISOString(), max=new Date(Date.now()+60*DIA).toISOString();
     const r=await gcalFetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${encodeURIComponent(min)}&timeMax=${encodeURIComponent(max)}&singleEvents=true&orderBy=startTime&maxResults=50`);
@@ -2091,11 +2098,11 @@ async function gcalImportar(){ if(!gcalToken()||gcalImporting)return; gcalImport
       }
     }
   }catch(e){} gcalImporting=false; }
-setInterval(()=>{ if(gcalToken())gcalImportar(); }, 10*60000);
-async function gcalFetch(url,opt={}){ const tk=gcalToken(); if(!tk)return null;
-  opt.headers={...(opt.headers||{}),Authorization:'Bearer '+tk}; const r=await fetch(url,opt);
-  if(r.status===401){ localStorage.removeItem('gcal_token'); localStorage.removeItem('gcal_exp'); gcalAtualizarUI(); } return r; }
-async function gcalCriarEvento(titulo,descricao,ms){ if(!gcalToken())return null;
+setInterval(()=>{ if(gcalConectado())gcalImportar(); }, 10*60000);
+async function gcalFetch(url,opt={}){ let tk=await gcalEnsure(); if(!tk)return null;
+  opt.headers={...(opt.headers||{}),Authorization:'Bearer '+tk}; let r=await fetch(url,opt);
+  if(r.status===401){ tk=await gcalPedir(''); if(tk){ opt.headers.Authorization='Bearer '+tk; r=await fetch(url,opt); } } return r; }
+async function gcalCriarEvento(titulo,descricao,ms){ if(!gcalConectado())return null;
   const ini=new Date(ms),fim=new Date(ms+30*60000);
   const body={summary:titulo,description:descricao||'Criado pela Zaia 🌙',
     start:{dateTime:ini.toISOString(),timeZone:TZ},end:{dateTime:fim.toISOString(),timeZone:TZ},
@@ -2105,7 +2112,7 @@ async function gcalCriarEvento(titulo,descricao,ms){ if(!gcalToken())return null
   if(r&&r.ok){ const d=await r.json(); return d.id||true; } return null; }
 /* envio automático: toda tarefa em aberto com data vai pra agenda sozinha */
 let gcalSyncing=false;
-async function gcalAutoSync(){ if(!gcalToken()||gcalSyncing)return;
+async function gcalAutoSync(){ if(!gcalConectado()||gcalSyncing)return;
   const alvo=tarefas.filter(t=>!t.concluida&&t.prazo&&!t.gcalEventId); if(!alvo.length)return;
   gcalSyncing=true;
   for(const t of alvo){ const id=await gcalCriarEvento(t.titulo,t.descricao,t.prazo);
