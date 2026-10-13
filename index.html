@@ -767,6 +767,24 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 .zaia-priority-dot{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:middle;margin-right:6px;box-shadow:0 0 0 3px rgba(255,255,255,.05)}
 
 
+/* ZAIA V6 — timeline inteligente, baixa estimulação */
+.zaia-timeline-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 18px}
+.zaia-timeline-tabs button{min-height:44px;border-radius:13px;padding:9px 15px;background:var(--card);border:1px solid var(--stroke);color:var(--txt-dim);font-weight:750;font-size:13px}
+.zaia-timeline-tabs button.on{background:#48346e;border-color:#8f73c8;color:white;box-shadow:inset 0 -2px #ba9bff}
+.zaia-timeline-tabs button:focus-visible{outline:2px solid var(--foco);outline-offset:3px}
+.zaia-intro{font-size:13px;color:var(--txt-dim);margin:2px 2px 13px}
+.zaia-futuro>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:50px;padding:13px 16px;list-style:none}
+.zaia-futuro>summary::-webkit-details-marker{display:none}
+.zaia-futuro>summary::after{content:'⌄';font-size:19px;color:var(--lilas);transition:transform .15s}
+.zaia-futuro[open]>summary::after{transform:rotate(180deg)}
+.zaia-series-card{background:var(--card);border:1px solid var(--stroke);border-radius:17px;padding:16px;margin:0 0 12px}
+.zaia-series-title{font-weight:800;font-size:16px;color:var(--txt);margin-bottom:7px}
+.zaia-series-muted{opacity:.65}
+.zaia-series-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.zaia-series-actions button{min-height:42px;border-radius:11px;padding:9px 12px;background:var(--elevado);border:1px solid var(--stroke);font-weight:700;font-size:13px;color:var(--lilas)}
+.zaia-series-actions button:hover{border-color:#a48cd0}
+@media(max-width:560px){.zaia-series-actions button{flex:1}.zaia-timeline-tabs button{flex:1}}
+
 /* ZAIA V5 — agenda, recorrência e foco temporal */
 .agenda-extra {border:1px solid var(--stroke);background:var(--elevado);padding:12px 14px;border-radius:18px;margin:12px 0 16px}
 .agenda-extra label{margin-top:9px}.agenda-extra .campo{background:var(--card-solid)}
@@ -897,8 +915,18 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
     </section>
 
     <section id="aba-tarefas">
-      <div id="filtro-etq" class="filtros"></div>
-      <div id="lista-tarefas"></div>
+      <div class="zaia-timeline-tabs" role="group" aria-label="Visualização de tarefas">
+        <button type="button" id="zaia-tab-hoje" class="on" aria-pressed="true">Minha timeline</button>
+        <button type="button" id="zaia-tab-series" aria-pressed="false">Minhas recorrências <span id="zaia-series-count"></span></button>
+      </div>
+      <div id="zaia-timeline-pane">
+        <div id="filtro-etq" class="filtros"></div>
+        <div id="lista-tarefas"></div>
+      </div>
+      <div id="zaia-series-pane" class="oculto">
+        <p class="zaia-help">Cada programação aparece uma única vez aqui. Você pode editar, pausar ou reativar sem excluir o histórico.</p>
+        <div id="zaia-series-list"></div>
+      </div>
     </section>
 
     <section id="aba-projetos" class="oculto">
@@ -1640,30 +1668,94 @@ function zaiaCardOcorrencia(o){const t=o.t, link=t.linkReuniao&&/^https:\/\//i.t
  <div class="t-meta"><span class="tag tag-prazo">${fmtPrazo(o.ms)}</span>${t.local?`<span class="tag tag-etiqueta">📍 ${esc(t.local)}</span>`:''}${link}</div>
  <div style="display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:8px"><button class="mini-btn" data-edit="${t.id}">Editar série</button><button class="zaia-done" aria-pressed="${o.feito}" data-ocorrencia="${t.id}|${o.chave}">${o.feito?'✓ Concluída':'Concluir'}</button></div></div>`;
 }
-function renderTarefas(){ renderFiltros();
-  const agora=Date.now(), janela=agora+60*DIA;
-  let ab=tarefas.filter(t=>!t.concluida&&(!filtroEtq||t.etiqueta===filtroEtq));
-  const normais=ab.filter(t=>!t.recorrencia||t.recorrencia.freq==='none');
-  const series=ab.filter(t=>t.recorrencia&&t.recorrencia.freq!=='none');
-  const visiveis=normais.filter(t=>!t.prazo||t.prazo<=agora);
-  const futuras=normais.filter(t=>t.prazo&&t.prazo>agora).map(t=>({ms:t.prazo,html:itemTarefa(t)}));
-  const recorrHoje=[], recorrFuturo=[];
-  series.forEach(t=>{zaiaRecOcorrencias(t,Math.min(agora,hojeZero()),janela).forEach(o=>{
-    if(o.feito)return;
-    if(o.ms<=agora)recorrHoje.push(o);else recorrFuturo.push(o);
-  });});
-  visiveis.sort((a,b)=>(a.prazo||9e15)-(b.prazo||9e15)||score(b)-score(a));
-  let html='';
-  if(visiveis.length||recorrHoje.length){html+='<div class="sec-titulo">Disponíveis agora</div>'+visiveis.map(itemTarefa).join('')+recorrHoje.map(zaiaCardOcorrencia).join('');}
-  const futuros=[...futuras,...recorrFuturo.map(o=>({ms:o.ms,html:zaiaCardOcorrencia(o)}))].sort((a,b)=>a.ms-b.ms);
-  if(futuros.length){html+=`<details class="zaia-futuro" id="zaia-future-details" ${zaiaFuturoAberto?'open':''}><summary>Programadas para depois (${futuros.length})</summary><div class="zaia-futuro-corpo">${futuros.map(o=>o.html).join('')}</div></details>`;}
-  if(!visiveis.length&&!recorrHoje.length&&!futuros.length)html='<div class="vazio">Nada pendente neste momento.</div>';
-  const feitas=tarefas.filter(t=>t.concluida&&(!filtroEtq||t.etiqueta===filtroEtq)).slice(0,12);
-  if(feitas.length) html+='<div class="sec-titulo">Concluídas recentes</div>'+feitas.map(itemTarefa).join('');
-  el('lista-tarefas').innerHTML=html;
-}
+// V6: recorrências geram apenas visualizações, nunca novos documentos no Firebase.
 let zaiaFuturoAberto=false;
-el('lista-tarefas').addEventListener('toggle',e=>{if(e.target.id==='zaia-future-details')zaiaFuturoAberto=e.target.open;},true);
+let zaiaTarefasModo='timeline';
+function zaiaProximaOcorrencia(t, inicio, horizonteDias=370){
+  // Primeiro resultado válido (inclui o dia atual); não materializa uma lista de meses.
+  return zaiaRecOcorrencias(t,inicio,inicio+horizonteDias*DIA).find(o=>!o.feito)||null;
+}
+function zaiaDescricaoRecorrencia(t){
+  const c=t.recorrencia||{};
+  const freq=c.freq==='daily'?'Todos os dias':c.freq==='weekly'
+    ? 'Toda '+(c.dias||[]).slice().sort((a,b)=>a-b).map(d=>DIAS_ABBR[d]).join(', ')
+    : 'Frequência não definida';
+  const horario=t.prazo?new Date(t.prazo).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'';
+  return [freq,horario,c.ate?'Até '+c.ate.split('-').reverse().join('/'):'Sem data final'].filter(Boolean).join(' · ');
+}
+function renderMinhasRecorrencias(){
+  const series=tarefas.filter(t=>!t.concluida&&t.recorrencia&&t.recorrencia.freq!=='none')
+    .sort((a,b)=>(a.titulo||'').localeCompare(b.titulo||'','pt-BR'));
+  const count=el('zaia-series-count'); if(count)count.textContent=`(${series.length})`;
+  const box=el('zaia-series-list');if(!box)return;
+  if(!series.length){box.innerHTML='<div class="vazio">Nenhuma programação recorrente ainda.</div>';return;}
+  box.innerHTML=series.map(t=>{
+    const pausada=!!t.recorrencia?.pausada;
+    const prox=pausada?null:zaiaProximaOcorrencia(t,hojeZero(),370);
+    const data=prox?`Próxima: ${fmtPrazo(prox.ms)}`:'Nenhuma próxima ocorrência';
+    return `<article class="zaia-series-card ${pausada?'zaia-series-muted':''}">
+      <div class="zaia-series-title">${esc(t.titulo)}</div>
+      <div class="hab-meta">${esc(zaiaDescricaoRecorrencia(t))}</div>
+      <div class="hab-meta">${pausada?'Série pausada':esc(data)}</div>
+      <div class="zaia-series-actions"><button data-edit="${t.id}">Editar série</button>
+        <button data-zaia-pausar="${t.id}">${pausada?'Reativar':'Pausar'}</button></div>
+    </article>`;
+  }).join('');
+}
+function zaiaMudarModo(modo){
+  zaiaTarefasModo=modo;
+  el('zaia-timeline-pane').classList.toggle('oculto',modo!=='timeline');
+  el('zaia-series-pane').classList.toggle('oculto',modo!=='series');
+  [['zaia-tab-hoje','timeline'],['zaia-tab-series','series']].forEach(([id,val])=>{
+    const b=el(id);b.classList.toggle('on',modo===val);b.setAttribute('aria-pressed',String(modo===val));
+  });
+  if(modo==='series')renderMinhasRecorrencias();
+}
+el('zaia-tab-hoje').addEventListener('click',()=>zaiaMudarModo('timeline'));
+el('zaia-tab-series').addEventListener('click',()=>zaiaMudarModo('series'));
+el('lista-tarefas').addEventListener('toggle',e=>{
+  if(e.target.id==='zaia-future-details')zaiaFuturoAberto=e.target.open;
+},true);
+document.body.addEventListener('click',e=>{
+  const b=e.target.closest('[data-zaia-pausar]');if(!b)return;
+  const t=tarefas.find(x=>x.id===b.dataset.zaiaPausar);if(!t||!t.recorrencia)return;
+  // Atualiza apenas o estado de pausa da série, preservando ocorrências concluídas.
+  updateDoc(doc(db,'tarefas',t.id),{recorrencia:{...t.recorrencia,pausada:!t.recorrencia.pausada}})
+    .catch(err=>{console.error('Falha ao pausar série',err);alert('Não foi possível alterar a recorrência.');});
+});
+function renderTarefas(){renderFiltros();
+  const inicioHoje=hojeZero(), fimHoje=new Date(new Date(inicioHoje).setDate(new Date(inicioHoje).getDate()+1)).getTime();
+  const abertas=tarefas.filter(t=>!t.concluida&&(!filtroEtq||t.etiqueta===filtroEtq));
+  const normais=abertas.filter(t=>!t.recorrencia||t.recorrencia.freq==='none');
+  const series=abertas.filter(t=>t.recorrencia&&t.recorrencia.freq!=='none'&&!t.recorrencia.pausada);
+  const hoje=normais.filter(t=>!t.prazo||t.prazo<fimHoje);
+  const futuras=normais.filter(t=>t.prazo&&t.prazo>=fimHoje).map(t=>({ms:t.prazo,html:itemTarefa(t)}));
+  const recorrHoje=[],recorrFuturo=[];
+  for(const t of series){
+    // Uma ocorrência no dia e somente a PRIMEIRA futura de cada série.
+    const dia=zaiaRecOcorrencias(t,inicioHoje,fimHoje).find(o=>!o.feito);
+    if(dia)recorrHoje.push(dia);
+    const prox=zaiaProximaOcorrencia(t,fimHoje,370);
+    if(prox)recorrFuturo.push(prox);
+  }
+  hoje.sort((a,b)=>(a.prazo||9e15)-(b.prazo||9e15)||score(b)-score(a));
+  recorrHoje.sort((a,b)=>a.ms-b.ms);
+  let html='<p class="zaia-intro">Compromissos de hoje e pendências anteriores. As próximas datas ficam recolhidas.</p>';
+  if(hoje.length||recorrHoje.length){
+    html+=`<div class="sec-titulo">Hoje e pendentes (${hoje.length+recorrHoje.length})</div>`
+      +hoje.map(itemTarefa).join('')+recorrHoje.map(zaiaCardOcorrencia).join('');
+  }else html+='<div class="vazio">Seu dia está livre de tarefas pendentes. ✦</div>';
+  const proximas=[...futuras,...recorrFuturo.map(o=>({ms:o.ms,html:zaiaCardOcorrencia(o)}))].sort((a,b)=>a.ms-b.ms);
+  if(proximas.length){
+    html+=`<details class="zaia-futuro" id="zaia-future-details" ${zaiaFuturoAberto?'open':''}>
+      <summary>Próximos dias (${proximas.length})</summary>
+      <div class="zaia-futuro-corpo">${proximas.map(o=>o.html).join('')}</div></details>`;
+  }
+  const feitas=tarefas.filter(t=>t.concluida&&(!filtroEtq||t.etiqueta===filtroEtq)).slice(0,12);
+  if(feitas.length)html+='<details class="zaia-futuro"><summary>Concluídas recentes ('+feitas.length+')</summary><div class="zaia-futuro-corpo">'+feitas.map(itemTarefa).join('')+'</div></details>';
+  el('lista-tarefas').innerHTML=html;
+  renderMinhasRecorrencias();
+}
 
 function renderProjetos(){ if(!projetos.length){el('lista-projetos').innerHTML='<div class="vazio">Crie um projeto para montar um cronograma.</div>';return;}
   el('lista-projetos').innerHTML=projetos.map(p=>{
@@ -1851,7 +1943,7 @@ el('m-salvar').onclick=async()=>{ const tit=el('m-titulo').value.trim(); if(!tit
   const link=el('m-link').value.trim();
   if(link){try{if(new URL(link).protocol!=='https:')throw new Error('Protocolo');}catch(e){fala('Insira um link HTTPS válido.',true);return;}}
   const dados={titulo:tit,descricao:el('m-desc').value.trim()||null,prioridade:prioSel,tipo:tipoSel,etiqueta:el('m-etiqueta').value.trim()||null,prazo,lembrete:prazo,local:el('m-local').value.trim()||null,linkReuniao:link||null,
-    recorrencia:freq==='none'?null:{freq,dias:freq==='weekly'?[...zaiaDiasSel]:[],ate},subitens:subPend.map(s=>({t:s.t,ok:!!s.ok}))};
+    recorrencia:freq==='none'?null:{freq,dias:freq==='weekly'?[...zaiaDiasSel]:[],ate,pausada:!!tarefas.find(t=>t.id===el('m-id').value)?.recorrencia?.pausada},subitens:subPend.map(s=>({t:s.t,ok:!!s.ok}))};
   let id=el('m-id').value; el('m-salvar').disabled=true;
   try{ if(id) await updateDoc(doc(db,'tarefas',id),dados);
     else{ const ref=await addDoc(collection(db,'tarefas'),{...dados,userId:user.uid,concluida:false,criadaEm:Date.now()}); id=ref.id; }
