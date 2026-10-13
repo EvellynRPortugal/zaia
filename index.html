@@ -25,13 +25,20 @@
     --lilas:#E8D9FF;       /* Lilás Neblina */
     --noite:#2E1B6B;       /* Noite Profunda */
     --laranja-claro:#FFF3D6;
-    --bg:#151026; --bg2:#21183A;
-    --card:rgba(46,27,107,0.5); --card-solid:#2E1B6B;
-    --stroke:rgba(180,150,255,0.2);
-    --txt:#ffffff; --txt-dim:#E8D9FF;
+    /* Superfícies — Dark Mode Cósmico (sólidas, para leitura confortável) */
+    --bg:#151026; --bg2:#1C1430;
+    --card:#261B40; --card-solid:#261B40; --elevado:#30214B;
+    --stroke:#473362;
+    --txt:#ffffff; --txt-dim:#D5C9EA;
+    --ativo:#7A5CFF;
     --urgente:#E94FD9; --importante:#FF8A5B; --tranquilo:#4ade80;
-    --sombra:0 18px 50px -18px rgba(0,0,0,0.6);
+    --sombra:0 14px 40px -18px rgba(0,0,0,0.55);
+    --foco:#FFF3D6;
     --fonte-display:'Baloo 2','Plus Jakarta Sans',system-ui,sans-serif;
+    /* Escala de espaçamento (base 4px) */
+    --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px; --sp-8:32px;
+    /* Raios */
+    --r-chip:999px; --r-btn:14px; --r-card:16px; --r-modal:20px;
     font-synthesis:none;
     /* Céu — padrão (tarde): Noite→Roxo Cósmico→Rosa Nebulosa→Laranja Aurora→Lua Suave */
     --sky1:#2E1B6B; --sky2:#7A5CFF; --sky3:#E94FD9; --sky4:#FF8A5B; --sky5:#FFF3D6;
@@ -61,11 +68,30 @@
   button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
   input,select,textarea{font-family:inherit}
 
-  /* CENA ENTERGALACTIC */
-  .ceu{position:fixed;inset:0;z-index:-2;overflow:hidden}
+  /* ACESSIBILIDADE — foco de teclado visível e consistente */
+  :focus{outline:none}
+  a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,[tabindex]:focus-visible{
+    outline:2px solid var(--foco);outline-offset:2px;border-radius:8px}
+  /* Alvo de toque ampliado (>=44px) nos círculos de check, sem mudar o visual */
+  .check{position:relative}
+  .check::after{content:"";position:absolute;inset:-11px}
+  /* Respeita quem pede menos movimento (SO ou modo Visual tranquilo) */
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
+      transition-duration:.001ms!important;scroll-behavior:auto!important}
+  }
+  body.calmo *,body.calmo *::before,body.calmo *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+
+  /* CENA CÓSMICA — ondas suaves, concentradas no topo */
+  .ceu{position:fixed;inset:0;z-index:-2;overflow:hidden;opacity:.5}
   .ceu svg{width:100%;height:100%;display:block}
-  .grao{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.05;
-    background-image:repeating-linear-gradient(115deg,#fff 0,#fff 1px,transparent 1px,transparent 4px)}
+  /* Véu: deixa o topo com as ondas e dissolve pro fundo escuro sólido na área de leitura */
+  .grao{position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:linear-gradient(to bottom, rgba(21,16,38,0) 0%, rgba(21,16,38,.35) 22%, var(--bg) 60%, var(--bg) 100%)}
+  /* Modo "Visual tranquilo": sem ondas, fundo escuro sólido e sem animações */
+  body.calmo .ceu{display:none}
+  body.calmo .grao{background:var(--bg)}
 
   /* LOGIN */
   .login-wrap{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px}
@@ -646,6 +672,7 @@
         <button id="btn-spotify"><svg class="mic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 10.2c2.8-.7 5.5-.3 7.6 1M8 13c2.3-.5 4.6-.2 6.2 1M8.4 15.6c1.8-.4 3.4-.1 4.6.7"/></svg><span id="sp-lbl">Spotify</span></button>
         <button id="btn-ensino"><svg class="mic" viewBox="0 0 24 24"><path d="M12 5a4 4 0 00-4 4c0 1.5.8 2.5 1.5 3.2.5.5.5 1 .5 1.8h4c0-.8 0-1.3.5-1.8.7-.7 1.5-1.7 1.5-3.2a4 4 0 00-4-4z"/><path d="M10 19h4"/></svg><span>Modo Ensino</span></button>
         <button id="btn-manual"><svg class="mic" viewBox="0 0 24 24"><path d="M5 4h9a2 2 0 012 2v14H7a2 2 0 01-2-2V4z"/><path d="M9 8h6M9 12h6"/></svg><span>Manual</span></button>
+        <button id="btn-calmo" role="switch" aria-checked="false"><svg class="mic" viewBox="0 0 24 24"><path d="M20 14a8 8 0 11-9.5-10 6.5 6.5 0 009.5 10z"/></svg><span id="calmo-lbl">Visual tranquilo</span></button>
         <button id="btn-exportar"><svg class="mic" viewBox="0 0 24 24"><path d="M12 4v10M8 11l4 3 4-3"/><path d="M5 19h14"/></svg><span>Exportar meus dados</span></button>
         <button id="btn-sair"><svg class="mic" viewBox="0 0 24 24"><path d="M15 5v-.5A1.5 1.5 0 0013.5 3h-7A1.5 1.5 0 005 4.5v15A1.5 1.5 0 006.5 21h7a1.5 1.5 0 001.5-1.5V19"/><path d="M10 12h10M17 9l3 3-3 3"/></svg><span>Sair</span></button>
       </div>
@@ -1178,6 +1205,14 @@ function mostraErro(e){ const m={'auth/invalid-credential':'E-mail ou senha inco
 /* MENU */
 el('user-linha').onclick=e=>{e.stopPropagation();el('menu-drop').classList.toggle('oculto');};
 document.addEventListener('click',()=>el('menu-drop').classList.add('oculto'));
+
+/* VISUAL TRANQUILO — reduz estímulos (sem ondas/animações), escolha persistente */
+function aplicarCalmo(on){ document.body.classList.toggle('calmo',on);
+  const b=el('btn-calmo'); if(b){ b.setAttribute('aria-checked',on?'true':'false'); }
+  const l=el('calmo-lbl'); if(l){ l.textContent=on?'Visual tranquilo: ligado':'Visual tranquilo'; } }
+aplicarCalmo(localStorage.getItem('zaia_calmo')==='1');
+el('btn-calmo').onclick=e=>{ e.stopPropagation(); const on=!(localStorage.getItem('zaia_calmo')==='1');
+  localStorage.setItem('zaia_calmo',on?'1':'0'); aplicarCalmo(on); };
 el('btn-foto').onclick=()=>el('foto-input').click();
 el('foto-input').onchange=e=>{ const file=e.target.files[0]; if(!file)return;
   const r=new FileReader();
