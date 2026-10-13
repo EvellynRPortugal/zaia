@@ -43,8 +43,6 @@
   body.manha .estrelas,body.tarde .estrelas{opacity:.45}
   .ceu .lua-noite{display:none}
   body.noite .lua-noite{display:block}
-  .ceu .nuvens{display:none;opacity:.12}
-  body.manha .nuvens,body.tarde .nuvens{display:block}
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
   body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);
@@ -552,7 +550,7 @@
 
 <!-- CÉU -->
 <div class="ceu">
-  <svg viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <svg viewBox="0 0 400 800" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" style="stop-color:var(--sky1)"/>
@@ -576,10 +574,6 @@
     <g class="lua-noite">
       <circle cx="305" cy="120" r="36" fill="#fff3d6" opacity=".95"/>
       <circle cx="290" cy="108" r="31" style="fill:var(--sky1)"/>
-    </g>
-    <g class="nuvens" fill="#fff">
-      <ellipse cx="95" cy="150" rx="48" ry="13"/><ellipse cx="130" cy="160" rx="38" ry="11"/>
-      <ellipse cx="300" cy="250" rx="58" ry="15"/><ellipse cx="270" cy="258" rx="40" ry="12"/>
     </g>
     <path d="M0 640 Q100 580 200 630 T400 620 V800 H0 Z" fill="#3d1a54" opacity="0.9"/>
     <path d="M0 700 Q120 650 230 700 T400 690 V800 H0 Z" fill="#2a1140"/>
