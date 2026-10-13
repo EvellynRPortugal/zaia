@@ -228,7 +228,7 @@
   .mini-btn:hover{background:rgba(139,92,246,.4)}
 
   /* STATS */
-  .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px}
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:10px;margin-top:4px}
   .stat{background:var(--card);border:1px solid var(--stroke);border-radius:18px;padding:18px;text-align:center;backdrop-filter:blur(8px)}
   .stat .num{font-size:30px;font-weight:800;background:linear-gradient(100deg,var(--laranja-claro),var(--magenta));
     -webkit-background-clip:text;background-clip:text;color:transparent}
@@ -318,10 +318,14 @@
   .midia-cap{width:44px;height:60px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
     background:linear-gradient(140deg,rgba(139,92,246,.3),rgba(217,70,239,.2));font-size:20px;object-fit:cover}
   img.midia-cap{object-fit:cover}
-  .md-res{display:flex;flex-direction:column;gap:4px;margin-bottom:6px;max-height:230px;overflow-y:auto}
-  .md-res-item{display:flex;gap:10px;align-items:center;text-align:left;padding:7px;border-radius:11px;background:rgba(0,0,0,.2)}
-  .md-res-item:hover{background:rgba(139,92,246,.2)}
+  .md-res{display:flex;flex-direction:column;gap:5px;margin-bottom:6px;max-height:300px;overflow-y:auto}
+  .md-res-item{display:flex;gap:8px;align-items:center;padding:6px;border-radius:11px;background:rgba(0,0,0,.2)}
+  .md-res-main{flex:1;display:flex;gap:10px;align-items:center;text-align:left;background:none;min-width:0}
+  .md-res-item:hover{background:rgba(139,92,246,.15)}
   .md-res-item img{width:36px;height:50px;border-radius:6px;object-fit:cover;flex-shrink:0}
+  .quick-add{width:34px;height:34px;flex-shrink:0;border-radius:50%;border:1.8px solid var(--txt-dim);
+    background:rgba(0,0,0,.25);color:var(--txt-dim);font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .quick-add.on{background:linear-gradient(135deg,var(--roxo),var(--magenta));border-color:transparent;color:#fff}
   .md-res-ph{width:36px;height:50px;border-radius:6px;background:rgba(139,92,246,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
   .md-res-t{font-size:14px;font-weight:600}
   .md-res-y{font-size:12px;color:var(--txt-dim)}
@@ -655,7 +659,10 @@
 
     <section id="aba-assistir" class="oculto">
       <button id="btn-nova-midia" class="mini-btn" style="margin-bottom:12px">+ Adicionar</button>
+      <div id="assistir-stats" class="stats-grid"></div>
+      <input id="busca-lista-midia" class="campo" style="margin:14px 0 10px" placeholder="buscar na minha lista…"/>
       <div id="filtro-midia" class="filtros"></div>
+      <div id="filtro-tipo-midia" class="filtros"></div>
       <div id="lista-midia"></div>
     </section>
 
@@ -1549,7 +1556,21 @@ el('r-excluir').onclick=async()=>{ const id=el('r-id').value; if(!confirm('Apaga
 /* ASSISTIR (séries e filmes — estilo TV Time) */
 const TMDB_KEY='1865483d95385a0fdfa0a55d4e8aae1a';
 const MIDIA_FILTROS=[['assistindo','Assistindo'],['quero','Quero ver'],['concluido','Concluídos'],['fav','Favoritos']];
-let filtroMidia='assistindo';
+const TIPO_FILTROS=[['tudo','Tudo'],['filme','Filmes'],['serie','Séries']];
+let filtroMidia='assistindo', filtroTipoMidia='tudo', buscaMidiaTxt='';
+function epViews(m){ const o=mapAssist(m); let n=0; Object.values(o).forEach(c=>n+=c); return n; }
+function statsAssistir(){ const filmes=midias.filter(m=>m.tipo==='filme'), series=midias.filter(m=>m.tipo==='serie');
+  const filmesVistos=filmes.filter(m=>m.visto); let ev=0,hs=0;
+  series.forEach(m=>{ const v=epViews(m); ev+=v; hs+=v*((m.runtimeEp||40))/60; });
+  let hf=0; filmesVistos.forEach(m=>{ hf+=Math.max(1,m.vezes||1)*((m.runtime||110))/60; });
+  return {filmesVistos:filmesVistos.length, series:series.length, ev, hs:Math.round(hs), hf:Math.round(hf)}; }
+function renderAssistirStats(){ const s=statsAssistir();
+  el('assistir-stats').innerHTML=`
+    <div class="stat"><div class="num">${s.filmesVistos}</div><div class="lbl">filmes assistidos</div></div>
+    <div class="stat"><div class="num">${s.series}</div><div class="lbl">séries</div></div>
+    <div class="stat"><div class="num">${s.ev}</div><div class="lbl">episódios vistos</div></div>
+    <div class="stat"><div class="num">${s.hs}h</div><div class="lbl">em séries</div></div>
+    <div class="stat"><div class="num">${s.hf}h</div><div class="lbl">em filmes</div></div>`; }
 function totalEps(m){ return (m.temporadas||[]).reduce((s,t)=>s+(t.eps||0),0); }
 function mapAssist(m){ const a=m.assistidos; if(!a)return {}; if(Array.isArray(a)){const o={};a.forEach(k=>o[k]=1);return o;} return {...a}; }
 function epsVistos(m){ const o=mapAssist(m); return Object.keys(o).filter(k=>o[k]>0).length; }
@@ -1562,7 +1583,8 @@ function statusMidia(m){ if(m.tipo==='filme')return m.visto?'concluido':'quero';
   if(min>=1 && min===max)return 'concluido';  // ciclo completo e parelho
   return 'assistindo'; }                        // uns à frente = revendo
 const rotuloStatus=s=>({assistindo:'Assistindo',quero:'Quero ver',concluido:'Concluído'}[s]||'');
-function renderFiltroMidia(){ el('filtro-midia').innerHTML=MIDIA_FILTROS.map(([k,l])=>`<button class="chip ${filtroMidia===k?'on':''}" data-mf="${k}">${l}</button>`).join(''); }
+function renderFiltroMidia(){ el('filtro-midia').innerHTML=MIDIA_FILTROS.map(([k,l])=>`<button class="chip ${filtroMidia===k?'on':''}" data-mf="${k}">${l}</button>`).join('');
+  el('filtro-tipo-midia').innerHTML=TIPO_FILTROS.map(([k,l])=>`<button class="chip ${filtroTipoMidia===k?'on':''}" data-mtf="${k}">${l}</button>`).join(''); }
 function midiaCard(m){ const serie=m.tipo==='serie';
   const prog=serie?`${epsVistos(m)}/${totalEps(m)||'?'} eps`:(m.vezes>1?`assistido ${m.vezes}x`:'');
   return `<button class="poster-card" data-midabrir="${m.id}">
@@ -1571,12 +1593,16 @@ function midiaCard(m){ const serie=m.tipo==='serie';
     <div class="poster-tit">${esc(m.titulo)}</div>
     ${prog?`<div class="poster-sub">${prog}</div>`:''}
   </button>`; }
-function renderMidia(){ renderFiltroMidia();
+function renderMidia(){ renderFiltroMidia(); renderAssistirStats();
   let lista=midias.slice();
   if(filtroMidia==='fav')lista=lista.filter(m=>m.fav); else lista=lista.filter(m=>statusMidia(m)===filtroMidia);
+  if(filtroTipoMidia!=='tudo')lista=lista.filter(m=>m.tipo===filtroTipoMidia);
+  if(buscaMidiaTxt)lista=lista.filter(m=>(m.titulo||'').toLowerCase().includes(buscaMidiaTxt));
   lista.sort((a,b)=>(b.criadaEm||0)-(a.criadaEm||0));
-  el('lista-midia').innerHTML=lista.length?`<div class="poster-grid">${lista.map(midiaCard).join('')}</div>`:'<div class="vazio">Nada aqui ainda.</div>'; }
+  el('lista-midia').innerHTML=lista.length?`<div class="poster-grid">${lista.map(midiaCard).join('')}</div>`:'<div class="vazio">Nada aqui.</div>'; }
 el('filtro-midia').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;filtroMidia=b.dataset.mf;renderMidia();});
+el('filtro-tipo-midia').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;filtroTipoMidia=b.dataset.mtf;renderMidia();});
+el('busca-lista-midia').addEventListener('input',()=>{ buscaMidiaTxt=el('busca-lista-midia').value.trim().toLowerCase(); renderMidia(); });
 
 /* adicionar (busca TMDB) */
 let buscaTimer=null;
@@ -1585,30 +1611,42 @@ el('busca-cancelar').onclick=()=>el('modal-busca').classList.remove('on');
 el('md-busca').addEventListener('input',()=>{ clearTimeout(buscaTimer); const q=el('md-busca').value.trim();
   if(q.length<2){el('md-resultados').innerHTML='';return;} buscaTimer=setTimeout(()=>buscarTMDB(q),350); });
 let ultimaBusca=[];
+const naLista=(tp,id)=>midias.find(m=>String(m.tmdbId)===String(id)&&m.tipo===tp);
+function renderResultados(){ const res=ultimaBusca;
+  el('md-resultados').innerHTML=res.length?res.map(x=>{ const t=x.title||x.name, ano=(x.release_date||x.first_air_date||'').slice(0,4);
+    const pp=x.poster_path?`https://image.tmdb.org/t/p/w92${x.poster_path}`:'', tp=x.media_type==='tv'?'serie':'filme';
+    const dados=`${tp}|${x.id}|${encodeURIComponent(t)}|${x.poster_path||''}`, membro=!!naLista(tp,x.id);
+    return `<div class="md-res-item"><button type="button" class="md-res-main" data-pick="${dados}">
+      ${pp?`<img src="${pp}" alt="">`:'<div class="md-res-ph">🎬</div>'}
+      <div><div class="md-res-t">${esc(t)}</div><div class="md-res-y">${tp==='serie'?'Série':'Filme'}${ano?' · '+ano:''}</div></div></button>
+      <button type="button" class="quick-add ${membro?'on':''}" data-quick="${dados}">${membro?'✓':'+'}</button></div>`;
+  }).join(''):'<div class="vazio" style="padding:10px">Nada encontrado.</div>'; }
 async function buscarTMDB(q){
   try{ const r=await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_KEY}&language=pt-BR&query=${encodeURIComponent(q)}`);
-    const d=await r.json(); const res=(d.results||[]).filter(x=>x.media_type==='movie'||x.media_type==='tv').slice(0,8);
-    ultimaBusca=res;
-    el('md-resultados').innerHTML=res.length?res.map(x=>{ const t=x.title||x.name, ano=(x.release_date||x.first_air_date||'').slice(0,4);
-      const pp=x.poster_path?`https://image.tmdb.org/t/p/w92${x.poster_path}`:'', tp=x.media_type==='tv'?'serie':'filme';
-      return `<button type="button" class="md-res-item" data-pick="${tp}|${x.id}|${encodeURIComponent(t)}|${x.poster_path||''}">
-        ${pp?`<img src="${pp}" alt="">`:'<div class="md-res-ph">🎬</div>'}
-        <div><div class="md-res-t">${esc(t)}</div><div class="md-res-y">${tp==='serie'?'Série':'Filme'}${ano?' · '+ano:''}</div></div></button>`;
-    }).join(''):'<div class="vazio" style="padding:10px">Nada encontrado.</div>';
+    const d=await r.json(); ultimaBusca=(d.results||[]).filter(x=>x.media_type==='movie'||x.media_type==='tv').slice(0,10); renderResultados();
   }catch(e){ el('md-resultados').innerHTML='<div class="vazio" style="padding:10px">Erro na busca.</div>'; }
 }
-el('md-resultados').addEventListener('click',async e=>{ const b=e.target.closest('[data-pick]'); if(!b)return;
-  b.style.opacity='.5';
-  const [tp,id,tenc,pp]=b.dataset.pick.split('|'); const titulo=decodeURIComponent(tenc);
-  const item=ultimaBusca.find(x=>String(x.id)===id && (x.media_type==='tv')===(tp==='serie'));
-  let temporadas=null, sinopse=item&&item.overview?item.overview:'';
-  if(tp==='serie'){ try{ const r=await fetch(`https://api.themoviedb.org/3/tv/${id}?api_key=${TMDB_KEY}&language=pt-BR`); const d=await r.json();
-    temporadas=(d.seasons||[]).filter(s=>s.season_number>=1&&s.episode_count>0).map(s=>({n:s.season_number,eps:s.episode_count,nome:s.name}));
-    if(d.overview)sinopse=d.overview; }catch(err){} }
+async function adicionarMidia(tp,id,titulo,pp){
+  const ex=naLista(tp,id); if(ex)return ex.id;
+  let temporadas=null,sinopse='',runtimeEp=null,runtime=null;
+  try{ if(tp==='serie'){ const d=await (await fetch(`https://api.themoviedb.org/3/tv/${id}?api_key=${TMDB_KEY}&language=pt-BR`)).json();
+      temporadas=(d.seasons||[]).filter(s=>s.season_number>=1&&s.episode_count>0).map(s=>({n:s.season_number,eps:s.episode_count,nome:s.name}));
+      sinopse=d.overview||''; const rt=(d.episode_run_time||[]).filter(Boolean); runtimeEp=rt.length?Math.round(rt.reduce((a,b)=>a+b,0)/rt.length):null;
+    } else { const d=await (await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${TMDB_KEY}&language=pt-BR`)).json();
+      sinopse=d.overview||''; runtime=d.runtime||null; } }catch(e){}
   const dados={titulo,tipo:tp,tmdbId:+id||null,poster:pp?`https://image.tmdb.org/t/p/w500${pp}`:null,sinopse:sinopse||null,
-    temporadas:temporadas||null,assistidos:[],visto:false,vezes:0,nota:null,nota_txt:null,fav:false,userId:user.uid,criadaEm:Date.now()};
-  const ref=await addDoc(collection(db,'midias'),dados);
-  el('modal-busca').classList.remove('on'); abrirDet(ref.id); });
+    temporadas:temporadas||null,runtimeEp:runtimeEp||null,runtime:runtime||null,assistidos:[],visto:false,vezes:0,nota:null,nota_txt:null,fav:false,userId:user.uid,criadaEm:Date.now()};
+  const ref=await addDoc(collection(db,'midias'),dados); return ref.id;
+}
+el('md-resultados').addEventListener('click',async e=>{
+  const q=e.target.closest('[data-quick]');
+  if(q){ q.disabled=true; const [tp,id,tenc,pp]=q.dataset.quick.split('|'); const ex=naLista(tp,id);
+    if(ex){ await del('midias',ex.id); } else { await adicionarMidia(tp,id,decodeURIComponent(tenc),pp); }
+    setTimeout(renderResultados,350); return; }
+  const b=e.target.closest('[data-pick]'); if(!b)return; b.style.opacity='.5';
+  const [tp,id,tenc,pp]=b.dataset.pick.split('|');
+  const nid=await adicionarMidia(tp,id,decodeURIComponent(tenc),pp);
+  el('modal-busca').classList.remove('on'); abrirDet(nid); });
 
 /* detalhe (marcar episódios) */
 let detId=null, detNota=0;
