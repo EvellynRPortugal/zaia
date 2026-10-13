@@ -86,7 +86,8 @@
     position:sticky;top:0;height:100dvh}
   .side-marca{font-size:26px;font-weight:800;letter-spacing:-.5px;padding:4px 8px;
     background:linear-gradient(100deg,var(--laranja-claro),var(--magenta),var(--roxo));
-    -webkit-background-clip:text;background-clip:text;color:transparent}
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 2px 7px rgba(25,10,45,.6))}
   .conteudo{flex:1;min-width:0;padding:24px 22px 120px;max-width:760px}
 
   /* NAV VERTICAL */
@@ -129,8 +130,10 @@
   .mic{width:18px;height:18px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
 
   /* TOPO CONTEÚDO */
-  .saudacao h1{font-size:24px;font-weight:700;letter-spacing:-.5px}
-  .saudacao p{color:var(--txt-dim);font-size:14px;margin-top:2px;margin-bottom:16px}
+  .saudacao h1{font-size:24px;font-weight:700;letter-spacing:-.5px;
+    text-shadow:0 1px 10px rgba(25,10,45,.55),0 1px 2px rgba(25,10,45,.5)}
+  .saudacao p{color:#efe6ff;font-size:14px;margin-top:2px;margin-bottom:16px;
+    text-shadow:0 1px 8px rgba(25,10,45,.55)}
 
   /* BARRA ZAIA */
   .zaia-bar{background:var(--card);border:1px solid var(--stroke);border-radius:18px;padding:8px;
@@ -1196,7 +1199,7 @@ function apelido(raw){ const base=raw.split('@')[0].split(' ')[0];
   return base.charAt(0).toUpperCase()+base.slice(1); }
 function saudacao(nome){ const h=new Date().getHours();
   const parte=h<5?'Boa madrugada':h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';
-  el('ola').textContent=`${parte}, ${nome} 🌙`; }
+  el('ola').textContent=`${parte}, ${nome}`; }
 
 /* CÉU POR PERÍODO — o fundo muda de cor conforme a hora, sem perder a essência da Zaia */
 function periodoDia(){ const h=new Date().getHours();
@@ -2188,20 +2191,27 @@ setInterval(()=>{ if(gcalConectado())gcalImportar(); }, 10*60000);
 async function gcalFetch(url,opt={}){ let tk=await gcalEnsure(); if(!tk)return null;
   opt.headers={...(opt.headers||{}),Authorization:'Bearer '+tk}; let r=await fetch(url,opt);
   if(r.status===401){ tk=await gcalPedir(''); if(tk){ opt.headers.Authorization='Bearer '+tk; r=await fetch(url,opt); } } return r; }
-async function gcalCriarEvento(titulo,descricao,ms){ if(!gcalConectado())return null;
+/* ID fixo do evento, derivado do id da tarefa (base32hex: só 0-9 e a-v).
+   Com isso o Google recusa cópias repetidas em vez de criar outra. */
+function gcalIdEvento(taskId){ let h=''; for(let i=0;i<taskId.length;i++){ h+=taskId.charCodeAt(i).toString(16).padStart(2,'0'); } return 'zaia'+h; }
+async function gcalCriarEvento(titulo,descricao,ms,eventId){ if(!gcalConectado())return null;
   const ini=new Date(ms),fim=new Date(ms+30*60000);
   const body={summary:titulo,description:descricao||'Criado pela Zaia 🌙',
     start:{dateTime:ini.toISOString(),timeZone:TZ},end:{dateTime:fim.toISOString(),timeZone:TZ},
     reminders:{useDefault:false,overrides:[{method:'popup',minutes:0},{method:'popup',minutes:10}]}};
+  if(eventId) body.id=eventId;
   const r=await gcalFetch('https://www.googleapis.com/calendar/v3/calendars/primary/events',{method:'POST',
     headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  if(r&&r.ok){ const d=await r.json(); return d.id||true; } return null; }
+  if(r&&r.ok){ const d=await r.json(); return d.id||eventId||true; }
+  if(r&&r.status===409) return eventId||true;   // já existe: não duplica
+  return null; }
 /* envio automático: toda tarefa em aberto com data vai pra agenda sozinha */
 let gcalSyncing=false;
 async function gcalAutoSync(){ if(!gcalConectado()||gcalSyncing)return;
   const alvo=tarefas.filter(t=>!t.concluida&&t.prazo&&!t.gcalEventId); if(!alvo.length)return;
   gcalSyncing=true;
-  for(const t of alvo){ const id=await gcalCriarEvento(t.titulo,t.descricao,t.prazo);
+  for(const t of alvo){ const eid=gcalIdEvento(t.id);
+    const id=await gcalCriarEvento(t.titulo,t.descricao,t.prazo,eid);
     if(id){ try{ await updateDoc(doc(db,'tarefas',t.id),{gcalEventId:id}); }catch(e){} } }
   gcalSyncing=false; }
 gcalInitClient(); gcalAtualizarUI();
