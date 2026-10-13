@@ -766,6 +766,22 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 
 .zaia-priority-dot{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:middle;margin-right:6px;box-shadow:0 0 0 3px rgba(255,255,255,.05)}
 
+
+/* ZAIA V5 — agenda, recorrência e foco temporal */
+.agenda-extra {border:1px solid var(--stroke);background:var(--elevado);padding:12px 14px;border-radius:18px;margin:12px 0 16px}
+.agenda-extra label{margin-top:9px}.agenda-extra .campo{background:var(--card-solid)}
+.zaia-rec-dias {gap:5px;margin:6px 0 10px}.zaia-rec-dias button{min-width:39px;flex:1;padding:10px 5px}
+.zaia-rec-dias button.sel{background:var(--roxo);border-color:var(--roxo);color:#fff}
+.zaia-help{font-size:12px;color:var(--txt-dim);line-height:1.6;margin:3px 0 2px}
+.zaia-futuro{margin:18px 0;border:1px solid var(--stroke);border-radius:18px;background:var(--card-solid);overflow:hidden}
+.zaia-futuro summary{padding:15px 17px;cursor:pointer;color:var(--lilas);font-weight:700;list-style-position:inside}
+.zaia-futuro .zaia-futuro-corpo{padding:0 14px 12px}
+.zaia-ocorrencia{border:1px solid var(--stroke);border-radius:16px;background:var(--card-solid);padding:13px 15px;margin-bottom:9px}
+.zaia-ocorrencia .t-titulo{font-weight:700}.zaia-ocorrencia .t-meta{margin-top:8px}
+.zaia-ocorrencia .zaia-done{min-width:44px;min-height:44px;border-radius:12px;border:1px solid var(--stroke);background:var(--elevado);padding:8px 12px}
+.zaia-ocorrencia .zaia-done[aria-pressed="true"]{color:var(--tranquilo)}
+.zaia-agenda-link{color:var(--lilas);text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+
 </style>
 </head>
 <body>
@@ -985,6 +1001,23 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
     <div style="display:flex;gap:8px">
       <input id="m-data" class="campo" type="date" style="flex:1"/>
       <input id="m-hora" class="campo" type="time" style="flex:0 0 118px"/>
+    </div>
+    <div class="agenda-extra">
+      <label for="m-local">Local ou endereço (opcional)</label>
+      <input id="m-local" class="campo" placeholder="Ex.: Sala 203, Campus Central" />
+      <label for="m-link">Link da reunião (opcional)</label>
+      <input id="m-link" class="campo" type="url" placeholder="https://meet.google.com/..." />
+      <label for="m-rec-freq">Repetir</label>
+      <select id="m-rec-freq" class="campo"><option value="none">Não repetir</option><option value="daily">Todos os dias</option><option value="weekly">Dias da semana personalizados</option></select>
+      <div id="m-rec-extra" class="oculto">
+        <label>Dias em que se repete</label>
+        <div class="dias-pick zaia-rec-dias" id="m-rec-dias">
+          <button type="button" data-rec-day="0">Dom</button><button type="button" data-rec-day="1">Seg</button><button type="button" data-rec-day="2">Ter</button><button type="button" data-rec-day="3">Qua</button><button type="button" data-rec-day="4">Qui</button><button type="button" data-rec-day="5">Sex</button><button type="button" data-rec-day="6">Sáb</button>
+        </div>
+      </div>
+      <label for="m-rec-end">Repetir até (inclusive)</label>
+      <input id="m-rec-end" class="campo" type="date" />
+      <p class="zaia-help">A recorrência aparece na Zaia sem criar tarefas duplicadas. As séries recorrentes ainda não são exportadas para o Google Agenda.</p>
     </div>
     <label>Etiqueta</label>
     <input id="m-etiqueta" class="campo"/>
@@ -1464,6 +1497,7 @@ function aplicarPeriodo(){ document.body.classList.remove('manha','tarde','noite
   document.body.classList.add(periodoDia()); }
 aplicarPeriodo();
 setInterval(aplicarPeriodo, 10*60*1000);
+setInterval(()=>{if(user){renderTarefas();renderRotina();renderRotinaHoje();}},60000);
 
 /* DADOS */
 function ligarDados(){ const col=(n)=>query(collection(db,n), where('userId','==',user.uid));
@@ -1509,6 +1543,7 @@ function render(){ renderTarefas();renderProjetos();renderSinonimos();renderRoti
 const hojeStr=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
 function diaMesAlvo(diaMes){ const d=new Date(); const ultimo=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(); return Math.min(diaMes||1,ultimo); }
 function rotinaHoje(r){
+  if(r.hora && new Date().toTimeString().slice(0,5) < r.hora) return false;
   if(r.freq==='mes'){ return new Date().getDate()===diaMesAlvo(r.diaMes); }
   const hj=new Date().getDay(); return r.dias==='todos'||(Array.isArray(r.dias)&&r.dias.includes(hj)); }
 const IC_MANHA='<svg viewBox="0 0 24 24"><path d="M3 18h18M8 18a4 4 0 018 0"/><path d="M12 4v2M4.5 9.5l1.4 1.4M19.5 9.5l-1.4 1.4"/></svg>';
@@ -1532,10 +1567,14 @@ function renderRotinaHoje(){ const hoje=rotinas.filter(rotinaHoje);
   el('rotina-hoje-sec').classList.toggle('oculto',!hoje.length);
   el('rotina-hoje').innerHTML=hoje.length?grupos(hoje):''; }
 function renderRotina(){ if(!rotinas.length){el('lista-rotina').innerHTML='<div class="vazio">Sem hábitos ainda. Crie o primeiro — algo pequeno do seu dia.</div>';return;}
-  el('lista-rotina').innerHTML=grupos(rotinas); }
+  const disponiveis=rotinas.filter(rotinaHoje),futuras=rotinas.filter(r=>!rotinaHoje(r));
+  el('lista-rotina').innerHTML=(disponiveis.length?'<div class="sec-titulo">Disponíveis agora</div>'+grupos(disponiveis):'<div class="vazio">Nenhum hábito disponível agora.</div>')+
+    (futuras.length?`<details class="zaia-futuro"><summary>Próximas rotinas (${futuras.length})</summary><div class="zaia-futuro-corpo">${grupos(futuras)}</div></details>`:''); }
 function itemTarefa(t){
   const prazo=t.prazo?`<span class="tag tag-prazo ${venceu(t.prazo)&&!t.concluida?'venc':''}">${fmtPrazo(t.prazo)}</span>`:'';
   const etq=t.etiqueta?`<span class="tag tag-etiqueta">${esc(t.etiqueta)}</span>`:'';
+  const local=t.local?`<span class="tag tag-etiqueta">📍 ${esc(t.local)}</span>`:'';
+  const link=t.linkReuniao&&/^https:\/\//i.test(t.linkReuniao)?`<a class="zaia-agenda-link" target="_blank" rel="noopener noreferrer" href="${esc(t.linkReuniao)}">Reunião ↗</a>`:'';
   const nA=anexos.filter(a=>a.tarefaId===t.id).length;
   const anx=nA?`<span class="tag tag-prazo">${nA} anexo${nA>1?'s':''}</span>`:'';
   const desc=t.descricao?`<div class="t-desc">${esc(t.descricao)}</div>`:'';
@@ -1548,7 +1587,7 @@ function itemTarefa(t){
     <div class="t-corpo-wrap">
       <div class="t-corpo" data-open="${t.id}">
         <div class="t-titulo">${priIcon(t.prioridade)}${esc(t.titulo)}</div>${desc}
-        <div class="t-meta">${ehCompromisso(t)?'<span class="tag tag-compromisso">compromisso</span>':''}${etq}${prazo}${anx}${subTag}</div>
+        <div class="t-meta">${ehCompromisso(t)?'<span class="tag tag-compromisso">compromisso</span>':''}${etq}${prazo}${local}${link}${anx}${subTag}</div>
       </div>
       ${subList}
     </div>
@@ -1578,25 +1617,54 @@ function renderFiltros(){ const etqs=etiquetasExistentes(); const box=el('filtro
   let h=`<button class="chip ${!filtroEtq?'on':''}" data-etq="">Todas</button>`;
   etqs.forEach(e=>{ h+=`<button class="chip ${filtroEtq===e?'on':''}" data-etq="${esc(e)}">${esc(e)}</button>`; });
   box.innerHTML=h; }
+/* Recorrências calculadas em tempo de exibição, sem duplicar documentos no Firebase */
+const zaiaDia = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+function zaiaRecOcorrencias(t, inicio, fim){
+  const cfg=t.recorrencia; if(!cfg||cfg.freq==='none'||!t.prazo)return [];
+  const base=new Date(t.prazo), hora=base.getHours(), min=base.getMinutes();
+  const limite=cfg.ate?new Date(cfg.ate+'T23:59:59').getTime():Infinity;
+  const inicioMs=Math.max(inicio,new Date(base.getFullYear(),base.getMonth(),base.getDate()).getTime());
+  const resultado=[];
+  const day=new Date(inicioMs);day.setHours(0,0,0,0);
+  for(let i=0;i<370&&day.getTime()<fim&&resultado.length<60;i++,day.setDate(day.getDate()+1)){
+    const ms=new Date(day.getFullYear(),day.getMonth(),day.getDate(),hora,min).getTime();
+    if(ms<t.prazo||ms>limite||ms<inicio||ms>=fim)continue;
+    if(cfg.freq==='weekly'&&!(cfg.dias||[]).includes(day.getDay()))continue;
+    const chave=zaiaDia(day);
+    resultado.push({t,ms,chave,feito:(t.ocorrenciasConcluidas||[]).includes(chave)});
+  }
+  return resultado;
+}
+function zaiaCardOcorrencia(o){const t=o.t, link=t.linkReuniao&&/^https:\/\//i.test(t.linkReuniao)?`<a class="zaia-agenda-link" target="_blank" rel="noopener noreferrer" href="${esc(t.linkReuniao)}">Entrar na reunião ↗</a>`:'';
+ return `<div class="zaia-ocorrencia"><div class="t-titulo">${esc(t.titulo)}</div><div class="t-desc">${t.descricao?esc(t.descricao):''}</div>
+ <div class="t-meta"><span class="tag tag-prazo">${fmtPrazo(o.ms)}</span>${t.local?`<span class="tag tag-etiqueta">📍 ${esc(t.local)}</span>`:''}${link}</div>
+ <div style="display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:8px"><button class="mini-btn" data-edit="${t.id}">Editar série</button><button class="zaia-done" aria-pressed="${o.feito}" data-ocorrencia="${t.id}|${o.chave}">${o.feito?'✓ Concluída':'Concluir'}</button></div></div>`;
+}
 function renderTarefas(){ renderFiltros();
-  let ab=tarefas.filter(t=>!t.concluida);
-  if(filtroEtq) ab=ab.filter(t=>t.etiqueta===filtroEtq);
-  const hj=hojeZero(), fimHoje=hj+DIA, fimAmanha=hj+2*DIA, fim7=hj+7*DIA;
-  const grupos=[
-    {t:'Atrasadas', f:x=>x.prazo&&x.prazo<hj},
-    {t:'Hoje', f:x=>x.prazo&&x.prazo>=hj&&x.prazo<fimHoje},
-    {t:'Amanhã', f:x=>x.prazo&&x.prazo>=fimHoje&&x.prazo<fimAmanha},
-    {t:'Próximos 7 dias', f:x=>x.prazo&&x.prazo>=fimAmanha&&x.prazo<fim7},
-    {t:'Mais tarde', f:x=>x.prazo&&x.prazo>=fim7},
-    {t:'Sem data', f:x=>!x.prazo}
-  ];
-  let h='', usados=new Set();
-  grupos.forEach(g=>{ const lista=ab.filter(g.f).sort((a,b)=>(a.prazo||9e15)-(b.prazo||9e15)||score(b)-score(a));
-    if(lista.length){ h+=`<div class="sec-titulo">${g.t}</div>`+lista.map(t=>{usados.add(t.id);return itemTarefa(t);}).join(''); } });
-  if(!ab.length)h='<div class="vazio">Nenhuma tarefa'+(filtroEtq?' nessa etiqueta.':' em aberto.')+'</div>';
-  const ft=tarefas.filter(t=>t.concluida&&(!filtroEtq||t.etiqueta===filtroEtq)).sort((a,b)=>(b.concluidaEm||b.criadaEm||0)-(a.concluidaEm||a.criadaEm||0)).slice(0,15);
-  if(ft.length)h+=`<div class="sec-titulo">Concluídas recentes</div>`+ft.map(itemTarefa).join('');
-  el('lista-tarefas').innerHTML=h; }
+  const agora=Date.now(), janela=agora+60*DIA;
+  let ab=tarefas.filter(t=>!t.concluida&&(!filtroEtq||t.etiqueta===filtroEtq));
+  const normais=ab.filter(t=>!t.recorrencia||t.recorrencia.freq==='none');
+  const series=ab.filter(t=>t.recorrencia&&t.recorrencia.freq!=='none');
+  const visiveis=normais.filter(t=>!t.prazo||t.prazo<=agora);
+  const futuras=normais.filter(t=>t.prazo&&t.prazo>agora).map(t=>({ms:t.prazo,html:itemTarefa(t)}));
+  const recorrHoje=[], recorrFuturo=[];
+  series.forEach(t=>{zaiaRecOcorrencias(t,Math.min(agora,hojeZero()),janela).forEach(o=>{
+    if(o.feito)return;
+    if(o.ms<=agora)recorrHoje.push(o);else recorrFuturo.push(o);
+  });});
+  visiveis.sort((a,b)=>(a.prazo||9e15)-(b.prazo||9e15)||score(b)-score(a));
+  let html='';
+  if(visiveis.length||recorrHoje.length){html+='<div class="sec-titulo">Disponíveis agora</div>'+visiveis.map(itemTarefa).join('')+recorrHoje.map(zaiaCardOcorrencia).join('');}
+  const futuros=[...futuras,...recorrFuturo.map(o=>({ms:o.ms,html:zaiaCardOcorrencia(o)}))].sort((a,b)=>a.ms-b.ms);
+  if(futuros.length){html+=`<details class="zaia-futuro" id="zaia-future-details" ${zaiaFuturoAberto?'open':''}><summary>Programadas para depois (${futuros.length})</summary><div class="zaia-futuro-corpo">${futuros.map(o=>o.html).join('')}</div></details>`;}
+  if(!visiveis.length&&!recorrHoje.length&&!futuros.length)html='<div class="vazio">Nada pendente neste momento.</div>';
+  const feitas=tarefas.filter(t=>t.concluida&&(!filtroEtq||t.etiqueta===filtroEtq)).slice(0,12);
+  if(feitas.length) html+='<div class="sec-titulo">Concluídas recentes</div>'+feitas.map(itemTarefa).join('');
+  el('lista-tarefas').innerHTML=html;
+}
+let zaiaFuturoAberto=false;
+el('lista-tarefas').addEventListener('toggle',e=>{if(e.target.id==='zaia-future-details')zaiaFuturoAberto=e.target.open;},true);
+
 function renderProjetos(){ if(!projetos.length){el('lista-projetos').innerHTML='<div class="vazio">Crie um projeto para montar um cronograma.</div>';return;}
   el('lista-projetos').innerHTML=projetos.map(p=>{
     const es=etapas.filter(e=>e.projetoId===p.id).sort((a,b)=>(a.prazo||9e15)-(b.prazo||9e15)||(a.ordem||0)-(b.ordem||0));
@@ -1641,6 +1709,10 @@ function priIcon(p){
 /* CLIQUES */
 document.body.addEventListener('click', async e=>{
   const t=e.target.closest('button'); if(!t)return; const d=t.dataset;
+  if(d.ocorrencia){ const [id,chave]=d.ocorrencia.split('|'); const serie=tarefas.find(t=>t.id===id);if(!serie)return;
+    const atual=serie.ocorrenciasConcluidas||[];
+    const novos=atual.includes(chave)?atual.filter(x=>x!==chave):[...atual,chave];
+    return updateDoc(doc(db,'tarefas',id),{ocorrenciasConcluidas:novos}); }
   if(d.check) return toggleTarefa(d.check);
   if(d.edit) return abrirEdicao(d.edit);
   if(d.del){ if(confirm('Apagar essa tarefa?')){ anexos.filter(a=>a.tarefaId===d.del).forEach(a=>del('anexos',a.id)); return del('tarefas',d.del);} }
@@ -1659,7 +1731,7 @@ document.body.addEventListener('click', async e=>{
   if(d.delsin) return del('sinonimos',d.delsin);
   if(d.addetapa) return addEtapaUI(d.addetapa);
 });
-document.body.addEventListener('click',e=>{ if(e.target.closest('button'))return;
+document.body.addEventListener('click',e=>{ if(e.target.closest('button,a'))return;
   const o=e.target.closest('[data-open]'); if(o)return abrirEdicao(o.dataset.open);
   const r=e.target.closest('[data-rotedit]'); if(r)return abrirRotina(r.dataset.rotedit);
   const md=e.target.closest('[data-midabrir]'); if(md)return abrirDet(md.dataset.midabrir);
@@ -1700,19 +1772,34 @@ el('m-prio').addEventListener('click',e=>{ const b=e.target.closest('button'); i
 el('m-tipo').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b)return;
   document.querySelectorAll('#m-tipo button').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); tipoSel=b.dataset.tp; });
 function setTipo(tp){ tipoSel=tp; document.querySelectorAll('#m-tipo button').forEach(x=>x.classList.toggle('sel',x.dataset.tp===tp)); }
+let zaiaDiasSel=[];
+function zaiaPintarRec(){
+  const f=el('m-rec-freq').value;
+  el('m-rec-extra').classList.toggle('oculto',f!=='weekly');
+  el('m-rec-end').disabled=f==='none';
+  document.querySelectorAll('[data-rec-day]').forEach(b=>b.classList.toggle('sel',zaiaDiasSel.includes(+b.dataset.recDay)));
+}
+el('m-rec-freq').addEventListener('change',zaiaPintarRec);
+el('m-rec-dias').addEventListener('click',e=>{const b=e.target.closest('[data-rec-day]');if(!b)return;
+  const d=+b.dataset.recDay;zaiaDiasSel=zaiaDiasSel.includes(d)?zaiaDiasSel.filter(x=>x!==d):[...zaiaDiasSel,d];zaiaPintarRec();});
+function zaiaPreencherExtra(t={}){
+ el('m-local').value=t.local||'';el('m-link').value=t.linkReuniao||'';
+ el('m-rec-freq').value=t.recorrencia?.freq||'none';el('m-rec-end').value=t.recorrencia?.ate||'';
+ zaiaDiasSel=[...(t.recorrencia?.dias||[])];zaiaPintarRec();
+}
 el('fab').onclick=()=>abrirNova();
 function abrirNova(pre={}){ el('modal-titulo').textContent='Nova tarefa';
   el('m-id').value=''; el('m-titulo').value=pre.titulo||''; el('m-desc').value='';
   el('m-etiqueta').value=pre.etiqueta||''; setPrazoInputs(pre.prazo||null);
   setPrio(pre.prioridade||'importante'); setTipo(pre.tipo||'tarefa'); anexoPend=[];anexoRem=[];renderAnexosModal();
-  subPend=[];renderSubPend();
+  subPend=[];renderSubPend();zaiaPreencherExtra(pre);
   el('m-excluir').classList.add('oculto');
   el('modal-tarefa').classList.add('on'); el('m-titulo').focus(); }
 function abrirEdicao(id){ const t=tarefas.find(x=>x.id===id); if(!t)return;
   el('modal-titulo').textContent='Editar tarefa'; el('m-id').value=id; el('m-titulo').value=t.titulo;
   el('m-desc').value=t.descricao||''; el('m-etiqueta').value=t.etiqueta||''; setPrazoInputs(t.prazo||null);
   setPrio(t.prioridade); setTipo(ehCompromisso(t)?'compromisso':'tarefa'); anexoPend=[];anexoRem=[];renderAnexosModal();
-  subPend=(t.subitens||[]).map(s=>({t:s.t,ok:!!s.ok}));renderSubPend();
+  subPend=(t.subitens||[]).map(s=>({t:s.t,ok:!!s.ok}));renderSubPend();zaiaPreencherExtra(t);
   el('m-excluir').classList.remove('oculto');
   el('modal-tarefa').classList.add('on'); }
 function renderSubPend(){ el('m-sublist').innerHTML=subPend.map((s,i)=>
@@ -1757,7 +1844,14 @@ function lerPrazoInputs(){ const dt=el('m-data').value; if(!dt)return null; retu
 el('m-cancelar').onclick=()=>el('modal-tarefa').classList.remove('on');
 el('m-salvar').onclick=async()=>{ const tit=el('m-titulo').value.trim(); if(!tit){fala('Dá um título pra tarefa.');return;}
   const prazo=lerPrazoInputs();
-  const dados={titulo:tit,descricao:el('m-desc').value.trim()||null,prioridade:prioSel,tipo:tipoSel,etiqueta:el('m-etiqueta').value.trim()||null,prazo,lembrete:prazo,subitens:subPend.map(s=>({t:s.t,ok:!!s.ok}))};
+  const freq=el('m-rec-freq').value, ate=el('m-rec-end').value||null;
+  if(freq!=='none'&&!prazo){fala('Para repetir, informe a data e a hora da primeira ocorrência.',true);return;}
+  if(freq==='weekly'&&!zaiaDiasSel.length){fala('Selecione ao menos um dia da semana.',true);return;}
+  if(ate&&prazo&&new Date(ate+'T23:59:59').getTime()<prazo){fala('A data final deve ser igual ou posterior à primeira ocorrência.',true);return;}
+  const link=el('m-link').value.trim();
+  if(link){try{if(new URL(link).protocol!=='https:')throw new Error('Protocolo');}catch(e){fala('Insira um link HTTPS válido.',true);return;}}
+  const dados={titulo:tit,descricao:el('m-desc').value.trim()||null,prioridade:prioSel,tipo:tipoSel,etiqueta:el('m-etiqueta').value.trim()||null,prazo,lembrete:prazo,local:el('m-local').value.trim()||null,linkReuniao:link||null,
+    recorrencia:freq==='none'?null:{freq,dias:freq==='weekly'?[...zaiaDiasSel]:[],ate},subitens:subPend.map(s=>({t:s.t,ok:!!s.ok}))};
   let id=el('m-id').value; el('m-salvar').disabled=true;
   try{ if(id) await updateDoc(doc(db,'tarefas',id),dados);
     else{ const ref=await addDoc(collection(db,'tarefas'),{...dados,userId:user.uid,concluida:false,criadaEm:Date.now()}); id=ref.id; }
@@ -2466,9 +2560,9 @@ async function gcalFetch(url,opt={}){ let tk=await gcalEnsure(); if(!tk)return n
 /* ID fixo do evento, derivado do id da tarefa (base32hex: só 0-9 e a-v).
    Com isso o Google recusa cópias repetidas em vez de criar outra. */
 function gcalIdEvento(taskId){ let h=''; for(let i=0;i<taskId.length;i++){ h+=taskId.charCodeAt(i).toString(16).padStart(2,'0'); } return 'zaia'+h; }
-async function gcalCriarEvento(titulo,descricao,ms,eventId){ if(!gcalConectado())return null;
+async function gcalCriarEvento(titulo,descricao,ms,eventId,local){ if(!gcalConectado())return null;
   const ini=new Date(ms),fim=new Date(ms+30*60000);
-  const body={summary:titulo,description:descricao||'Criado pela Zaia 🌙',
+  const body={summary:titulo,description:descricao||'Criado pela Zaia 🌙',location:local||undefined,
     start:{dateTime:ini.toISOString(),timeZone:TZ},end:{dateTime:fim.toISOString(),timeZone:TZ},
     reminders:{useDefault:false,overrides:[{method:'popup',minutes:0},{method:'popup',minutes:10}]}};
   if(eventId) body.id=eventId;
@@ -2480,10 +2574,10 @@ async function gcalCriarEvento(titulo,descricao,ms,eventId){ if(!gcalConectado()
 /* envio automático: toda tarefa em aberto com data vai pra agenda sozinha */
 let gcalSyncing=false;
 async function gcalAutoSync(){ if(!gcalConectado()||gcalSyncing)return;
-  const alvo=tarefas.filter(t=>!t.concluida&&t.prazo&&!t.gcalEventId&&t.origem!=='google'); if(!alvo.length)return;
+  const alvo=tarefas.filter(t=>!t.concluida&&t.prazo&&!t.gcalEventId&&t.origem!=='google'&&(!t.recorrencia||t.recorrencia.freq==='none')); if(!alvo.length)return;
   gcalSyncing=true;
   try { for(const t of alvo){ const eid=gcalIdEvento(t.id);
-    const id=await gcalCriarEvento(t.titulo,t.descricao,t.prazo,eid);
+    const id=await gcalCriarEvento(t.titulo,[t.descricao,t.linkReuniao].filter(Boolean).join('\n'),t.prazo,eid,t.local);
     if(id){ try{ await updateDoc(doc(db,'tarefas',t.id),{gcalEventId:id}); }catch(e){} } }
   } finally { gcalSyncing=false; } }
 gcalInitClient(); gcalAtualizarUI();
