@@ -670,6 +670,102 @@ body.calmo .fab:hover,body.calmo .btn-primario:hover{transform:none}
 .saudacao h1{font-family:'Nunito',system-ui,sans-serif;font-size:clamp(20px,2vw,23px);font-weight:700;line-height:1.35;letter-spacing:0;color:var(--lilas);text-shadow:none}
 .saudacao p{font-size:13.5px;font-weight:500;color:var(--txt-dim);margin-top:3px;margin-bottom:0;text-shadow:none}
 @media(max-width:820px){.saudacao h1{font-size:21px}.saudacao p{font-size:13px}}
+
+/* =============================================================
+   ZAIA V4 | POLIMENTO PREMIUM • somente apresentação
+   Tokens e componentes reaproveitam a lógica existente.
+   ============================================================= */
+:root{
+ --ui-line:#584473;--ui-soft:#322447;--ui-hover:#382852;
+ --ui-field:#211832;--ui-muted:#D8CDEE;
+ --ui-radius:18px;--ui-shadow:0 16px 42px -28px rgba(0,0,0,.8);
+}
+/* Navegação: o ícone usa sempre o mesmo peso e área visual */
+.aba-nav .ic,.bottom-nav svg,.mic,.sec-ic{stroke-width:1.85;stroke-linecap:round;stroke-linejoin:round}
+.aba-nav button{min-height:48px;transition:background-color .16s,border-color .16s,color .16s}
+.aba-nav button.ativa{box-shadow:inset 3px 0 #B9A6FF;background:#473265}
+.aba-nav button:focus-visible,.chip:focus-visible{outline-offset:2px}
+/* cartões: superfície sólida, hierarquia e ritmo consistentes */
+.tarefa,.habito,.proj,.midia,.agenda-item,.stat{border-radius:var(--ui-radius);border:1px solid var(--ui-line);background:#291E42;box-shadow:var(--ui-shadow);transition:border-color .16s,background-color .16s,box-shadow .16s}
+.tarefa:hover,.habito:hover,.midia:hover,.proj:hover{border-color:#826CA6;background:#2C2148}
+.tarefa.feita,.habito.ok{opacity:.78}
+.t-titulo,.hab-tit,.midia-tit{font-size:15.5px;font-weight:750;line-height:1.4;letter-spacing:.005em}
+.t-desc,.midia-meta,.hab-meta{line-height:1.55}
+.tag{border:1px solid rgba(232,217,255,.10);letter-spacing:.005em}
+.sublist{padding-top:9px;border-top:1px solid rgba(216,205,238,.12);margin-top:13px;gap:3px}
+.subitem{min-height:40px;padding:8px 10px;border-radius:11px}
+.subitem:hover{background:rgba(232,217,255,.07)}
+.subitem .subcheck{width:20px;height:20px;border-radius:6px}
+.t-acoes button,.sp-ctrl button{border-radius:11px;min-width:40px;min-height:40px}
+.t-acoes button:hover,.sp-ctrl button:hover{background:#42305D}
+/* MODAIS: composição e leitura desktop + bottom sheets mobile */
+.modal-bg{background:rgba(7,5,16,.82);backdrop-filter:blur(5px);padding:12px}
+.modal{position:relative;width:100%;max-width:570px;max-height:min(88dvh,900px);background:#261B40;border:1px solid #655080;border-radius:24px;padding:28px 30px;box-shadow:0 28px 90px -35px rgba(0,0,0,.92);scrollbar-width:thin;scrollbar-color:#69528D transparent}
+.modal::before{content:"";position:sticky;display:block;top:-28px;height:3px;margin:-28px -30px 23px;background:linear-gradient(90deg,#7A5CFF,#E94FD9 62%,#FF8A5B);border-radius:24px 24px 0 0;z-index:1}
+.modal h3{font-size:23px;font-weight:800;line-height:1.2;color:#F7F0FF;letter-spacing:-.02em;margin:0 44px 22px 0}
+.modal label{font-size:12.5px;color:#E1D4F4;letter-spacing:.015em;font-weight:750;margin:16px 0 7px}
+.modal .campo,.modal input:not([type=hidden]):not([type=file]),.modal textarea,.modal select{max-width:100%}
+.modal .campo{width:100%;min-height:46px;border-radius:13px;background:var(--ui-field);border:1px solid #65517D;color:#F8F4FF;padding:11px 13px;font-size:14px;transition:border-color .15s,box-shadow .15s}
+.modal textarea.campo{min-height:88px;resize:vertical;line-height:1.55}
+.modal .campo:focus{border-color:#AD8FFF;box-shadow:0 0 0 3px rgba(122,92,255,.2)}
+.modal .campo::placeholder{color:#BEB1D4}
+.modal .prio-pick{gap:9px;flex-wrap:wrap}
+.modal .prio-pick button,.modal .dias-pick button{min-height:43px;border-radius:12px;background:#322449;border:1px solid #625077;font-size:13px;line-height:1.3;font-weight:700;transition:background-color .15s,border-color .15s}
+.modal .prio-pick button:hover,.modal .dias-pick button:hover{background:#41315E;border-color:#8C73B3}
+.modal .prio-pick button.sel,.modal .dias-pick button.sel{box-shadow:inset 0 0 0 1px rgba(224,210,255,.2)}
+.modal .modal-acoes{margin-top:25px;padding-top:18px;border-top:1px solid rgba(216,205,238,.15);gap:10px}
+.modal .btn{min-height:46px;border-radius:13px;font-weight:800;letter-spacing:.006em;box-shadow:none}
+.modal .btn-primario{background:linear-gradient(105deg,#785AFF,#BB52DB 70%,#E275A0)}
+.modal .btn-sec{background:#403054;border:1px solid #6B5584;color:#F1E9FF}
+.modal .btn-sec:hover{background:#4B385F}
+.modal .mini-btn{min-height:40px;background:#44315E;border:1px solid #695184;color:#F1E8FF;border-radius:11px}
+.modal .add-etapa input{min-height:41px;background:#211832;border:1px solid #65517D;color:#fff}
+.modal .subedit,.modal .anexo{min-height:43px;background:#302344;border-color:#59436F;border-radius:12px}
+.modal .btn-excluir{margin-top:12px;border-radius:12px;min-height:42px;color:#FFB6C7}
+.modal .btn-excluir:hover{background:#4A2B43}
+/* detalhe de filmes, séries e livros */
+#modal-det .modal,#modal-livro .modal{max-width:660px}
+.det-head{display:grid;grid-template-columns:112px minmax(0,1fr);gap:19px;align-items:start;margin-bottom:21px}
+.det-poster{width:112px;aspect-ratio:2/3;object-fit:cover;border-radius:14px;border:1px solid #695184;box-shadow:0 10px 24px -15px #000}
+.det-head-info{gap:9px;padding-right:30px}
+.det-head-info h3{font-size:22px;line-height:1.25;overflow-wrap:anywhere;margin:0;color:#FFF}
+.det-sinopse{-webkit-line-clamp:5;line-height:1.6;font-size:13.5px;color:#DFD3EF}
+.det-status{align-self:start;width:max-content;max-width:100%;background:#43305F;color:#E7DAFF;border:1px solid #685181;padding:4px 9px;border-radius:999px;font-size:11px;letter-spacing:.04em}
+.det-x{width:42px;height:42px;position:absolute;top:19px;right:19px;display:grid;place-items:center;border:1px solid #604A79;background:#37274F;border-radius:13px;color:#EEE4FF;font-size:17px}
+.det-x:hover{background:#49335F;color:#fff}
+.det-fav{background:#37294D;border:1px solid #6A5481;border-radius:999px;min-height:35px;padding:7px 13px;font-weight:700;color:#F4E9FF}
+.det-visto{border-radius:13px;background:#29483E;border-color:#3C7560;min-height:46px;font-weight:800;color:#B9F4D4}
+.det-visto.on{background:#2A624D}
+.temp{border-color:#66507D;border-radius:15px;background:#2D2144}
+.temp-head{background:#35274B;min-height:47px}
+.ep-row{min-height:44px;background:#312447;border-color:#5D4878;border-radius:12px}
+.ep-row:hover{background:#403055}
+.poster-card img,.poster-ph{border-radius:14px;border-color:#66507D}
+.poster-tit{font-weight:750}
+/* formulários, controles e ações da interface */
+.campo,.chat-bar input,.add-etapa input{border-radius:13px;min-height:43px}
+.btn,.chip,.mini-btn,.fab,.fab-chat{transition:background-color .16s,border-color .16s,box-shadow .16s,transform .16s}
+.fab{border-radius:19px;border:1px solid rgba(255,255,255,.18)}
+.fab-chat{border-radius:17px;border-color:#695282}
+.chip{min-height:40px}
+.menu-drop{padding:8px;border-radius:17px}
+.menu-drop button{min-height:42px;border-radius:11px}
+/* animações previsíveis; estado calmo e sistema sempre respeitados */
+@media(prefers-reduced-motion:reduce){.modal,.chat,.tarefa,.proj,.fab{animation:none!important;transition:none!important}}
+body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:none!important;transition:none!important}
+@media(min-width:560px){.modal-bg{align-items:center}.modal{border-radius:24px;margin:auto}}
+@media(max-width:559px){
+ .modal-bg{padding:0;align-items:flex-end}
+ .modal{max-height:92dvh;padding:24px 18px calc(20px + env(safe-area-inset-bottom));border-radius:24px 24px 0 0}
+ .modal::before{top:-24px;margin:-24px -18px 20px;border-radius:24px 24px 0 0}
+ .modal h3{font-size:21px}
+ .det-head{grid-template-columns:85px minmax(0,1fr);gap:12px}
+ .det-poster{width:85px}.det-head-info{padding-right:29px}.det-head-info h3{font-size:18px}
+ .modal .prio-pick button{flex:1 1 auto}
+}
+
+.zaia-priority-dot{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:middle;margin-right:6px;box-shadow:0 0 0 3px rgba(255,255,255,.05)}
+
 </style>
 </head>
 <body>
@@ -872,8 +968,8 @@ body.calmo .fab:hover,body.calmo .btn-primario:hover{transform:none}
     <input type="hidden" id="m-id"/>
     <label>Tipo</label>
     <div class="prio-pick" id="m-tipo">
-      <button data-tp="tarefa" class="sel">📝 Tarefa / entrega</button>
-      <button data-tp="compromisso">📅 Compromisso</button>
+      <button data-tp="tarefa" class="sel"><svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:5px"><path d="M8 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8l-5-5H8z"/><path d="M14 3v6h6M8 13h8M8 17h6"/></svg> Tarefa / entrega</button>
+      <button data-tp="compromisso"><svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:5px"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg> Compromisso</button>
     </div>
     <label>Título</label>
     <input id="m-titulo" class="campo"/>
@@ -881,9 +977,9 @@ body.calmo .fab:hover,body.calmo .btn-primario:hover{transform:none}
     <textarea id="m-desc" class="campo" rows="3"></textarea>
     <label>Prioridade</label>
     <div class="prio-pick" id="m-prio">
-      <button data-p="urgente">🔴 Urgente</button>
-      <button data-p="importante" class="sel">🟡 Importante</button>
-      <button data-p="tranquilo">🟢 Tranquilo</button>
+      <button data-p="urgente"><span aria-hidden="true" class="zaia-priority-dot" style="background:#E94FD9"></span> Urgente</button>
+      <button data-p="importante" class="sel"><span aria-hidden="true" class="zaia-priority-dot" style="background:#FF8A5B"></span> Importante</button>
+      <button data-p="tranquilo"><span aria-hidden="true" class="zaia-priority-dot" style="background:#4ade80"></span> Tranquilo</button>
     </div>
     <label>Data e horário limite</label>
     <div style="display:flex;gap:8px">
@@ -900,7 +996,7 @@ body.calmo .fab:hover,body.calmo .btn-primario:hover{transform:none}
     </div>
     <label>Anexos</label>
     <div id="m-anexos" class="anexos-lista"></div>
-    <button id="m-add-anexo" class="mini-btn" type="button">📎 Anexar arquivo</button>
+    <button id="m-add-anexo" class="mini-btn" type="button"><svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:5px"><path d="m21 11.5-8.2 8.2a5 5 0 0 1-7.1-7.1l9-9a3.5 3.5 0 0 1 5 5l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5"/></svg> Anexar arquivo</button>
     <input id="m-file" type="file" class="oculto" multiple/>
     <div class="modal-acoes">
       <button id="m-cancelar" class="btn btn-sec">Cancelar</button>
@@ -1136,7 +1232,7 @@ body.calmo .fab:hover,body.calmo .btn-primario:hover{transform:none}
     <p>As tarefas na aba Tarefas ficam agrupadas por data (atrasadas, hoje, amanhã…).</p>
 
     <h4>Tarefa x Compromisso</h4>
-    <p>Ao criar algo, escolha o tipo: <b>📝 Tarefa/entrega</b> (algo que você precisa fazer ou entregar) ou <b>📅 Compromisso</b> (hora marcada: terapia, consulta, reunião). No chat, a Zaia já classifica sozinha (terapia, reunião ou "coloque na agenda" viram compromisso).</p>
+    <p>Ao criar algo, escolha o tipo: <b>📝 Tarefa/entrega</b> (algo que você precisa fazer ou entregar) ou <b><svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:5px"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg> Compromisso</b> (hora marcada: terapia, consulta, reunião). No chat, a Zaia já classifica sozinha (terapia, reunião ou "coloque na agenda" viram compromisso).</p>
 
     <h4>Projetos e cronograma</h4>
     <p>Na aba <b>Projetos</b>, crie algo grande (como o TCC) e adicione etapas com prazo. A barra mostra o progresso e as etapas alimentam seu dia.</p>
