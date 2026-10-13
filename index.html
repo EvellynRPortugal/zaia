@@ -79,21 +79,17 @@
   .aba-nav .ic{width:20px;height:20px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.7;
     stroke-linecap:round;stroke-linejoin:round}
 
-  /* SPOTIFY RETÂNGULO */
-  .spotify{margin-top:auto}
-  .sp-connect{width:100%;background:rgba(30,215,96,.14);border:1px solid rgba(30,215,96,.4);
-    color:#1ed760;border-radius:16px;padding:12px;font-size:13.5px;font-weight:600}
-  .sp-connect:hover{background:rgba(30,215,96,.24)}
-  .sp-player{background:var(--card);border:1px solid var(--stroke);border-radius:18px;
-    padding:12px;backdrop-filter:blur(10px);position:relative}
-  .sp-capa{width:100%;aspect-ratio:1;border-radius:12px;object-fit:cover;background:rgba(0,0,0,.3);display:block}
-  .sp-musica{font-size:14px;font-weight:600;margin-top:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .sp-artista{font-size:12.5px;color:var(--txt-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .sp-ctrl{display:flex;gap:4px;justify-content:center;margin-top:10px}
-  .sp-ctrl button{width:38px;height:38px;border-radius:11px;font-size:16px;color:var(--txt);background:rgba(255,255,255,.05)}
-  .sp-ctrl button:hover{background:rgba(255,255,255,.14)}
-  .sp-sair{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:8px;
-    background:rgba(0,0,0,.35);color:#fff;font-size:11px}
+  /* MINI PLAYER SPOTIFY (flutuante, só quando tocando) */
+  .sp-mini{position:fixed;left:20px;bottom:26px;z-index:45;width:320px;max-width:calc(100vw - 40px);
+    display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:16px;
+    background:rgba(20,12,38,.92);border:1px solid var(--stroke);backdrop-filter:blur(14px);box-shadow:var(--sombra)}
+  .sp-capa{width:46px;height:46px;border-radius:10px;object-fit:cover;flex-shrink:0;background:rgba(0,0,0,.3)}
+  .sp-info-wrap{flex:1;min-width:0}
+  .sp-musica{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sp-artista{font-size:12px;color:var(--txt-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sp-ctrl{display:flex;gap:2px;flex-shrink:0}
+  .sp-ctrl button{width:34px;height:34px;border-radius:10px;font-size:15px;color:var(--txt)}
+  .sp-ctrl button:hover{background:rgba(255,255,255,.1)}
 
   /* MENU USER */
   .menu-user{position:fixed;top:16px;right:22px;z-index:60;width:auto}
@@ -487,13 +483,7 @@
     .sidebar{width:100%;height:auto;position:static;flex-direction:column;padding:16px 16px 6px;gap:12px}
     .side-marca{font-size:24px;padding:0 2px}
     .aba-nav{display:none}                    /* nav vai pra barra inferior */
-    .spotify{margin-top:2px;order:3}
-    .sp-player{display:flex;flex-direction:row;gap:10px;align-items:center;padding:10px}
-    .sp-capa{width:48px;height:48px;aspect-ratio:1}
-    .sp-info-wrap{flex:1;min-width:0}
-    .sp-musica{margin-top:0}
-    .sp-ctrl{margin-top:0;flex-shrink:0}
-    .sp-ctrl button{width:34px;height:34px}
+    .sp-mini{left:12px;right:12px;bottom:78px;width:auto;max-width:none}
     .menu-user{position:fixed;top:14px;right:14px;z-index:60;width:auto}
     .user-linha{padding:0}
     .user-nome{display:none}
@@ -514,6 +504,13 @@
     .fab{bottom:82px;right:16px;width:54px;height:54px;font-size:26px}
     .fab-chat{bottom:148px;right:18px}
     .btn-crise{bottom:82px;left:16px;padding:13px;border-radius:50%}
+    /* etapas de projeto não espremem no celular */
+    .add-etapa{flex-wrap:wrap}
+    .add-etapa input[data-etapa-nome]{flex:1 1 100%}
+    .add-etapa input.data{flex:1 1 42%}
+    .add-etapa .mini-btn{flex:1 1 100%}
+    .proj{padding:14px 15px}
+    .temp-head{gap:9px}
     /* MODO CRISE no celular */
     .crise{justify-content:flex-start;padding:64px 18px 48px}
     .crise-titulo{font-size:22px}
@@ -600,23 +597,6 @@
         <span class="lbl">Livros</span></button>
     </nav>
 
-    <div id="spotify" class="spotify oculto">
-      <button id="sp-connect" class="sp-connect">🎵 Conectar Spotify</button>
-      <div id="sp-player" class="sp-player oculto">
-        <button id="sp-sair" class="sp-sair" title="Desconectar">✕</button>
-        <img id="sp-capa" class="sp-capa" alt=""/>
-        <div class="sp-info-wrap">
-          <div id="sp-musica" class="sp-musica">—</div>
-          <div id="sp-artista" class="sp-artista">—</div>
-        </div>
-        <div class="sp-ctrl">
-          <button id="sp-prev">⏮</button>
-          <button id="sp-play">⏯</button>
-          <button id="sp-next">⏭</button>
-        </div>
-      </div>
-    </div>
-
     <div class="menu-user">
       <div id="user-linha" class="user-linha">
         <div id="avatar" class="avatar">E</div>
@@ -626,6 +606,7 @@
         <button id="btn-foto"><svg class="mic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.6"/><path d="M4 17l5-4 4 3 3-2 4 3"/></svg><span>Trocar foto</span></button>
         <button id="btn-notif"><svg class="mic" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0112 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M10 20a2 2 0 004 0"/></svg><span>Ativar lembretes</span></button>
         <button id="btn-gcal"><svg class="mic" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2"/><path d="M3.5 9h17M8 3v3M16 3v3"/></svg><span id="gcal-lbl">Google Agenda</span></button>
+        <button id="btn-spotify"><svg class="mic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 10.2c2.8-.7 5.5-.3 7.6 1M8 13c2.3-.5 4.6-.2 6.2 1M8.4 15.6c1.8-.4 3.4-.1 4.6.7"/></svg><span id="sp-lbl">Spotify</span></button>
         <button id="btn-ensino"><svg class="mic" viewBox="0 0 24 24"><path d="M12 5a4 4 0 00-4 4c0 1.5.8 2.5 1.5 3.2.5.5.5 1 .5 1.8h4c0-.8 0-1.3.5-1.8.7-.7 1.5-1.7 1.5-3.2a4 4 0 00-4-4z"/><path d="M10 19h4"/></svg><span>Modo Ensino</span></button>
         <button id="btn-manual"><svg class="mic" viewBox="0 0 24 24"><path d="M5 4h9a2 2 0 012 2v14H7a2 2 0 01-2-2V4z"/><path d="M9 8h6M9 12h6"/></svg><span>Manual</span></button>
         <button id="btn-exportar"><svg class="mic" viewBox="0 0 24 24"><path d="M12 4v10M8 11l4 3 4-3"/><path d="M5 19h14"/></svg><span>Exportar meus dados</span></button>
@@ -668,6 +649,8 @@
 
     <section id="aba-livros" class="oculto">
       <button id="btn-novo-livro" class="mini-btn" style="margin-bottom:12px">+ Adicionar</button>
+      <div id="livros-stats" class="stats-grid"></div>
+      <input id="busca-lista-livro" class="campo" style="margin:14px 0 10px" placeholder="buscar na minha estante…"/>
       <div id="filtro-livro" class="filtros"></div>
       <div id="lista-livro"></div>
     </section>
@@ -691,6 +674,20 @@
       <svg viewBox="0 0 24 24"><path d="M4 5.5C5.8 4.6 8 4.5 12 5.5c4-1 6.2-.9 8 0V19c-1.8-.9-4-1-8 0-4-1-6.2-.9-8 0V5.5z"/><path d="M12 5.5V19"/></svg>
       <span>Livros</span></button>
   </nav>
+</div>
+
+<!-- MINI PLAYER SPOTIFY (aparece só quando tocando) -->
+<div id="spotify" class="sp-mini oculto">
+  <img id="sp-capa" class="sp-capa" alt=""/>
+  <div class="sp-info-wrap">
+    <div id="sp-musica" class="sp-musica">—</div>
+    <div id="sp-artista" class="sp-artista">—</div>
+  </div>
+  <div class="sp-ctrl">
+    <button id="sp-prev">⏮</button>
+    <button id="sp-play">⏯</button>
+    <button id="sp-next">⏭</button>
+  </div>
 </div>
 
 <button id="btn-crise" class="btn-crise oculto" title="Modo Crise">🌙<span>Modo Crise</span></button>
@@ -1742,7 +1739,15 @@ let filtroLivro='lendo';
 function statusLivro(l){ if(l.lido)return 'lido'; if(l.pagTotal&&l.pagAtual>=l.pagTotal)return 'lido';
   if(l.pagAtual&&l.pagAtual>0)return 'lendo'; return 'quero'; }
 const rotuloLivro=s=>({lendo:'Lendo',quero:'Quero ler',lido:'Lido'}[s]||'');
+let buscaLivroTxt='';
 function renderFiltroLivro(){ el('filtro-livro').innerHTML=LIVRO_FILTROS.map(([k,l])=>`<button class="chip ${filtroLivro===k?'on':''}" data-lf="${k}">${l}</button>`).join(''); }
+function renderLivroStats(){ const lidos=livros.filter(l=>statusLivro(l)==='lido'), lendo=livros.filter(l=>statusLivro(l)==='lendo');
+  let pags=0; livros.forEach(l=>{ pags += statusLivro(l)==='lido'?(l.pagTotal||l.pagAtual||0):(l.pagAtual||0); });
+  el('livros-stats').innerHTML=`
+    <div class="stat"><div class="num">${lidos.length}</div><div class="lbl">livros lidos</div></div>
+    <div class="stat"><div class="num">${lendo.length}</div><div class="lbl">lendo agora</div></div>
+    <div class="stat"><div class="num">${livros.length}</div><div class="lbl">na estante</div></div>
+    <div class="stat"><div class="num">${pags.toLocaleString('pt-BR')}</div><div class="lbl">páginas lidas</div></div>`; }
 function livroCard(l){ const st=statusLivro(l);
   const prog=(l.pagTotal&&l.pagAtual)?`${l.pagAtual}/${l.pagTotal} pág`:(l.vezes>1?`lido ${l.vezes}x`:'');
   return `<button class="poster-card" data-lvabrir="${l.id}">
@@ -1751,12 +1756,14 @@ function livroCard(l){ const st=statusLivro(l);
     <div class="poster-tit">${esc(l.titulo)}</div>
     ${prog?`<div class="poster-sub">${prog}</div>`:(l.autor?`<div class="poster-sub">${esc(l.autor)}</div>`:'')}
   </button>`; }
-function renderLivro(){ renderFiltroLivro();
+function renderLivro(){ renderFiltroLivro(); renderLivroStats();
   let lista=livros.slice();
   if(filtroLivro==='fav')lista=lista.filter(l=>l.fav); else lista=lista.filter(l=>statusLivro(l)===filtroLivro);
+  if(buscaLivroTxt)lista=lista.filter(l=>(l.titulo||'').toLowerCase().includes(buscaLivroTxt)||(l.autor||'').toLowerCase().includes(buscaLivroTxt));
   lista.sort((a,b)=>(b.criadaEm||0)-(a.criadaEm||0));
-  el('lista-livro').innerHTML=lista.length?`<div class="poster-grid">${lista.map(livroCard).join('')}</div>`:'<div class="vazio">Nada aqui ainda.</div>'; }
+  el('lista-livro').innerHTML=lista.length?`<div class="poster-grid">${lista.map(livroCard).join('')}</div>`:'<div class="vazio">Nada aqui.</div>'; }
 el('filtro-livro').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;filtroLivro=b.dataset.lf;renderLivro();});
+el('busca-lista-livro').addEventListener('input',()=>{ buscaLivroTxt=el('busca-lista-livro').value.trim().toLowerCase(); renderLivro(); });
 
 /* buscar na Open Library */
 let lvTimer=null, lvUltima=[];
@@ -1963,7 +1970,7 @@ async function spLogin(){ const arr=crypto.getRandomValues(new Uint8Array(64)),v
 async function spTrocarCodigo(code){ const verifier=localStorage.getItem('sp_verifier');
   const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
     body:new URLSearchParams({client_id:SP_CLIENT,grant_type:'authorization_code',code,redirect_uri:SP_REDIRECT,code_verifier:verifier})});
-  if(r.ok){ sp.set(await r.json()); spIniciarPlayer(); } }
+  if(r.ok){ sp.set(await r.json()); spStart(); } }
 async function spRenovar(){ if(!sp.refresh)return false;
   const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
     body:new URLSearchParams({client_id:SP_CLIENT,grant_type:'refresh_token',refresh_token:sp.refresh})});
@@ -1971,23 +1978,26 @@ async function spRenovar(){ if(!sp.refresh)return false;
 async function spFetch(url,opt={}){ if(Date.now()>sp.exp){ if(!await spRenovar())return null; }
   opt.headers={...(opt.headers||{}),Authorization:'Bearer '+sp.token}; let r=await fetch(url,opt);
   if(r.status===401){ if(await spRenovar()){opt.headers.Authorization='Bearer '+sp.token;r=await fetch(url,opt);} } return r; }
+const spConectado=()=>!!(sp.token||sp.refresh);
+function spLbl(){ if(el('sp-lbl'))el('sp-lbl').textContent=spConectado()?'Spotify ✓':'Spotify'; }
 async function spAtualizar(){ const r=await spFetch('https://api.spotify.com/v1/me/player/currently-playing');
-  if(!r||r.status===204||!r.ok){ el('sp-musica').textContent='Nada tocando'; el('sp-artista').textContent='abra o Spotify e dê play'; return; }
-  const d=await r.json(); if(!d||!d.item)return;
+  if(!r||r.status===204||!r.ok){ el('spotify').classList.add('oculto'); return; }
+  const d=await r.json(); if(!d||!d.item){ el('spotify').classList.add('oculto'); return; }
+  el('spotify').classList.remove('oculto');
   el('sp-musica').textContent=d.item.name; el('sp-artista').textContent=d.item.artists.map(a=>a.name).join(', ');
   const img=d.item.album?.images?.[0]?.url; if(img)el('sp-capa').src=img; el('sp-play').textContent=d.is_playing?'⏸':'▶'; }
-function spIniciarPlayer(){ el('sp-connect').classList.add('oculto'); el('sp-player').classList.remove('oculto');
-  spAtualizar(); clearInterval(spTimer); spTimer=setInterval(spAtualizar,5000); }
-el('sp-connect').onclick=spLogin;
-el('sp-sair').onclick=()=>{ sp.limpar(); clearInterval(spTimer); el('sp-player').classList.add('oculto'); el('sp-connect').classList.remove('oculto'); };
+function spStart(){ spLbl(); clearInterval(spTimer); spAtualizar(); spTimer=setInterval(spAtualizar,5000); }
+el('btn-spotify').onclick=async()=>{ if(!spConectado()){ spLogin(); return; }
+  // já conectado: tenta dar play e passa a mostrar o player
+  await spFetch('https://api.spotify.com/v1/me/player/play',{method:'PUT'}); spStart(); setTimeout(spAtualizar,500); };
 el('sp-prev').onclick=async()=>{ await spFetch('https://api.spotify.com/v1/me/player/previous',{method:'POST'}); setTimeout(spAtualizar,400); };
 el('sp-next').onclick=async()=>{ await spFetch('https://api.spotify.com/v1/me/player/next',{method:'POST'}); setTimeout(spAtualizar,400); };
 el('sp-play').onclick=async()=>{ const r=await spFetch('https://api.spotify.com/v1/me/player'); const d=r&&r.ok?await r.json():null;
   await spFetch('https://api.spotify.com/v1/me/player/'+(d&&d.is_playing?'pause':'play'),{method:'PUT'}); setTimeout(spAtualizar,400); };
-async function spBoot(){ el('spotify').classList.remove('oculto');
+async function spBoot(){ spLbl();
   const code=new URLSearchParams(location.search).get('code');
   if(code){ history.replaceState({},'',SP_REDIRECT); await spTrocarCodigo(code); }
-  else if(sp.token||sp.refresh){ spIniciarPlayer(); } }
+  else if(spConectado()){ spStart(); } }
 spBoot();
 
 /* MODO CRISE */
