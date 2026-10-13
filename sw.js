@@ -1,7 +1,7 @@
-/* Service Worker da Zaia — v5
+/* Service Worker da Zaia — v6
    Estratégia: REDE PRIMEIRO (sempre pega a versão nova quando há internet),
    e usa o cache só como reserva quando estiver offline. */
-const CACHE = 'zaia-v5';
+const CACHE = 'zaia-v6';
 const ARQUIVOS = [
   './',
   './index.html',
