@@ -800,6 +800,40 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 .zaia-ocorrencia .zaia-done[aria-pressed="true"]{color:var(--tranquilo)}
 .zaia-agenda-link{color:var(--lilas);text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
 
+/* Hábitos: opções de recorrência explícitas e confortáveis no celular */
+#r-freq{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#r-freq button{min-width:0;min-height:48px;line-height:1.3;padding:9px 7px}
+#r-dias button{min-height:42px}
+.zaia-hab-resumo{padding:11px 14px;margin:8px 0 12px;border:1px solid var(--stroke);border-radius:14px;background:var(--card);color:var(--txt-dim);font-size:13px}
+@media(max-width:460px){#r-freq{grid-template-columns:1fr}#r-freq button{min-height:42px}}
+/* ZAIA V8 — hábitos, calendário acessível e pausas */
+.zaia-rotina-tabs{display:flex;gap:8px;margin:2px 0 14px;flex-wrap:wrap}
+.zaia-rotina-tabs button{border:1px solid var(--stroke);border-radius:13px;background:var(--card);padding:11px 15px;font-size:13px;font-weight:700;color:var(--txt-dim)}
+.zaia-rotina-tabs button.on{color:#fff;background:#48346e;border-color:#826ca6}
+.zaia-hab-orientacao{font-size:12px;color:var(--txt-dim);line-height:1.6;margin-bottom:16px;max-width:680px}
+.zaia-hab-orientacao strong{color:var(--lilas)}
+.zaia-hab-pausa{font-size:11px;color:#ffe0ac;margin-top:3px}
+.zaia-hab-actions{display:flex;gap:5px;align-items:center}
+.zaia-hab-actions button{border:1px solid var(--stroke);background:var(--elevado);border-radius:10px;font-size:12px;padding:7px 9px;color:var(--lilas)}
+.zaia-hab-actions button:disabled{opacity:.4;cursor:default}
+.zaia-hab-hist-card{border:1px solid var(--stroke);background:var(--card);border-radius:18px;padding:16px;margin-bottom:13px}
+.zaia-hab-hist-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.zaia-hab-hist-top strong{font-size:15px}
+.zaia-hab-hist-top p{color:var(--txt-dim);font-size:12px;margin-top:4px}
+.zaia-hab-score{border-radius:999px;background:#473362;padding:5px 10px;font-size:12px;color:#f7efff;white-space:nowrap}
+.zaia-hab-grade{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-top:15px}
+.zaia-hab-dia{min-height:35px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11px;background:#312646;color:#cfc1e7;border:1px solid transparent}
+.zaia-hab-dia.feito{background:#6651b7;color:white}
+.zaia-hab-dia.previsto{border-color:#655483}
+.zaia-hab-dia.pausado{opacity:.42}
+.zaia-hab-dia.hoje{outline:2px solid #fff3d6;outline-offset:1px}
+.zaia-hab-semana{color:var(--txt-dim);font-size:10px;text-align:center}
+.zaia-hab-legenda{font-size:11px;color:var(--txt-dim);line-height:1.6;margin-top:11px}
+.zaia-pausa-form{margin-top:15px;background:rgba(122,92,255,.07);border:1px solid var(--stroke);padding:12px;border-radius:15px}
+.zaia-pausa-form p,.zaia-pausa-form small{display:block;color:var(--txt-dim);font-size:12px;line-height:1.5;margin:6px 0}
+.zaia-check-pausa{display:flex!important;align-items:center;gap:9px;color:var(--lilas)!important;font-size:14px!important}
+.zaia-check-pausa input{accent-color:#7a5cff;width:18px;height:18px}
+@media(max-width:480px){.zaia-hab-dia{min-height:31px;font-size:10px}.zaia-hab-hist-card{padding:12px}}
 </style>
 </head>
 <body>
@@ -911,6 +945,8 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 
     <section id="aba-rotina" class="oculto">
       <button id="btn-nova-rotina" class="mini-btn" style="margin-bottom:14px">+ Novo hábito</button>
+      <div class="zaia-rotina-tabs" role="group" aria-label="Visualização de hábitos"><button id="hab-tab-hoje" class="on" type="button" aria-pressed="true">Meu dia</button><button id="hab-tab-historico" type="button" aria-pressed="false">Consistência e histórico</button></div>
+      <p class="zaia-hab-orientacao">Hábitos são práticas que você acompanha. Aulas, reuniões e consultas com horário ficam em <strong>Tarefas → Compromisso</strong>, com recorrência e local.</p>
       <div id="lista-rotina"></div>
     </section>
 
@@ -1179,13 +1215,14 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
     </div>
     <label>Com que frequência?</label>
     <div class="prio-pick" id="r-freq">
-      <button data-f="semana" class="sel">Toda semana</button>
-      <button data-f="mes">Uma vez no mês</button>
+      <button type="button" data-f="diario" class="sel">Todos os dias</button>
+      <button type="button" data-f="semana">Dias da semana</button>
+      <button type="button" data-f="mes">Mensal</button>
     </div>
     <div id="r-bloco-semana">
-      <label>Dias</label>
+      <label>Em quais dias da semana?</label>
       <div class="dias-pick" id="r-dias">
-        <button data-d="todos" class="sel">Todo dia</button>
+        <button type="button" data-d="todos">Todos os dias</button>
         <button data-d="0">D</button><button data-d="1">S</button><button data-d="2">T</button>
         <button data-d="3">Q</button><button data-d="4">Q</button><button data-d="5">S</button><button data-d="6">S</button>
       </div>
@@ -1197,6 +1234,13 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
     </div>
     <label>Horário do lembrete (opcional)</label>
     <input id="r-hora" class="campo" type="time"/>
+    <div class="zaia-pausa-form">
+      <label class="zaia-check-pausa"><input type="checkbox" id="r-pausar"/> Pausar este hábito</label>
+      <p>Durante uma pausa, o hábito não aparece entre as atividades do dia e não exige conclusão.</p>
+      <label>Início da pausa (opcional)</label><input id="r-pausa-inicio" class="campo" type="date"/>
+      <label>Retomar automaticamente em (opcional)</label><input id="r-pausa-fim" class="campo" type="date"/>
+      <small>Se deixar as duas datas vazias, a pausa começa agora e continua até você reativar.</small>
+    </div>
     <div class="modal-acoes">
       <button id="r-cancelar" class="btn btn-sec">Cancelar</button>
       <button id="r-salvar" class="btn btn-primario">Salvar</button>
@@ -1417,7 +1461,7 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword,
   createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut }
   from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, setDoc,
-  onSnapshot, query, where }
+  onSnapshot, query, where, arrayUnion, arrayRemove }
   from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -1570,34 +1614,71 @@ function render(){ renderTarefas();renderProjetos();renderSinonimos();renderRoti
   el('resumo-linha').textContent=ab?`Você tem ${ab} tarefa${ab>1?'s':''} em aberto.`:'Tudo em dia por aqui.'; }
 const hojeStr=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
 function diaMesAlvo(diaMes){ const d=new Date(); const ultimo=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(); return Math.min(diaMes||1,ultimo); }
-function rotinaHoje(r){
-  if(r.hora && new Date().toTimeString().slice(0,5) < r.hora) return false;
-  if(r.freq==='mes'){ return new Date().getDate()===diaMesAlvo(r.diaMes); }
-  const hj=new Date().getDay(); return r.dias==='todos'||(Array.isArray(r.dias)&&r.dias.includes(hj)); }
+function pausaAtiva(r, data=hojeStr()){
+  if(!r.pausado)return false;
+  if(r.pausaInicio && data<r.pausaInicio)return false;
+  if(r.pausaFim && data>=r.pausaFim)return false; // data de retorno inclusiva
+  return true;
+}
+function rotinaPrevistaNaData(r, data){
+  if(pausaAtiva(r,data))return false;
+  const d=new Date(data+'T12:00:00');
+  if(r.freq==='mes'){ const ultimo=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();return d.getDate()===Math.min(r.diaMes||1,ultimo); }
+  if(r.freq==='diario'||r.dias==='todos')return true;
+  return Array.isArray(r.dias)&&r.dias.some(x=>Number(x)===d.getDay());
+}
+function rotinaHoje(r){return rotinaPrevistaNaData(r,hojeStr()) && (!r.hora||new Date().toTimeString().slice(0,5)>=r.hora);}
+function habDatas(r){const datas=new Set(Array.isArray(r.historico)?r.historico:[]);if(r.feitoEm)datas.add(r.feitoEm);return datas;}
 const IC_MANHA='<svg viewBox="0 0 24 24"><path d="M3 18h18M8 18a4 4 0 018 0"/><path d="M12 4v2M4.5 9.5l1.4 1.4M19.5 9.5l-1.4 1.4"/></svg>';
 const IC_TARDE='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/></svg>';
 const IC_NOITE='<svg viewBox="0 0 24 24"><path d="M20 14a8 8 0 11-9.5-10 6.5 6.5 0 009.5 10z"/></svg>';
 const MOMENTOS=[['manha','Manhã',IC_MANHA],['tarde','Tarde',IC_TARDE],['noite','Noite',IC_NOITE]];
 const DIAS_ABBR=['dom','seg','ter','qua','qui','sex','sáb'];
 function diasTexto(r){ if(r.freq==='mes')return `dia ${r.diaMes||1} de cada mês`;
-  if(r.dias==='todos')return 'todo dia';
+  if(r.freq==='diario'||r.dias==='todos')return 'todos os dias';
   if(Array.isArray(r.dias)&&r.dias.length)return [...r.dias].sort((a,b)=>a-b).map(d=>DIAS_ABBR[d]).join(' · ');
   return 'todo dia'; }
-function habitoItem(r){ const ok=r.feitoEm===hojeStr();
+function habitoItem(r){ const ok=habDatas(r).has(hojeStr());
   const meta=[r.hora?`${r.hora}`:'', diasTexto(r)].filter(Boolean).join('  ·  ');
   return `<div class="habito ${ok?'ok':''}">
     <button class="check ${ok?'on':''}" data-rottoggle="${r.id}">✓</button>
-    <div class="hab-corpo" data-rotedit="${r.id}"><div class="hab-tit">${esc(r.titulo)}</div><div class="hab-meta">${meta}</div></div>
+    <div class="hab-corpo" data-rotedit="${r.id}"><div class="hab-tit">${esc(r.titulo)}</div><div class="hab-meta">${meta}</div>${pausaAtiva(r)?'<div class="zaia-hab-pausa">Em pausa</div>':''}</div>
+    <div class="zaia-hab-actions"><button data-rotedit="${r.id}" title="Editar hábito" aria-label="Editar hábito">Editar</button></div>
   </div>`; }
 function grupos(lista){ let h=''; MOMENTOS.forEach(([m,lbl,ic])=>{ const g=lista.filter(r=>(r.momento||'manha')===m).sort((a,b)=>(a.hora||'').localeCompare(b.hora||''));
     if(g.length)h+=`<div class="hab-grupo">${ic}${lbl}</div>`+g.map(habitoItem).join(''); }); return h; }
 function renderRotinaHoje(){ const hoje=rotinas.filter(rotinaHoje);
   el('rotina-hoje-sec').classList.toggle('oculto',!hoje.length);
   el('rotina-hoje').innerHTML=hoje.length?grupos(hoje):''; }
-function renderRotina(){ if(!rotinas.length){el('lista-rotina').innerHTML='<div class="vazio">Sem hábitos ainda. Crie o primeiro — algo pequeno do seu dia.</div>';return;}
-  const disponiveis=rotinas.filter(rotinaHoje),futuras=rotinas.filter(r=>!rotinaHoje(r));
-  el('lista-rotina').innerHTML=(disponiveis.length?'<div class="sec-titulo">Disponíveis agora</div>'+grupos(disponiveis):'<div class="vazio">Nenhum hábito disponível agora.</div>')+
-    (futuras.length?`<details class="zaia-futuro"><summary>Próximas rotinas (${futuras.length})</summary><div class="zaia-futuro-corpo">${grupos(futuras)}</div></details>`:''); }
+let modoHabitos='hoje';
+function habFormatoDia(d){return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;}
+function renderHistoricoHabitos(){
+ if(!rotinas.length)return '<div class="vazio">Nenhum hábito cadastrado ainda.</div>';
+ const hoje=hojeStr();
+ return '<p class="zaia-hab-orientacao">Últimos 28 dias. Cada quadrado representa um dia; as marcações ficam salvas no histórico sem criar tarefas novas.</p>'+rotinas.map(r=>{
+  const feitos=habDatas(r); const dias=[];let previstos=0,concluidos=0;
+  for(let n=27;n>=0;n--){const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-n);const iso=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+   const fez=feitos.has(iso),pausa=pausaAtiva(r,iso),previsto=rotinaPrevistaNaData(r,iso);
+   if(previsto)previstos++;if(previsto&&fez)concluidos++;
+   dias.push(`<div class="zaia-hab-dia ${fez?'feito':previsto?'previsto':pausa?'pausado':''} ${iso===hoje?'hoje':''}" title="${iso}: ${fez?'concluído':pausa?'em pausa':previsto?'programado':'sem programação'}" aria-label="${iso}: ${fez?'concluído':pausa?'em pausa':previsto?'programado':'não programado'}">${String(d.getDate()).padStart(2,'0')}</div>`);
+  }
+  const taxa=previstos?Math.round(concluidos/previstos*100):0;
+  return `<div class="zaia-hab-hist-card"><div class="zaia-hab-hist-top"><div><strong>${esc(r.titulo)}</strong><p>${esc(diasTexto(r))}${r.hora?' · '+esc(r.hora):''}${pausaAtiva(r)?' · Pausado':''}</p></div><span class="zaia-hab-score">${concluidos}/${previstos} · ${taxa}%</span></div><div class="zaia-hab-grade">${['D','S','T','Q','Q','S','S'].map(x=>`<span class="zaia-hab-semana">${x}</span>`).join('')}${dias.join('')}</div><div class="zaia-hab-legenda">Roxo: concluído · Contorno: programado · Transparente: em pausa</div><div class="zaia-hab-actions" style="margin-top:12px"><button data-rotedit="${r.id}">Editar / pausar</button></div></div>`;
+ }).join('');
+}
+function renderRotina(){
+ const area=el('lista-rotina');if(!area)return;
+ document.querySelectorAll('.zaia-rotina-tabs button').forEach(b=>{const ativo=(b.id==='hab-tab-historico')===(modoHabitos==='historico');b.classList.toggle('on',ativo);b.setAttribute('aria-pressed',String(ativo));});
+ if(modoHabitos==='historico'){area.innerHTML=renderHistoricoHabitos();return;}
+ if(!rotinas.length){area.innerHTML='<div class="vazio">Sem hábitos ainda. Crie o primeiro — algo pequeno do seu dia.</div>';return;}
+ const disponiveis=rotinas.filter(rotinaHoje),futuras=rotinas.filter(r=>!rotinaHoje(r)&&!pausaAtiva(r)),pausadas=rotinas.filter(r=>pausaAtiva(r));
+ area.innerHTML=`<div class="zaia-hab-resumo">${rotinas.length} hábitos · ${disponiveis.length} disponíveis agora · ${pausadas.length} em pausa</div>`+
+ (disponiveis.length?'<div class="sec-titulo">Disponíveis agora</div>'+grupos(disponiveis):'<div class="vazio">Nenhum hábito disponível agora.</div>')+
+ (futuras.length?`<details class="zaia-futuro"><summary>Programados para depois (${futuras.length})</summary><div class="zaia-futuro-corpo">${grupos(futuras)}</div></details>`:'')+
+ (pausadas.length?`<details class="zaia-futuro"><summary>Hábitos pausados (${pausadas.length})</summary><div class="zaia-futuro-corpo">${grupos(pausadas)}</div></details>`:'');
+}
+el('hab-tab-hoje').onclick=()=>{modoHabitos='hoje';renderRotina();};
+el('hab-tab-historico').onclick=()=>{modoHabitos='historico';renderRotina();};
 function itemTarefa(t){
   const prazo=t.prazo?`<span class="tag tag-prazo ${venceu(t.prazo)&&!t.concluida?'venc':''}">${fmtPrazo(t.prazo)}</span>`:'';
   const etq=t.etiqueta?`<span class="tag tag-etiqueta">${esc(t.etiqueta)}</span>`:'';
@@ -2002,39 +2083,43 @@ el('ensino-add').onclick=async()=>{ const termo=el('ensino-termo').value.trim().
 
 /* ROTINA (hábitos) */
 async function toggleRotina(id){ const r=rotinas.find(x=>x.id===id); if(!r)return;
-  const feito=r.feitoEm===hojeStr();
-  await updateDoc(doc(db,'rotinas',id),{feitoEm:feito?null:hojeStr()}); }
-let rMomento='manha', rDiasSel='todos', rFreq='semana';
+  if(!rotinaHoje(r))return;
+  const hoje=hojeStr(),feito=habDatas(r).has(hoje);
+  await updateDoc(doc(db,'rotinas',id),{feitoEm:feito?null:hoje,historico:feito?arrayRemove(hoje):arrayUnion(hoje)}); }
+let rMomento='manha', rDiasSel='todos', rFreq='diario';
 el('btn-nova-rotina').onclick=()=>abrirRotina();
 function abrirRotina(id){
   el('rotina-titulo-modal').textContent=id?'Editar hábito':'Novo hábito';
   if(id){ const r=rotinas.find(x=>x.id===id); if(!r)return;
     el('r-id').value=id; el('r-titulo').value=r.titulo; el('r-hora').value=r.hora||'';
-    rMomento=r.momento||'manha'; rDiasSel=r.dias||'todos'; rFreq=r.freq||'semana';
+    rMomento=r.momento||'manha'; rDiasSel=Array.isArray(r.dias)&&r.dias.length?r.dias:(r.dias==='todos'?'todos':'todos'); rFreq=r.freq==='mes'?'mes':(r.freq==='diario'||r.dias==='todos'?'diario':'semana');
     el('r-diames').value=r.diaMes||'';
+    el('r-pausar').checked=!!r.pausado;el('r-pausa-inicio').value=r.pausaInicio||'';el('r-pausa-fim').value=r.pausaFim||'';
     el('r-excluir').classList.remove('oculto');
-  } else { el('r-id').value=''; el('r-titulo').value=''; el('r-hora').value=''; rMomento='manha'; rDiasSel='todos'; rFreq='semana'; el('r-diames').value=''; el('r-excluir').classList.add('oculto'); }
+  } else { el('r-id').value=''; el('r-titulo').value=''; el('r-hora').value=''; rMomento='manha'; rDiasSel='todos'; rFreq='diario'; el('r-diames').value='';el('r-pausar').checked=false;el('r-pausa-inicio').value='';el('r-pausa-fim').value=''; el('r-excluir').classList.add('oculto'); }
   pintaMomento(); pintaDias(); pintaFreq(); el('modal-rotina').classList.add('on'); el('r-titulo').focus(); }
 function pintaFreq(){ document.querySelectorAll('#r-freq button').forEach(b=>b.classList.toggle('sel',b.dataset.f===rFreq));
   el('r-bloco-semana').classList.toggle('oculto',rFreq!=='semana');
   el('r-bloco-mes').classList.toggle('oculto',rFreq!=='mes'); }
-el('r-freq').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;rFreq=b.dataset.f;pintaFreq();});
+el('r-freq').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;rFreq=b.dataset.f;if(rFreq==='diario')rDiasSel='todos';if(rFreq==='semana'&&rDiasSel==='todos')rDiasSel=[new Date().getDay()];pintaFreq();pintaDias();});
 function pintaMomento(){ document.querySelectorAll('#r-momento button').forEach(b=>b.classList.toggle('sel',b.dataset.m===rMomento)); }
 function pintaDias(){ document.querySelectorAll('#r-dias button').forEach(b=>{
   if(b.dataset.d==='todos')b.classList.toggle('sel',rDiasSel==='todos');
   else b.classList.toggle('sel',Array.isArray(rDiasSel)&&rDiasSel.includes(+b.dataset.d)); }); }
 el('r-momento').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;rMomento=b.dataset.m;pintaMomento();});
 el('r-dias').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
-  if(b.dataset.d==='todos'){ rDiasSel='todos'; }
+  if(b.dataset.d==='todos'){ rFreq='diario';rDiasSel='todos';pintaFreq(); }
   else{ const dia=+b.dataset.d; if(!Array.isArray(rDiasSel))rDiasSel=[];
     if(rDiasSel.includes(dia))rDiasSel=rDiasSel.filter(x=>x!==dia); else rDiasSel=[...rDiasSel,dia];
-    if(!rDiasSel.length)rDiasSel='todos'; }
+    if(!rDiasSel.length)rDiasSel=[dia]; }
   pintaDias(); });
 el('r-cancelar').onclick=()=>el('modal-rotina').classList.remove('on');
 el('r-salvar').onclick=async()=>{ const tit=el('r-titulo').value.trim(); if(!tit)return;
   let diaMes=null;
   if(rFreq==='mes'){ diaMes=Math.min(Math.max(parseInt(el('r-diames').value,10)||1,1),31); }
-  const dados={titulo:tit,momento:rMomento,dias:rDiasSel,hora:el('r-hora').value||null,freq:rFreq,diaMes};
+  const pausado=el('r-pausar').checked,pausaInicio=el('r-pausa-inicio').value||null,pausaFim=el('r-pausa-fim').value||null;
+  if(pausado&&pausaInicio&&pausaFim&&pausaFim<=pausaInicio){alert('A data de retorno precisa ser posterior ao início da pausa.');return;}
+  const dados={titulo:tit,momento:rMomento,dias:rFreq==='diario'?'todos':rDiasSel,hora:el('r-hora').value||null,freq:rFreq,diaMes,pausado,pausaInicio:pausado?pausaInicio:null,pausaFim:pausado?pausaFim:null};
   const id=el('r-id').value;
   if(id) await updateDoc(doc(db,'rotinas',id),dados);
   else await addDoc(collection(db,'rotinas'),{...dados,feitoEm:null,userId:user.uid,criadaEm:Date.now()});
