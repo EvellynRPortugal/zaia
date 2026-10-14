@@ -785,6 +785,9 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 .zaia-series-actions button:hover{border-color:#a48cd0}
 @media(max-width:560px){.zaia-series-actions button{flex:1}.zaia-timeline-tabs button{flex:1}}
 
+/* ZAIA V9 — repetição mensal e anual */
+#m-rec-mensal .campo{max-width:160px}
+#m-rec-anual{padding:9px 0}
 /* ZAIA V5 — agenda, recorrência e foco temporal */
 .agenda-extra {border:1px solid var(--stroke);background:var(--elevado);padding:12px 14px;border-radius:18px;margin:12px 0 16px}
 .agenda-extra label{margin-top:9px}.agenda-extra .campo{background:var(--card-solid)}
@@ -1072,13 +1075,19 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
       <label for="m-link">Link da reunião (opcional)</label>
       <input id="m-link" class="campo" type="url" placeholder="https://meet.google.com/..." />
       <label for="m-rec-freq">Repetir</label>
-      <select id="m-rec-freq" class="campo"><option value="none">Não repetir</option><option value="daily">Todos os dias</option><option value="weekly">Dias da semana personalizados</option></select>
+      <select id="m-rec-freq" class="campo"><option value="none">Não repetir</option><option value="daily">Todos os dias</option><option value="weekly">Dias da semana personalizados</option><option value="monthly">Todo mês</option><option value="yearly">Todo ano</option></select>
       <div id="m-rec-extra" class="oculto">
         <label>Dias em que se repete</label>
         <div class="dias-pick zaia-rec-dias" id="m-rec-dias">
           <button type="button" data-rec-day="0">Dom</button><button type="button" data-rec-day="1">Seg</button><button type="button" data-rec-day="2">Ter</button><button type="button" data-rec-day="3">Qua</button><button type="button" data-rec-day="4">Qui</button><button type="button" data-rec-day="5">Sex</button><button type="button" data-rec-day="6">Sáb</button>
         </div>
       </div>
+      <div id="m-rec-mensal" class="oculto">
+        <label for="m-rec-dia">Dia do mês (1 a 31)</label>
+        <input id="m-rec-dia" class="campo" type="number" min="1" max="31" step="1" placeholder="Ex.: 15" />
+        <p class="zaia-help">Em meses mais curtos, a repetição será no último dia do mês. Ex.: dia 31 → 28/29 de fevereiro.</p>
+      </div>
+      <p id="m-rec-anual" class="zaia-help oculto">A repetição anual usa o dia e o mês da primeira ocorrência. Para 29 de fevereiro, ocorre apenas em anos bissextos.</p>
       <label for="m-rec-end">Repetir até (inclusive)</label>
       <input id="m-rec-end" class="campo" type="date" />
       <p class="zaia-help">A recorrência aparece na Zaia sem criar tarefas duplicadas. As séries recorrentes ainda não são exportadas para o Google Agenda.</p>
@@ -1729,7 +1738,7 @@ function renderFiltros(){ const etqs=etiquetasExistentes(); const box=el('filtro
 /* Recorrências calculadas em tempo de exibição, sem duplicar documentos no Firebase */
 const zaiaDia = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 function zaiaRecOcorrencias(t, inicio, fim){
-  const cfg=t.recorrencia; if(!cfg||cfg.freq==='none'||!t.prazo)return [];
+  const cfg=t.recorrencia; if(!cfg||!['daily','weekly','monthly','yearly'].includes(cfg.freq)||!t.prazo)return [];
   const base=new Date(t.prazo), hora=base.getHours(), min=base.getMinutes();
   const limite=cfg.ate?new Date(cfg.ate+'T23:59:59').getTime():Infinity;
   const inicioMs=Math.max(inicio,new Date(base.getFullYear(),base.getMonth(),base.getDate()).getTime());
@@ -1739,6 +1748,12 @@ function zaiaRecOcorrencias(t, inicio, fim){
     const ms=new Date(day.getFullYear(),day.getMonth(),day.getDate(),hora,min).getTime();
     if(ms<t.prazo||ms>limite||ms<inicio||ms>=fim)continue;
     if(cfg.freq==='weekly'&&!(cfg.dias||[]).includes(day.getDay()))continue;
+    if(cfg.freq==='monthly'){
+      const ultimoDiaMes=new Date(day.getFullYear(),day.getMonth()+1,0).getDate();
+      const desejado=Number(cfg.diaMes)||base.getDate();
+      if(day.getDate()!==Math.min(desejado,ultimoDiaMes))continue;
+    }
+    if(cfg.freq==='yearly'&&(day.getMonth()!==base.getMonth()||day.getDate()!==base.getDate()))continue;
     const chave=zaiaDia(day);
     resultado.push({t,ms,chave,feito:(t.ocorrenciasConcluidas||[]).includes(chave)});
   }
@@ -1760,6 +1775,8 @@ function zaiaDescricaoRecorrencia(t){
   const c=t.recorrencia||{};
   const freq=c.freq==='daily'?'Todos os dias':c.freq==='weekly'
     ? 'Toda '+(c.dias||[]).slice().sort((a,b)=>a-b).map(d=>DIAS_ABBR[d]).join(', ')
+    : c.freq==='monthly'?'Mensal · dia '+(c.diaMes||new Date(t.prazo).getDate())
+    : c.freq==='yearly'?'Anual · '+new Date(t.prazo).toLocaleDateString('pt-BR',{day:'2-digit',month:'long'})
     : 'Frequência não definida';
   const horario=t.prazo?new Date(t.prazo).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'';
   return [freq,horario,c.ate?'Até '+c.ate.split('-').reverse().join('/'):'Sem data final'].filter(Boolean).join(' · ');
@@ -1949,15 +1966,23 @@ let zaiaDiasSel=[];
 function zaiaPintarRec(){
   const f=el('m-rec-freq').value;
   el('m-rec-extra').classList.toggle('oculto',f!=='weekly');
+  el('m-rec-mensal').classList.toggle('oculto',f!=='monthly');
+  el('m-rec-anual').classList.toggle('oculto',f!=='yearly');
   el('m-rec-end').disabled=f==='none';
   document.querySelectorAll('[data-rec-day]').forEach(b=>b.classList.toggle('sel',zaiaDiasSel.includes(+b.dataset.recDay)));
 }
-el('m-rec-freq').addEventListener('change',zaiaPintarRec);
+el('m-rec-freq').addEventListener('change',()=>{
+  if(el('m-rec-freq').value==='monthly'&&!el('m-rec-dia').value){
+    el('m-rec-dia').value=el('m-data').value?Number(el('m-data').value.slice(-2)):new Date().getDate();
+  }
+  zaiaPintarRec();
+});
 el('m-rec-dias').addEventListener('click',e=>{const b=e.target.closest('[data-rec-day]');if(!b)return;
   const d=+b.dataset.recDay;zaiaDiasSel=zaiaDiasSel.includes(d)?zaiaDiasSel.filter(x=>x!==d):[...zaiaDiasSel,d];zaiaPintarRec();});
 function zaiaPreencherExtra(t={}){
  el('m-local').value=t.local||'';el('m-link').value=t.linkReuniao||'';
  el('m-rec-freq').value=t.recorrencia?.freq||'none';el('m-rec-end').value=t.recorrencia?.ate||'';
+ el('m-rec-dia').value=t.recorrencia?.diaMes|| (t.prazo?new Date(t.prazo).getDate():'');
  zaiaDiasSel=[...(t.recorrencia?.dias||[])];zaiaPintarRec();
 }
 el('fab').onclick=()=>abrirNova();
@@ -2020,11 +2045,15 @@ el('m-salvar').onclick=async()=>{ const tit=el('m-titulo').value.trim(); if(!tit
   const freq=el('m-rec-freq').value, ate=el('m-rec-end').value||null;
   if(freq!=='none'&&!prazo){fala('Para repetir, informe a data e a hora da primeira ocorrência.',true);return;}
   if(freq==='weekly'&&!zaiaDiasSel.length){fala('Selecione ao menos um dia da semana.',true);return;}
+  const diaMes=Number(el('m-rec-dia').value);
+  if(freq==='monthly'&&(!Number.isInteger(diaMes)||diaMes<1||diaMes>31)){
+    fala('Informe um dia do mês entre 1 e 31.',true);return;
+  }
   if(ate&&prazo&&new Date(ate+'T23:59:59').getTime()<prazo){fala('A data final deve ser igual ou posterior à primeira ocorrência.',true);return;}
   const link=el('m-link').value.trim();
   if(link){try{if(new URL(link).protocol!=='https:')throw new Error('Protocolo');}catch(e){fala('Insira um link HTTPS válido.',true);return;}}
   const dados={titulo:tit,descricao:el('m-desc').value.trim()||null,prioridade:prioSel,tipo:tipoSel,etiqueta:el('m-etiqueta').value.trim()||null,prazo,lembrete:prazo,local:el('m-local').value.trim()||null,linkReuniao:link||null,
-    recorrencia:freq==='none'?null:{freq,dias:freq==='weekly'?[...zaiaDiasSel]:[],ate,pausada:!!tarefas.find(t=>t.id===el('m-id').value)?.recorrencia?.pausada},subitens:subPend.map(s=>({t:s.t,ok:!!s.ok}))};
+    recorrencia:freq==='none'?null:{freq,dias:freq==='weekly'?[...zaiaDiasSel]:[],diaMes:freq==='monthly'?diaMes:null,ate,pausada:!!tarefas.find(t=>t.id===el('m-id').value)?.recorrencia?.pausada},subitens:subPend.map(s=>({t:s.t,ok:!!s.ok}))};
   let id=el('m-id').value; el('m-salvar').disabled=true;
   try{ if(id) await updateDoc(doc(db,'tarefas',id),dados);
     else{ const ref=await addDoc(collection(db,'tarefas'),{...dados,userId:user.uid,concluida:false,criadaEm:Date.now()}); id=ref.id; }
