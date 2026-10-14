@@ -1091,7 +1091,7 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
       <p id="m-rec-anual" class="zaia-help oculto">A repetição anual usa o dia e o mês da primeira ocorrência. Para 29 de fevereiro, ocorre apenas em anos bissextos.</p>
       <label for="m-rec-end">Repetir até (inclusive)</label>
       <input id="m-rec-end" class="campo" type="date" />
-      <p class="zaia-help">A recorrência aparece na Zaia sem criar tarefas duplicadas. As séries recorrentes ainda não são exportadas para o Google Agenda.</p>
+      <p class="zaia-help">A recorrência aparece na Zaia sem criar tarefas duplicadas. Séries recorrentes podem ser sincronizadas com o Google Agenda. Ao alterar a data inicial de uma repetição semanal, confira também os dias selecionados.</p>
     </div>
     <label>Etiqueta</label>
     <input id="m-etiqueta" class="campo"/>
@@ -2049,6 +2049,10 @@ el('m-salvar').onclick=async()=>{ const tit=el('m-titulo').value.trim(); if(!tit
   const freq=el('m-rec-freq').value, ate=el('m-rec-end').value||null;
   if(freq!=='none'&&!prazo){fala('Para repetir, informe a data e a hora da primeira ocorrência.',true);return;}
   if(freq==='weekly'&&!zaiaDiasSel.length){fala('Selecione ao menos um dia da semana.',true);return;}
+  if(freq==='weekly'&&prazo&&!zaiaDiasSel.includes(new Date(prazo).getDay())){
+    const ok=confirm('A data inicial escolhida não corresponde aos dias da semana selecionados. A primeira ocorrência real será no próximo dia selecionado. Deseja continuar?');
+    if(!ok)return;
+  }
   const diaMes=Number(el('m-rec-dia').value);
   if(freq==='monthly'&&(!Number.isInteger(diaMes)||diaMes<1||diaMes>31)){
     fala('Informe um dia do mês entre 1 e 31.',true);return;
@@ -2805,8 +2809,8 @@ function gcalRegraRecorrencia(t){
   }
   if(r.ate){
     // Inclusivo: 23:59:59 UTC do último dia escolhido.
-    const d=r.ate.replace(/-/g,'');
-    if(/^\d{8}$/.test(d))partes.push('UNTIL='+d+'T235959Z');
+    const limite=new Date(r.ate+'T23:59:59');
+    if(!isNaN(limite.getTime()))partes.push('UNTIL='+limite.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z'));
   }
   return 'RRULE:'+partes.join(';');
 }
@@ -2843,17 +2847,35 @@ async function gcalAtualizarEvento(t){
   if(!t.gcalEventId)return {ok:false,erro:'Tarefa sem vínculo com evento Google'};
   const url='https://www.googleapis.com/calendar/v3/calendars/primary/events/'+encodeURIComponent(t.gcalEventId);
   try{
-    const r=await gcalFetch(url,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(gcalCorpoEvento(t))});
+    // Atualiza o evento principal (a série), não as ocorrências individuais.
+    // GET confirma que o vínculo ainda existe e evita criar uma nova série inadvertidamente.
+    const antes=await gcalFetch(url,{method:'GET'});
+    if(!antes)return {ok:false,erro:'Autorização do Google indisponível'};
+    if(antes.status===404||antes.status===410)return {ok:false,erro:'Série não encontrada no Google. Nenhuma cópia foi criada.'};
+    if(!antes.ok)return {ok:false,erro:'Erro ao consultar série (HTTP '+antes.status+')'};
+    const antigo=await antes.json();
+    if(antigo.recurringEventId)return {ok:false,erro:'O vínculo aponta para uma ocorrência individual, não para a série. Edição bloqueada para evitar duplicação.'};
+    const corpo=gcalCorpoEvento(t);
+    const r=await gcalFetch(url,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(corpo)});
     if(!r)return {ok:false,erro:'Sem autorização Google válida'};
-    if(r.ok)return {ok:true,id:t.gcalEventId};
-    if(r.status===404||r.status===410)return {ok:false,erro:'Evento não encontrado no Google. Nenhuma cópia foi criada.'};
-    let detalhe='';try{const e=await r.json();detalhe=e.error?.message||'';}catch(_){}
-    return {ok:false,erro:`HTTP ${r.status}${detalhe?' — '+detalhe:''}`};
+    if(!r.ok){
+      let detalhe='';try{const e=await r.json();detalhe=e.error?.message||'';}catch(_){}
+      return {ok:false,erro:`HTTP ${r.status}${detalhe?' — '+detalhe:''}`};
+    }
+    const atualizado=await r.json();
+    const esperadoInicio=new Date(t.prazo).getTime();
+    const inicioGoogle=Date.parse(atualizado.start?.dateTime||'');
+    const regraEsperada=gcalRegraRecorrencia(t);
+    const regraGoogle=(atualizado.recurrence||[]).find(x=>x.startsWith('RRULE:'))||null;
+    if(!Number.isFinite(inicioGoogle)||Math.abs(inicioGoogle-esperadoInicio)>1000||regraGoogle!==regraEsperada){
+      return {ok:false,erro:'O Google recebeu a edição, mas os dados retornados não coincidem com a programação. Confira o evento antes de sincronizar novamente.'};
+    }
+    return {ok:true,id:t.gcalEventId};
   }catch(e){return {ok:false,erro:e.message||'Falha de rede'};}
 }
 async function gcalAtualizarAoSalvar(t){
-  if(!gcalConectado()){gcalStatus('Alteração salva na Zaia. Reconecte o Google e use Sincronizar agora.');return;}
-  if(!gcalToken()){gcalStatus('Alteração salva na Zaia. Autorização Google expirada: use Sincronizar agora.');return;}
+  if(!gcalConectado()){gcalStatus('Alteração salva na Zaia. Reconecte o Google e use Sincronizar agora.');alert('Salvo na Zaia, mas o Google Agenda não está conectado.');return;}
+  if(!gcalToken()){gcalStatus('Alteração salva na Zaia. Autorização Google expirada: use Sincronizar agora.');alert('Salvo na Zaia, mas a autorização do Google expirou. Reconecte e sincronize.');return;}
   if(!t.prazo){gcalStatus('Alteração salva na Zaia, mas o compromisso está sem data. Atualização no Google pendente.');return;}
   const assinatura=gcalAssinatura(t);
   if(t.gcalSyncFingerprint===assinatura)return;
@@ -2862,7 +2884,10 @@ async function gcalAtualizarAoSalvar(t){
     try{await updateDoc(doc(db,'tarefas',t.id),{gcalSyncFingerprint:assinatura});
       gcalStatus('Compromisso atualizado no Google Agenda.');}
     catch(e){gcalStatus('Google atualizado, mas falhou o registro da confirmação na Zaia.');}
-  }else gcalStatus('Alteração salva na Zaia, mas não no Google: '+ret.erro);
+  }else {
+    gcalStatus('Alteração salva na Zaia, mas não no Google: '+ret.erro);
+    alert('A alteração foi salva na Zaia, porém o Google Agenda não foi atualizado.\n\n'+ret.erro+'\n\nUse Sincronizar agora após conferir o evento.');
+  }
 }
 /* Sincronização idempotente: cria os novos, atualiza os vinculados que mudaram. */
 let gcalSyncing=false;
