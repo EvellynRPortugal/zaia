@@ -1583,7 +1583,7 @@ setInterval(()=>{if(user){renderTarefas();renderRotina();renderRotinaHoje();}},6
 
 /* DADOS */
 function ligarDados(){ const col=(n)=>query(collection(db,n), where('userId','==',user.uid));
-  unsub.push(onSnapshot(col('tarefas'), s=>{tarefas=docs(s);render();gcalAutoSync();}, err));
+  unsub.push(onSnapshot(col('tarefas'), s=>{tarefas=docs(s);render(); /* Google: sincronização manual para evitar envios inesperados */}, err));
   unsub.push(onSnapshot(col('projetos'),s=>{projetos=docs(s);render();}, err));
   unsub.push(onSnapshot(col('etapas'),  s=>{etapas=docs(s);render();}, err));
   unsub.push(onSnapshot(col('sinonimos'),s=>{sinonimos=docs(s);render();}, err));
@@ -2736,7 +2736,7 @@ el('btn-gcal').onclick=()=>{ if(gcalConectado()){ if(confirm('Desconectar a Goog
 function gcalStatus(msg){ const n=el('gcal-status');if(n)n.textContent=msg; }
 function gcalAtualizarUI(){ const on=gcalConectado();
   el('gcal-lbl').textContent=!on?'Google Agenda':gcalToken()?'Google Agenda ✓':'Google Agenda · reconectar';
-  if(on&&gcalToken())gcalAutoSync();
+  /* Sincronização apenas por ação do usuário; o status não dispara envio. */
 }
 el('btn-gcal-sync').onclick=async()=>{
   if(!gcalConectado()){ gcalStatus('Conecte sua conta Google antes de sincronizar.'); return; }
@@ -2759,7 +2759,7 @@ async function gcalImportar(){ if(!gcalConectado()||gcalImporting)return; gcalIm
       for(const ev of (d.items||[])){
         if(!ev.id||jaTem.has(ev.id)||ev.status==='cancelled')continue;
         // NUNCA reimporta eventos que a própria Zaia criou (evita o loop de duplicação)
-        if(String(ev.id).startsWith('zaia'))continue;
+        if(String(ev.id).startsWith('a1a'))continue;
         const meu=(ev.attendees||[]).find(a=>a.self); if(meu&&meu.responseStatus==='declined')continue;
         const dt=ev.start&&(ev.start.dateTime||ev.start.date); if(!dt)continue;
         const prazo=new Date(dt).getTime();
@@ -2778,7 +2778,7 @@ async function gcalFetch(url,opt={}){ let tk=await gcalEnsure(); if(!tk)return n
   if(r.status===401){ tk=await gcalPedir(''); if(tk){ opt.headers.Authorization='Bearer '+tk; r=await fetch(url,opt); } } return r; }
 /* ID fixo do evento, derivado do id da tarefa (base32hex: só 0-9 e a-v).
    Com isso o Google recusa cópias repetidas em vez de criar outra. */
-function gcalIdEvento(taskId){ let h=''; for(let i=0;i<taskId.length;i++){ h+=taskId.charCodeAt(i).toString(16).padStart(2,'0'); } return 'zaia'+h; }
+function gcalIdEvento(taskId){ let h=''; for(let i=0;i<taskId.length;i++){ h+=taskId.charCodeAt(i).toString(16).padStart(2,'0'); } return 'a1a'+h; }
 function gcalRegraRecorrencia(t){
   const r=t.recorrencia;
   if(!r||!r.freq||r.freq==='none')return null;
@@ -2824,6 +2824,7 @@ async function gcalCriarEvento(t,eventId){
 /* Sincronização somente Zaia → Google; um ID estável por tarefa ou série. */
 let gcalSyncing=false;
 async function gcalAutoSync(manual=false){
+  if(!manual)return; // Segurança: nunca enviar em massa sem clique explícito.
   if(!gcalConectado()){if(manual)gcalStatus('Google Agenda não conectado.');return;}
   if(gcalSyncing){if(manual)gcalStatus('Uma sincronização já está em andamento.');return;}
   // A autorização interativa só é solicitada por clique, nunca por atualização do Firebase.
