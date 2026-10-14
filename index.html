@@ -851,6 +851,30 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 .fab-chat{position:fixed}
 .chat-notif{position:absolute;top:-3px;right:-3px;width:12px;height:12px;background:#E94FD9;border:2px solid #151026;border-radius:50%}
 
+
+/* ZAIA V16 — Relatório mensal, visual tranquilo */
+.zaia-hab-mes-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:13px 0 18px;padding:12px;background:#261b40;border:1px solid var(--stroke);border-radius:16px;text-align:center}
+.zaia-hab-mes-nav strong{font-family:var(--fonte-display);font-size:18px;color:var(--lilas)}
+.zaia-hab-mes-nav button{min-width:44px;min-height:44px;border-radius:12px;background:#382752;color:#fff;font-size:27px;line-height:1}
+.zaia-hab-mes-nav button:disabled{opacity:.3;cursor:default}
+.zaia-hab-mes-nav button:hover:not(:disabled){background:#514071}
+.zaia-hab-seletor-label{display:block;font-size:13px;font-weight:700;color:var(--txt-dim);margin-bottom:7px}
+.zaia-hab-seletor{width:100%;margin:0 0 14px;background:#30214b}
+.zaia-hab-painel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 15px}
+.zaia-hab-painel>div{min-height:94px;background:#261b40;border:1px solid var(--stroke);border-radius:15px;padding:13px;display:flex;flex-direction:column;gap:10px;justify-content:space-between}
+.zaia-hab-painel span{font-size:12px;color:var(--txt-dim)}
+.zaia-hab-painel strong{font-size:22px;line-height:1.2;color:#fff;font-weight:800}
+.zaia-hab-painel .zaia-hab-tendencia{font-size:12px;line-height:1.4;color:var(--lilas)}
+.zaia-hab-dia.futuro{background:#1e1830;color:#80718e;border-color:transparent}
+.zaia-hab-dia.antes{background:transparent;color:#665b78;border:1px dashed #392f4d}
+.zaia-hab-dia.livre{background:#211a34;color:#a396b5}
+.zaia-hab-legend{display:flex;flex-wrap:wrap;gap:10px 15px;margin:14px 0 22px}
+.zaia-hab-legend span{display:flex;gap:6px;align-items:center}
+.zaia-hab-legend i{width:12px;height:12px;border-radius:4px;background:#312646;border:1px solid #655483}
+.zaia-hab-legend i.feito{background:#6651b7;border-color:#6651b7}
+.zaia-hab-legend i.futuro{background:#1e1830;border-color:#1e1830}
+.zaia-hab-legend i.pausado{opacity:.4}
+@media(max-width:480px){.zaia-hab-painel{gap:6px}.zaia-hab-painel>div{padding:10px;min-height:89px}.zaia-hab-painel strong{font-size:18px}.zaia-hab-painel .zaia-hab-tendencia{font-size:11px}.zaia-hab-mes-nav strong{font-size:16px}}
 </style>
 </head>
 <body>
@@ -970,7 +994,7 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 
     <section id="aba-rotina" class="oculto">
       <button id="btn-nova-rotina" class="mini-btn" style="margin-bottom:14px">+ Novo hábito</button>
-      <div class="zaia-rotina-tabs" role="group" aria-label="Visualização de hábitos"><button id="hab-tab-hoje" class="on" type="button" aria-pressed="true">Meu dia</button><button id="hab-tab-historico" type="button" aria-pressed="false">Consistência e histórico</button></div>
+      <div class="zaia-rotina-tabs" role="group" aria-label="Visualização de hábitos"><button id="hab-tab-hoje" class="on" type="button" aria-pressed="true">Meu dia</button><button id="hab-tab-historico" type="button" aria-pressed="false">Minha evolução</button></div>
       <p class="zaia-hab-orientacao">Hábitos são práticas que você acompanha. Aulas, reuniões e consultas com horário ficam em <strong>Tarefas → Compromisso</strong>, com recorrência e local.</p>
       <div id="lista-rotina"></div>
     </section>
@@ -1683,23 +1707,84 @@ function renderRotinaHoje(){ const hoje=rotinas.filter(rotinaHoje);
   el('rotina-hoje').innerHTML=hoje.length?grupos(hoje):''; }
 let modoHabitos='hoje';
 function habFormatoDia(d){return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;}
-function renderHistoricoHabitos(){
- if(!rotinas.length)return '<div class="vazio">Nenhum hábito cadastrado ainda.</div>';
- const hoje=hojeStr();
- return '<p class="zaia-hab-orientacao">Últimos 28 dias, alinhados ao dia correto da semana. Cada quadrado representa um dia; as marcações ficam salvas no histórico sem criar tarefas novas.</p>'+rotinas.map(r=>{
-  const feitos=habDatas(r); const dias=[];let previstos=0,concluidos=0;
-  // Alinhar o primeiro dos 28 dias ao dia correto da semana (domingo=0).
-  const inicio=new Date();inicio.setHours(12,0,0,0);inicio.setDate(inicio.getDate()-27);
-  for(let i=0;i<inicio.getDay();i++)dias.push('<span class="zaia-hab-dia-vazio" aria-hidden="true"></span>');
-  for(let n=27;n>=0;n--){const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-n);const iso=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-   const fez=feitos.has(iso),pausa=pausaAtiva(r,iso),previsto=rotinaPrevistaNaData(r,iso);
-   if(previsto)previstos++;if(previsto&&fez)concluidos++;
-   dias.push(`<div class="zaia-hab-dia ${fez?'feito':previsto?'previsto':pausa?'pausado':''} ${iso===hoje?'hoje':''}" title="${iso}: ${fez?'concluído':pausa?'em pausa':previsto?'programado':'sem programação'}" aria-label="${iso}: ${fez?'concluído':pausa?'em pausa':previsto?'programado':'não programado'}">${String(d.getDate()).padStart(2,'0')}</div>`);
-  }
-  const taxa=previstos?Math.round(concluidos/previstos*100):0;
-  return `<div class="zaia-hab-hist-card"><div class="zaia-hab-hist-top"><div><strong>${esc(r.titulo)}</strong><p>${esc(diasTexto(r))}${r.hora?' · '+esc(r.hora):''}${pausaAtiva(r)?' · Pausado':''}</p></div><span class="zaia-hab-score">${concluidos}/${previstos} · ${taxa}%</span></div><div class="zaia-hab-grade">${['D','S','T','Q','Q','S','S'].map(x=>`<span class="zaia-hab-semana">${x}</span>`).join('')}${dias.join('')}</div><div class="zaia-hab-legenda">Roxo: concluído · Contorno: programado · Transparente: em pausa</div><div class="zaia-hab-actions" style="margin-top:12px"><button data-rotedit="${r.id}">Editar / pausar</button></div></div>`;
- }).join('');
+// ZAIA V16 — calendário mensal; somente leitura dos registros existentes.
+let habMesVisivel = new Date().getFullYear()*12 + new Date().getMonth();
+let habSelecionado='todos';
+const HAB_MESES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+function habIsoData(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function habMonthParts(chave){let ano=Math.floor(chave/12), mes=chave-ano*12;return {ano,mes};}
+function habDataInicial(r){
+ // Hábitos legados sem data de criação conhecida: não inferir a data; histórico antigo pode ser incompleto.
+ const t=r.criadaEm;
+ if(typeof t==='number'&&Number.isFinite(t))return habIsoData(new Date(t));
+ if(t&&typeof t.toDate==='function')return habIsoData(t.toDate());
+ if(typeof t==='string'&&/^\d{4}-\d\d-\d\d/.test(t))return t.slice(0,10);
+ return null;
 }
+function habMetricas(r,chave){
+ const {ano,mes}=habMonthParts(chave), hoje=hojeStr(), feitos=habDatas(r),inicio=habDataInicial(r),fim=new Date(ano,mes+1,0).getDate();
+ let previstos=0,concluidos=0,pausados=0;
+ const dias=[];
+ for(let n=1;n<=fim;n++){
+  const iso=habIsoData(new Date(ano,mes,n));
+  const antes=!!inicio&&iso<inicio,futuro=iso>hoje,pausa=pausaAtiva(r,iso),programado=rotinaPrevistaNaData(r,iso);
+  const feito=feitos.has(iso);
+  if(!antes&&!futuro&&!pausa&&programado){previstos++;if(feito)concluidos++;}
+  if(!antes&&!futuro&&pausa)pausados++;
+  let estado=antes?'antes':futuro?'futuro':pausa?'pausado':feito?'feito':programado?'previsto':'livre';
+  dias.push({iso,n,estado,feito,programado});
+ }
+ return {dias,previstos,concluidos,pausados,taxa:previstos?Math.round(100*concluidos/previstos):null,registroAntigo:!inicio};
+}
+function habCalendario(r,chave){
+ const {ano,mes}=habMonthParts(chave),m=habMetricas(r,chave),inicio=new Date(ano,mes,1).getDay();
+ const vazios=Array.from({length:inicio},()=>'<span class="zaia-hab-dia-vazio" aria-hidden="true"></span>').join('');
+ const celulas=m.dias.map(d=>{
+  const rotulo={antes:'antes da criação',futuro:'futuro',pausado:'pausado',feito:'concluído',previsto:'programado, não concluído',livre:'não programado'}[d.estado];
+  return `<span class="zaia-hab-dia ${d.estado} ${d.iso===hojeStr()?'hoje':''}" title="${d.iso}: ${rotulo}" aria-label="${d.iso}: ${rotulo}">${d.n}</span>`;
+ }).join('');
+ return `<div class="zaia-hab-grade">${['D','S','T','Q','Q','S','S'].map(x=>`<span class="zaia-hab-semana">${x}</span>`).join('')}${vazios}${celulas}</div>`;
+}
+function habPercentual(v){return v===null?'—':v+'%';}
+function renderHistoricoHabitos(){
+ const atual=new Date().getFullYear()*12+new Date().getMonth();
+ if(habMesVisivel>atual)habMesVisivel=atual;
+ const {ano,mes}=habMonthParts(habMesVisivel);
+ const nome=`${HAB_MESES[mes].charAt(0).toUpperCase()+HAB_MESES[mes].slice(1)} de ${ano}`;
+ const lista=habSelecionado==='todos'?rotinas:rotinas.filter(r=>r.id===habSelecionado);
+ if(habSelecionado!=='todos'&&!lista.length)habSelecionado='todos';
+ const selecionadas=habSelecionado==='todos'?rotinas:lista;
+ const metricas=selecionadas.map(r=>habMetricas(r,habMesVisivel));
+ const feitos=metricas.reduce((s,m)=>s+m.concluidos,0),previstos=metricas.reduce((s,m)=>s+m.previstos,0);
+ const taxa=previstos?Math.round(feitos*100/previstos):null;
+ const anteriores=selecionadas.map(r=>habMetricas(r,habMesVisivel-1));
+ const antFeitos=anteriores.reduce((s,m)=>s+m.concluidos,0), antPrevistos=anteriores.reduce((s,m)=>s+m.previstos,0);
+ const antTaxa=antPrevistos?Math.round(antFeitos*100/antPrevistos):null;
+ const diferenca=taxa===null||antTaxa===null?null:taxa-antTaxa;
+ const delta=diferenca===null?'Sem comparação disponível':`${diferenca>0?'+':''}${diferenca} p.p. em relação ao mês anterior`;
+ const opcoes=['<option value="todos">Todos os hábitos</option>',...rotinas.map(r=>`<option value="${esc(r.id)}" ${r.id===habSelecionado?'selected':''}>${esc(r.titulo)}</option>`)];
+ const nav=`<div class="zaia-hab-mes-nav"><button type="button" data-hab-mes="anterior" aria-label="Mês anterior">‹</button><strong>${nome}</strong><button type="button" data-hab-mes="proximo" ${habMesVisivel>=atual?'disabled':''} aria-label="Próximo mês">›</button></div>`;
+ const seletor=`<label class="zaia-hab-seletor-label" for="zaia-hab-seletor">Visualizar histórico de</label><select id="zaia-hab-seletor" class="campo zaia-hab-seletor">${opcoes.join('')}</select>`;
+ const resumo=`<div class="zaia-hab-painel"><div><span>Consistência</span><strong>${habPercentual(taxa)}</strong></div><div><span>Concluídos</span><strong>${feitos} de ${previstos}</strong></div><div><span>Evolução mensal</span><strong class="zaia-hab-tendencia">${delta}</strong></div></div>`;
+ const explicacao='<p class="zaia-hab-orientacao">Consistência considera apenas os dias programados já transcorridos; pausas e datas anteriores à criação não contam como faltas. Você pode navegar entre os meses sem modificar os dados.</p>';
+ if(!rotinas.length)return nav+'<div class="vazio">Nenhum hábito cadastrado ainda.</div>';
+ const cards=selecionadas.map(r=>{
+  const m=habMetricas(r,habMesVisivel);
+  return `<article class="zaia-hab-hist-card"><div class="zaia-hab-hist-top"><div><strong>${esc(r.titulo)}</strong><p>${esc(diasTexto(r))}${r.hora?' · '+esc(r.hora):''}</p></div><span class="zaia-hab-score">${habPercentual(m.taxa)}</span></div>${habCalendario(r,habMesVisivel)}<div class="zaia-hab-legenda">${m.concluidos} de ${m.previstos} dias programados concluídos${m.registroAntigo?' · histórico anterior à criação não verificado':''}</div><div class="zaia-hab-actions" style="margin-top:12px"><button data-rotedit="${r.id}">Editar / pausar</button></div></article>`;
+ }).join('');
+ const legenda='<div class="zaia-hab-legenda zaia-hab-legend"><span><i class="feito"></i> Concluído</span><span><i class="previsto"></i> Pendente</span><span><i class="futuro"></i> Futuro</span><span><i class="pausado"></i> Pausado</span></div>';
+ return nav+seletor+resumo+explicacao+cards+legenda;
+}
+// Navegação delegada: não recriar ouvintes após cada atualização do Firebase.
+el('lista-rotina').addEventListener('click',e=>{
+ const bot=e.target.closest('[data-hab-mes]');if(!bot)return;
+ const hojeMes=new Date().getFullYear()*12+new Date().getMonth();
+ habMesVisivel=Math.min(hojeMes,habMesVisivel+(bot.dataset.habMes==='anterior'?-1:1));
+ renderRotina();
+});
+el('lista-rotina').addEventListener('change',e=>{
+ if(e.target.id==='zaia-hab-seletor'){habSelecionado=e.target.value;renderRotina();}
+});
 function renderRotina(){
  const area=el('lista-rotina');if(!area)return;
  document.querySelectorAll('.zaia-rotina-tabs button').forEach(b=>{const ativo=(b.id==='hab-tab-historico')===(modoHabitos==='historico');b.classList.toggle('on',ativo);b.setAttribute('aria-pressed',String(ativo));});
