@@ -875,6 +875,40 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 .zaia-hab-legend i.futuro{background:#1e1830;border-color:#1e1830}
 .zaia-hab-legend i.pausado{opacity:.4}
 @media(max-width:480px){.zaia-hab-painel{gap:6px}.zaia-hab-painel>div{padding:10px;min-height:89px}.zaia-hab-painel strong{font-size:18px}.zaia-hab-painel .zaia-hab-tendencia{font-size:11px}.zaia-hab-mes-nav strong{font-size:16px}}
+
+/* ZAIA V17 — Projetos: foco, missões e constelação acessível */
+.zp-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}
+.zp-tabs button{border:1px solid var(--stroke);background:var(--card);padding:10px 15px;border-radius:999px;font-size:13px;font-weight:700;color:var(--txt-dim)}
+.zp-tabs button.on{background:#44336c;color:#fff;border-color:#8469bf}
+.zp-hero{background:var(--card);border:1px solid var(--stroke);border-radius:20px;padding:18px;margin-bottom:15px}
+.zp-hero h2{font:800 21px/1.3 var(--fonte-display);margin:6px 0}
+.zp-muted{color:var(--txt-dim);font-size:13px}
+.zp-statrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0}
+.zp-stat{background:var(--elevado);padding:12px 9px;border-radius:13px;text-align:center;font-size:12px;color:var(--txt-dim)}
+.zp-stat strong{display:block;font-size:21px;color:var(--txt);font-weight:800}
+.zp-missao{display:flex;gap:12px;align-items:center;border:1px solid #564273;border-radius:16px;padding:14px;background:var(--elevado);margin-top:12px}
+.zp-missao .check{margin:0}
+.zp-missao-main{flex:1;min-width:0}
+.zp-action{background:#59429a;color:white;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:700}
+.zp-action:focus-visible{outline:2px solid var(--foco);outline-offset:3px}
+.zp-const{display:flex;align-items:center;gap:0;overflow-x:auto;padding:20px 0 8px;scrollbar-width:thin}
+.zp-star{flex:0 0 66px;display:flex;align-items:center;flex-direction:column;gap:9px;text-align:center;background:none;border:0;font-size:11px;color:var(--txt-dim);min-width:0}
+.zp-star span:first-child{width:33px;height:33px;display:grid;place-items:center;border-radius:50%;background:#37294d;border:1px solid #786a99;color:#ccc1e5;font-size:17px}
+.zp-star.done span:first-child{background:#6750ab;border-color:#baa5ff;color:#fff}
+.zp-star.next span:first-child{border:2px solid #fff3d6;color:#fff3d6}
+.zp-link{width:16px;height:2px;background:#624e87;flex:0 0 16px;margin-top:-20px}
+.zp-timer{border-radius:20px;padding:22px;background:var(--card);border:1px solid var(--stroke);text-align:center;margin:14px 0}
+.zp-clock{font:800 clamp(38px,8vw,56px)/1.2 var(--fonte-display);font-variant-numeric:tabular-nums;letter-spacing:1px;margin:10px 0;color:#fff3d6}
+.zp-times{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.zp-times button{padding:9px 12px;border:1px solid var(--stroke);background:var(--elevado);border-radius:12px;font-size:13px}
+.zp-times button.sel{background:#59429a;color:white;border-color:#a58bff}
+.zp-timer-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.zp-timer-actions button{border-radius:12px;padding:11px 15px;background:var(--elevado);border:1px solid var(--stroke);font-weight:700;font-size:13px}
+.zp-timer-actions button.primary{background:var(--roxo);border-color:var(--roxo)}
+.zp-steps{margin:12px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.zp-steps li{padding:10px 12px;border:1px solid var(--stroke);border-radius:12px;background:var(--card);display:flex;gap:10px;align-items:center}
+.zp-project-selector{background:var(--card);color:var(--txt);border:1px solid var(--stroke);border-radius:12px;padding:11px;width:100%;margin:8px 0 10px}
+@media(min-width:650px){.zp-statrow{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
 <body>
@@ -1016,6 +1050,12 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 
     <section id="aba-projetos" class="oculto">
       <button id="btn-novo-proj" class="mini-btn" style="margin-bottom:14px">+ Novo projeto</button>
+      <div class="zp-tabs" role="group" aria-label="Visualização dos projetos">
+        <button type="button" class="on" data-zp-tab="visao" aria-pressed="true">Visão geral</button>
+        <button type="button" data-zp-tab="etapas" aria-pressed="false">Etapas e missões</button>
+        <button type="button" data-zp-tab="foco" aria-pressed="false">Modo Foco</button>
+      </div>
+      <div id="zp-dashboard"></div>
       <div id="lista-projetos"></div>
     </section>
 
@@ -1516,7 +1556,7 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword,
   createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut }
   from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, setDoc,
-  onSnapshot, query, where, arrayUnion, arrayRemove }
+  onSnapshot, query, where, arrayUnion, arrayRemove, increment }
   from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -1965,7 +2005,7 @@ function renderTarefas(){renderFiltros();
   renderMinhasRecorrencias();
 }
 
-function renderProjetos(){ if(!projetos.length){el('lista-projetos').innerHTML='<div class="vazio">Crie um projeto para montar um cronograma.</div>';return;}
+function renderProjetosLegado(){ if(!projetos.length){el('lista-projetos').innerHTML='<div class="vazio">Crie um projeto para montar um cronograma.</div>';return;}
   el('lista-projetos').innerHTML=projetos.map(p=>{
     const es=etapas.filter(e=>e.projetoId===p.id).sort((a,b)=>(a.prazo||9e15)-(b.prazo||9e15)||(a.ordem||0)-(b.ordem||0));
     const ft=es.filter(e=>e.concluida).length, pct=es.length?Math.round(ft/es.length*100):0;
@@ -1986,6 +2026,46 @@ function renderProjetos(){ if(!projetos.length){el('lista-projetos').innerHTML='
         <input class="data" type="time" data-etapa-hora="${p.id}" style="flex:0 0 96px"/>
         <button class="mini-btn" data-addetapa="${p.id}">+</button></div>
     </div>`; }).join(''); }
+
+/* V17: cada estrela é uma etapa existente no Firebase, sem criar documentos extras. */
+let zpAba='visao', zpSelecionado=null;
+const zpEsc=s=>esc(s);
+function zpOrdenadas(p){return etapas.filter(e=>e.projetoId===p.id).sort((a,b)=>(a.ordem||0)-(b.ordem||0)||(a.prazo||9e15)-(b.prazo||9e15));}
+function zpProjeto(){return projetos.find(p=>p.id===zpSelecionado)||projetos[0]||null;}
+function zpStatus(){const p=zpProjeto();if(!p)return null;const es=zpOrdenadas(p);return {p,es,feitas:es.filter(e=>e.concluida).length,proxima:es.find(e=>!e.concluida)};}
+function zpSelecionarHTML(p){return `<label class="zp-muted" for="zp-projeto">Projeto selecionado</label><select id="zp-projeto" class="zp-project-selector" aria-label="Escolher projeto">${projetos.map(x=>`<option value="${zpEsc(x.id)}" ${x.id===p.id?'selected':''}>${zpEsc(x.nome)}</option>`).join('')}</select>`;}
+function zpConstelacao(es){if(!es.length)return '<p class="zp-muted">Crie sua primeira etapa em “Etapas e missões” para iniciar a constelação.</p>';
+ return `<div class="zp-const" role="group" aria-label="Constelação das etapas do projeto">${es.slice(0,16).map((e,i)=>`${i?'<span class="zp-link" aria-hidden="true"></span>':''}<button type="button" class="zp-star ${e.concluida?'done':!es.slice(0,i).some(x=>!x.concluida)?'next':''}" data-editetapa="${zpEsc(e.id)}" aria-label="${zpEsc(e.titulo)}, ${e.concluida?'concluída':'pendente'}"><span aria-hidden="true">${e.concluida?'✓':'✦'}</span><span>${i+1}ª etapa</span></button>`).join('')}</div>${es.length>16?'<p class="zp-muted">Mostrando as primeiras 16 etapas. Todas permanecem acessíveis em Etapas e missões.</p>':''}`;
+}
+function renderProjetos(){const root=el('zp-dashboard'),lista=el('lista-projetos');if(!root||!lista)return;
+ document.querySelectorAll('[data-zp-tab]').forEach(b=>{const ativo=b.dataset.zpTab===zpAba;b.classList.toggle('on',ativo);b.setAttribute('aria-pressed',String(ativo));});
+ if(!projetos.length){root.innerHTML='<div class="zp-hero">Comece criando um projeto. Depois, divida-o em pequenas etapas para acompanhar seu progresso.</div>';lista.innerHTML='';return;}
+ const {p,es,feitas,proxima}=zpStatus();zpSelecionado=p.id;const pct=es.length?Math.round(feitas/es.length*100):0;
+ const selector=zpSelecionarHTML(p);
+ if(zpAba==='etapas'){root.innerHTML=`${selector}<p class="zp-muted">Todas as etapas são mantidas como foram salvas. Clique em cada uma para editar ou adicionar notas.</p>`;renderProjetosLegado();return;}
+ lista.innerHTML='';
+ if(zpAba==='visao'){
+ root.innerHTML=`${selector}<section class="zp-hero" aria-label="Progresso do projeto"><p class="zp-muted">SEU UNIVERSO DE PROJETOS ✦</p><h2>${zpEsc(p.nome)}</h2><p class="zp-muted">Grandes ideias, pequenos passos.</p><div class="zp-statrow"><div class="zp-stat"><strong>${pct}%</strong>progresso</div><div class="zp-stat"><strong>${feitas}/${es.length}</strong>etapas</div><div class="zp-stat"><strong>${Math.round((p.focoMinutos||0))}</strong>min de foco</div></div><div class="barra" role="progressbar" aria-label="Progresso do projeto" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><span style="width:${pct}%"></span></div><p class="zp-muted" style="margin:14px 0 4px">Sua constelação de progresso</p>${zpConstelacao(es)}<div class="zp-missao"><div class="zp-missao-main"><strong>${proxima?'Próxima pequena missão':'Etapas em dia'}</strong><p class="zp-muted">${proxima?zpEsc(proxima.titulo):es.length?'Todas as etapas cadastradas foram concluídas.':'Adicione uma etapa na aba Etapas e missões.'}</p></div>${proxima?`<button type="button" class="zp-action" data-zp-missao="${zpEsc(proxima.id)}">Concluir</button>`:''}</div><div style="margin-top:14px"><button class="zp-action" type="button" data-zp-ir="foco">Iniciar sessão de foco →</button> <button type="button" class="mini-btn" data-zp-ir="etapas">Ver etapas</button></div></section>`;
+ }else{
+ root.innerHTML=`${selector}<section class="zp-timer" aria-label="Temporizador de foco"><p class="zp-muted">SESSÃO DE FOCO · ${zpEsc(p.nome)}</p><div class="zp-clock" id="zp-clock" role="timer" aria-label="Tempo restante">25:00</div><div class="zp-times">${[15,25,45].map(n=>`<button type="button" data-zp-min="${n}" class="${zpMin===n?'sel':''}" ${zpRodando?'disabled':''}>${n} min</button>`).join('')}</div><div class="zp-timer-actions"><button class="primary" type="button" id="zp-toggle">${zpRodando?'Pausar':zpRestante<zpMin*60?'Continuar':'Iniciar'}</button><button type="button" id="zp-reset">Reiniciar</button></div><p class="zp-muted" style="margin-top:12px" id="zp-info">Ao terminar, os minutos serão registrados neste projeto. Você pode parar ou pausar sem penalização.</p></section>`;
+ zpAtualizaRelogio();
+ }
+}
+let zpMin=25,zpRestante=25*60,zpRodando=false,zpFim=0,zpTimer=null,zpProjetoFoco=null;
+function zpTempoStr(s){return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;}
+function zpAtualizaRelogio(){const x=el('zp-clock');if(x)x.textContent=zpTempoStr(Math.max(0,zpRestante));}
+function zpPararTimer(){if(zpTimer)clearInterval(zpTimer);zpTimer=null;zpRodando=false;}
+async function zpConcluirFoco(){zpPararTimer();const id=zpProjetoFoco;zpProjetoFoco=null;const projeto=projetos.find(p=>p.id===id);if(projeto){try{await updateDoc(doc(db,'projetos',id),{focoMinutos:increment(zpMin)});}catch(e){console.error('Erro ao registrar sessão de foco',e);fala('Não consegui salvar os minutos da sessão de foco. Tente novamente.');}}zpRestante=zpMin*60;renderProjetos();}
+function zpTick(){if(!zpRodando)return;zpRestante=Math.max(0,Math.ceil((zpFim-Date.now())/1000));zpAtualizaRelogio();if(zpRestante===0)zpConcluirFoco();}
+document.body.addEventListener('click',async e=>{const btn=e.target.closest('button');if(!btn)return;
+ if(btn.dataset.zpTab){zpAba=btn.dataset.zpTab;renderProjetos();return;}
+ if(btn.dataset.zpIr){zpAba=btn.dataset.zpIr;renderProjetos();return;}
+ if(btn.dataset.zpMissao){const etapa=etapas.find(x=>x.id===btn.dataset.zpMissao);if(etapa&&!etapa.concluida)await toggleEtapa(etapa.id);return;}
+ if(btn.dataset.zpMin){if(zpRodando)return;zpMin=+btn.dataset.zpMin;zpRestante=zpMin*60;renderProjetos();return;}
+ if(btn.id==='zp-toggle'){if(zpRodando){zpRestante=Math.max(0,Math.ceil((zpFim-Date.now())/1000));zpPararTimer();renderProjetos();}else{const proj=zpProjeto();if(!proj)return;if(zpProjetoFoco&&zpProjetoFoco!==proj.id){zpRestante=zpMin*60;}zpProjetoFoco=proj.id;zpFim=Date.now()+zpRestante*1000;zpRodando=true;zpTimer=setInterval(zpTick,1000);renderProjetos();}return;}
+ if(btn.id==='zp-reset'){zpPararTimer();zpProjetoFoco=null;zpRestante=zpMin*60;renderProjetos();return;}
+});
+document.body.addEventListener('change',e=>{if(e.target.id==='zp-projeto'){if(zpRodando){fala('Pause ou finalize a sessão de foco antes de trocar de projeto.');e.target.value=zpSelecionado;return;}zpSelecionado=e.target.value;zpRestante=zpMin*60;renderProjetos();}});
 function renderStats(){ const ft=tarefas.filter(t=>t.concluida).length, ab=tarefas.filter(t=>!t.concluida).length;
   const sem=tarefas.filter(t=>t.concluida&&t.concluidaEm&&t.concluidaEm>Date.now()-7*DIA).length;
   const at=tarefas.filter(t=>!t.concluida&&venceu(t.prazo)).length;
