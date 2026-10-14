@@ -927,7 +927,7 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
       <div id="menu-drop" class="menu-drop oculto">
         <button id="btn-foto"><svg class="mic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.6"/><path d="M4 17l5-4 4 3 3-2 4 3"/></svg><span>Trocar foto</span></button>
         <button id="btn-notif"><svg class="mic" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0112 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M10 20a2 2 0 004 0"/></svg><span>Ativar lembretes</span></button>
-        <button id="btn-gcal"><svg class="mic" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2"/><path d="M3.5 9h17M8 3v3M16 3v3"/></svg><span id="gcal-lbl">Google Agenda</span></button>
+        <button id="btn-gcal"><svg class="mic" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2"/><path d="M3.5 9h17M8 3v3M16 3v3"/></svg><span id="gcal-lbl">Google Agenda</span></button><button id="btn-gcal-sync" title="Enviar eventos pendentes para o Google Agenda">↻ Sincronizar agora</button><span id="gcal-status" role="status" aria-live="polite" style="display:block;font-size:12px;padding:6px 13px;color:var(--txt-dim)"></span>
         <button id="btn-spotify"><svg class="mic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 10.2c2.8-.7 5.5-.3 7.6 1M8 13c2.3-.5 4.6-.2 6.2 1M8.4 15.6c1.8-.4 3.4-.1 4.6.7"/></svg><span id="sp-lbl">Spotify</span></button>
         <button id="btn-ensino"><svg class="mic" viewBox="0 0 24 24"><path d="M12 5a4 4 0 00-4 4c0 1.5.8 2.5 1.5 3.2.5.5.5 1 .5 1.8h4c0-.8 0-1.3.5-1.8.7-.7 1.5-1.7 1.5-3.2a4 4 0 00-4-4z"/><path d="M10 19h4"/></svg><span>Modo Ensino</span></button>
         <button id="btn-manual"><svg class="mic" viewBox="0 0 24 24"><path d="M5 4h9a2 2 0 012 2v14H7a2 2 0 01-2-2V4z"/><path d="M9 8h6M9 12h6"/></svg><span>Manual</span></button>
@@ -2733,9 +2733,18 @@ async function gcalEnsure(){ const t=gcalToken(); if(t)return t; if(!gcalConecta
 function gcalConectar(){ gcalPedir('consent'); }
 el('btn-gcal').onclick=()=>{ if(gcalConectado()){ if(confirm('Desconectar a Google Agenda?')){ ['gcal_token','gcal_exp','gcal_conn'].forEach(k=>localStorage.removeItem(k)); gcalAtualizarUI(); } }
   else gcalConectar(); };
+function gcalStatus(msg){ const n=el('gcal-status');if(n)n.textContent=msg; }
 function gcalAtualizarUI(){ const on=gcalConectado();
-  el('gcal-lbl').textContent=on?'Google Agenda ✓':'Google Agenda';
-  if(on){ gcalAutoSync(); } } // Importação automática desabilitada para impedir loop Google → Firebase → Google
+  el('gcal-lbl').textContent=!on?'Google Agenda':gcalToken()?'Google Agenda ✓':'Google Agenda · reconectar';
+  if(on&&gcalToken())gcalAutoSync();
+}
+el('btn-gcal-sync').onclick=async()=>{
+  if(!gcalConectado()){ gcalStatus('Conecte sua conta Google antes de sincronizar.'); return; }
+  if(!gcalToken()){ gcalStatus('Renove a autorização do Google.');
+    const token=await gcalPedir('');if(!token){gcalStatus('Autorização não concluída.');return;}
+  }
+  await gcalAutoSync(true);
+}; // Importação automática do Google para a Zaia continua desativada.
 /* importa eventos criados na Google Agenda (ex.: convites aceitos) como compromissos */
 let gcalImporting=false;
 async function gcalImportar(){ if(!gcalConectado()||gcalImporting)return; gcalImporting=true;
@@ -2770,26 +2779,73 @@ async function gcalFetch(url,opt={}){ let tk=await gcalEnsure(); if(!tk)return n
 /* ID fixo do evento, derivado do id da tarefa (base32hex: só 0-9 e a-v).
    Com isso o Google recusa cópias repetidas em vez de criar outra. */
 function gcalIdEvento(taskId){ let h=''; for(let i=0;i<taskId.length;i++){ h+=taskId.charCodeAt(i).toString(16).padStart(2,'0'); } return 'zaia'+h; }
-async function gcalCriarEvento(titulo,descricao,ms,eventId,local){ if(!gcalConectado())return null;
-  const ini=new Date(ms),fim=new Date(ms+30*60000);
-  const body={summary:titulo,description:descricao||'Criado pela Zaia 🌙',location:local||undefined,
+function gcalRegraRecorrencia(t){
+  const r=t.recorrencia;
+  if(!r||!r.freq||r.freq==='none')return null;
+  const mapa={daily:'DAILY',weekly:'WEEKLY',monthly:'MONTHLY',yearly:'YEARLY'};
+  if(!mapa[r.freq])return null;
+  const partes=['FREQ='+mapa[r.freq]];
+  if(r.freq==='weekly'){
+    const dias=['SU','MO','TU','WE','TH','FR','SA'];
+    const sel=[...new Set((r.dias||[]).map(Number).filter(n=>Number.isInteger(n)&&n>=0&&n<=6))];
+    if(!sel.length)return null;
+    partes.push('BYDAY='+sel.map(d=>dias[d]).join(','));
+  }
+  if(r.freq==='monthly'){
+    const d=Number(r.diaMes)||new Date(t.prazo).getDate();
+    if(d>=1&&d<=31)partes.push('BYMONTHDAY='+d);
+  }
+  if(r.ate){
+    // Inclusivo: 23:59:59 UTC do último dia escolhido.
+    const d=r.ate.replace(/-/g,'');
+    if(/^\d{8}$/.test(d))partes.push('UNTIL='+d+'T235959Z');
+  }
+  return 'RRULE:'+partes.join(';');
+}
+async function gcalCriarEvento(t,eventId){
+  if(!gcalConectado())return {ok:false,erro:'Conta não conectada'};
+  const ms=t.prazo,ini=new Date(ms),fim=new Date(ms+30*60000);
+  const regra=gcalRegraRecorrencia(t);
+  const body={id:eventId,summary:t.titulo,description:[t.descricao,t.linkReuniao].filter(Boolean).join('\n')||'Criado pela Zaia',
+    location:t.local||undefined,
     start:{dateTime:ini.toISOString(),timeZone:TZ},end:{dateTime:fim.toISOString(),timeZone:TZ},
-    reminders:{useDefault:false,overrides:[{method:'popup',minutes:0},{method:'popup',minutes:10}]}};
-  if(eventId) body.id=eventId;
-  const r=await gcalFetch('https://www.googleapis.com/calendar/v3/calendars/primary/events',{method:'POST',
-    headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  if(r&&r.ok){ const d=await r.json(); return d.id||eventId||true; }
-  if(r&&r.status===409) return eventId||true;   // já existe: não duplica
-  return null; }
-/* envio automático: toda tarefa em aberto com data vai pra agenda sozinha */
+    reminders:{useDefault:false,overrides:[{method:'popup',minutes:10}]}};
+  if(regra)body.recurrence=[regra];
+  try{
+    const r=await gcalFetch('https://www.googleapis.com/calendar/v3/calendars/primary/events',{
+      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!r)return {ok:false,erro:'Sem autorização Google válida'};
+    if(r.ok){const d=await r.json();return {ok:true,id:d.id||eventId};}
+    if(r.status===409)return {ok:true,id:eventId}; // evento já existe: não duplicar
+    let detalhe='';try{const e=await r.json();detalhe=e.error?.message||'';}catch(_){}
+    return {ok:false,erro:`HTTP ${r.status}${detalhe?' — '+detalhe:''}`};
+  }catch(e){return {ok:false,erro:e.message||'Falha de rede'};}
+}
+/* Sincronização somente Zaia → Google; um ID estável por tarefa ou série. */
 let gcalSyncing=false;
-async function gcalAutoSync(){ if(!gcalConectado()||gcalSyncing)return;
-  const alvo=tarefas.filter(t=>!t.concluida&&t.prazo&&!t.gcalEventId&&t.origem!=='google'&&(!t.recorrencia||t.recorrencia.freq==='none')); if(!alvo.length)return;
+async function gcalAutoSync(manual=false){
+  if(!gcalConectado()){if(manual)gcalStatus('Google Agenda não conectado.');return;}
+  if(gcalSyncing){if(manual)gcalStatus('Uma sincronização já está em andamento.');return;}
+  // A autorização interativa só é solicitada por clique, nunca por atualização do Firebase.
+  if(!gcalToken()){if(manual)gcalStatus('Sessão expirada. Use Sincronizar agora para reconectar.');gcalAtualizarRotuloSeguro();return;}
+  const alvo=tarefas.filter(t=>!t.concluida&&t.prazo&&!t.gcalEventId&&t.origem!=='google'&&!t.recorrencia?.pausada);
+  if(!alvo.length){if(manual)gcalStatus('Nenhum compromisso pendente para envio.');return;}
   gcalSyncing=true;
-  try { for(const t of alvo){ const eid=gcalIdEvento(t.id);
-    const id=await gcalCriarEvento(t.titulo,[t.descricao,t.linkReuniao].filter(Boolean).join('\n'),t.prazo,eid,t.local);
-    if(id){ try{ await updateDoc(doc(db,'tarefas',t.id),{gcalEventId:id}); }catch(e){} } }
-  } finally { gcalSyncing=false; } }
+  let enviados=0;const erros=[];
+  try{
+    for(const t of alvo){
+      const eid=gcalIdEvento(t.id);
+      const ret=await gcalCriarEvento(t,eid);
+      if(ret.ok){
+        try{await updateDoc(doc(db,'tarefas',t.id),{gcalEventId:ret.id});enviados++;}
+        catch(e){erros.push(`${t.titulo}: ID não salvo no Firebase`);}
+      }else erros.push(`${t.titulo}: ${ret.erro}`);
+    }
+  }finally{gcalSyncing=false;}
+  if(manual||erros.length)gcalStatus(`${enviados} enviado(s). ${erros.length} falha(s).`+(erros.length?' '+erros.slice(0,2).join(' | '):''));
+  if(erros.length)console.warn('Zaia Google Agenda:',erros);
+}
+function gcalAtualizarRotuloSeguro(){el('gcal-lbl').textContent=gcalToken()?'Google Agenda ✓':'Google Agenda · reconectar';}
 gcalInitClient(); gcalAtualizarUI();
 
 /* PWA — registra o service worker */
