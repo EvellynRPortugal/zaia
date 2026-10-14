@@ -830,6 +830,7 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 .zaia-hab-dia.previsto{border-color:#655483}
 .zaia-hab-dia.pausado{opacity:.42}
 .zaia-hab-dia.hoje{outline:2px solid #fff3d6;outline-offset:1px}
+.zaia-hab-dia-vazio{min-height:35px;visibility:hidden;pointer-events:none}
 .zaia-hab-semana{color:var(--txt-dim);font-size:10px;text-align:center}
 .zaia-hab-legenda{font-size:11px;color:var(--txt-dim);line-height:1.6;margin-top:11px}
 .zaia-pausa-form{margin-top:15px;background:rgba(122,92,255,.07);border:1px solid var(--stroke);padding:12px;border-radius:15px}
@@ -1664,8 +1665,11 @@ function habFormatoDia(d){return `${String(d.getDate()).padStart(2,'0')}/${Strin
 function renderHistoricoHabitos(){
  if(!rotinas.length)return '<div class="vazio">Nenhum hábito cadastrado ainda.</div>';
  const hoje=hojeStr();
- return '<p class="zaia-hab-orientacao">Últimos 28 dias. Cada quadrado representa um dia; as marcações ficam salvas no histórico sem criar tarefas novas.</p>'+rotinas.map(r=>{
+ return '<p class="zaia-hab-orientacao">Últimos 28 dias, alinhados ao dia correto da semana. Cada quadrado representa um dia; as marcações ficam salvas no histórico sem criar tarefas novas.</p>'+rotinas.map(r=>{
   const feitos=habDatas(r); const dias=[];let previstos=0,concluidos=0;
+  // Alinhar o primeiro dos 28 dias ao dia correto da semana (domingo=0).
+  const inicio=new Date();inicio.setHours(12,0,0,0);inicio.setDate(inicio.getDate()-27);
+  for(let i=0;i<inicio.getDay();i++)dias.push('<span class="zaia-hab-dia-vazio" aria-hidden="true"></span>');
   for(let n=27;n>=0;n--){const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-n);const iso=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
    const fez=feitos.has(iso),pausa=pausaAtiva(r,iso),previsto=rotinaPrevistaNaData(r,iso);
    if(previsto)previstos++;if(previsto&&fez)concluidos++;
