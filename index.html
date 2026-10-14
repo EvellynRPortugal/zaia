@@ -838,6 +838,19 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 .zaia-check-pausa{display:flex!important;align-items:center;gap:9px;color:var(--lilas)!important;font-size:14px!important}
 .zaia-check-pausa input{accent-color:#7a5cff;width:18px;height:18px}
 @media(max-width:480px){.zaia-hab-dia{min-height:31px;font-size:10px}.zaia-hab-hist-card{padding:12px}}
+
+/* ZAIA V15 — integração Google agrupada, sem ocupar o menu principal */
+.gcal-opcoes{margin:0 2px 7px 12px;padding:9px;border-radius:13px;background:#21172F;border:1px solid #54406F;display:flex;flex-direction:column;gap:3px}
+.gcal-opcoes.oculto{display:none!important}
+.gcal-opcoes-titulo{font-size:10px;letter-spacing:1.1px;font-weight:800;color:#CFC0E6;padding:5px 8px}
+.gcal-conexao-info{font-size:12px;line-height:1.4;color:#E8D9FF;padding:2px 8px 8px}
+.menu-drop .gcal-opcoes button{font-size:12.5px;min-height:38px;padding:8px 10px;text-align:left}
+.menu-drop .gcal-opcoes button:disabled{opacity:.55;cursor:progress}
+.menu-drop .gcal-opcoes #btn-gcal-desconectar{color:#E3B4C8}
+.gcal-sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.fab-chat{position:fixed}
+.chat-notif{position:absolute;top:-3px;right:-3px;width:12px;height:12px;background:#E94FD9;border:2px solid #151026;border-radius:50%}
+
 </style>
 </head>
 <body>
@@ -927,7 +940,15 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
       <div id="menu-drop" class="menu-drop oculto">
         <button id="btn-foto"><svg class="mic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.6"/><path d="M4 17l5-4 4 3 3-2 4 3"/></svg><span>Trocar foto</span></button>
         <button id="btn-notif"><svg class="mic" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0112 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M10 20a2 2 0 004 0"/></svg><span>Ativar lembretes</span></button>
-        <button id="btn-gcal"><svg class="mic" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2"/><path d="M3.5 9h17M8 3v3M16 3v3"/></svg><span id="gcal-lbl">Google Agenda</span></button><button id="btn-gcal-sync" title="Enviar eventos pendentes para o Google Agenda">↻ Sincronizar agora</button><span id="gcal-status" role="status" aria-live="polite" style="display:block;font-size:12px;padding:6px 13px;color:var(--txt-dim)"></span>
+        <button id="btn-gcal"><svg class="mic" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2"/><path d="M3.5 9h17M8 3v3M16 3v3"/></svg><span id="gcal-lbl">Google Agenda</span></button>
+        <div id="gcal-opcoes" class="gcal-opcoes oculto" aria-label="Opções do Google Agenda">
+          <div class="gcal-opcoes-titulo">GERENCIAR GOOGLE AGENDA</div>
+          <div id="gcal-conexao-info" class="gcal-conexao-info">Verificando conexão…</div>
+          <button id="btn-gcal-conectar" type="button">Conectar / reconectar</button>
+          <button id="btn-gcal-sync" type="button" title="Enviar ou atualizar compromissos pendentes">Sincronizar agora</button>
+          <button id="btn-gcal-desconectar" type="button">Desconectar conta</button>
+        </div>
+        <span id="gcal-status" role="status" aria-live="polite" class="gcal-sr-only"></span>
         <button id="btn-spotify"><svg class="mic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 10.2c2.8-.7 5.5-.3 7.6 1M8 13c2.3-.5 4.6-.2 6.2 1M8.4 15.6c1.8-.4 3.4-.1 4.6.7"/></svg><span id="sp-lbl">Spotify</span></button>
         <button id="btn-ensino"><svg class="mic" viewBox="0 0 24 24"><path d="M12 5a4 4 0 00-4 4c0 1.5.8 2.5 1.5 3.2.5.5.5 1 .5 1.8h4c0-.8 0-1.3.5-1.8.7-.7 1.5-1.7 1.5-3.2a4 4 0 00-4-4z"/><path d="M10 19h4"/></svg><span>Modo Ensino</span></button>
         <button id="btn-manual"><svg class="mic" viewBox="0 0 24 24"><path d="M5 4h9a2 2 0 012 2v14H7a2 2 0 01-2-2V4z"/><path d="M9 8h6M9 12h6"/></svg><span>Manual</span></button>
@@ -1029,7 +1050,7 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 <button id="btn-crise" class="btn-crise oculto" title="Modo Crise">🌙<span>Modo Crise</span></button>
 <button id="fab" class="fab oculto">+</button>
 <button id="btn-chat" class="fab-chat oculto" title="Conversar com a Zaia">
-  <svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-8 8H5l-2 2V12a8 8 0 018-8h1a8 8 0 018 8z"/><circle cx="9" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="13" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="17" cy="12" r="1" fill="currentColor" stroke="none"/></svg>
+  <svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-8 8H5l-2 2V12a8 8 0 018-8h1a8 8 0 018 8z"/><circle cx="9" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="13" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="17" cy="12" r="1" fill="currentColor" stroke="none"/></svg><span id="chat-notif" class="chat-notif oculto" aria-label="Novas mensagens da Zaia"></span>
 </button>
 
 <!-- CHAT ZAIA -->
@@ -2467,7 +2488,7 @@ let chatSaudou=false;
 function chatAdd(quem,txt){ const d=document.createElement('div'); d.className='chat-msg '+quem; d.textContent=txt;
   el('chat-msgs').appendChild(d); el('chat-msgs').scrollTop=el('chat-msgs').scrollHeight; }
 function fala(txt,alerta){ chatAdd('zaia',txt); }
-function abrirChat(){ el('chat').classList.remove('oculto'); el('btn-chat').classList.add('oculto');
+function abrirChat(){ el('chat-notif')?.classList.add('oculto'); el('chat').classList.remove('oculto'); el('btn-chat').classList.add('oculto');
   if(!chatSaudou){ chatSaudou=true; const ab=tarefas.filter(t=>!t.concluida).length;
     chatAdd('zaia', ab?`Oi, Eve. 🌙 Você tem ${ab} tarefa${ab>1?'s':''} em aberto. Me diz o que você precisa — posso criar, concluir, adiar ou te mostrar o foco de hoje.`:'Oi, Eve. 🌙 Tá tudo em dia. Me diz o que você precisa que eu anoto.'); }
   setTimeout(()=>el('cmd').focus(),100); }
@@ -2743,20 +2764,59 @@ function gcalPedir(prompt){ return new Promise(res=>{ if(!gcalTokenClient){ gcal
   try{ gcalTokenClient.requestAccessToken({prompt:prompt||''}); }catch(e){ if(!done){ done=true; gcalResolve=null; res(null); } } }); }
 async function gcalEnsure(){ const t=gcalToken(); if(t)return t; if(!gcalConectado())return null; return await gcalPedir(''); }
 function gcalConectar(){ gcalPedir('consent'); }
-el('btn-gcal').onclick=()=>{ if(gcalConectado()){ if(confirm('Desconectar a Google Agenda?')){ ['gcal_token','gcal_exp','gcal_conn'].forEach(k=>localStorage.removeItem(k)); gcalAtualizarUI(); } }
-  else gcalConectar(); };
-function gcalStatus(msg){ const n=el('gcal-status');if(n)n.textContent=msg; }
-function gcalAtualizarUI(){ const on=gcalConectado();
-  el('gcal-lbl').textContent=!on?'Google Agenda':gcalToken()?'Google Agenda ✓':'Google Agenda · reconectar';
-  /* Sincronização apenas por ação do usuário; o status não dispara envio. */
-}
-el('btn-gcal-sync').onclick=async()=>{
-  if(!gcalConectado()){ gcalStatus('Conecte sua conta Google antes de sincronizar.'); return; }
-  if(!gcalToken()){ gcalStatus('Renove a autorização do Google.');
-    const token=await gcalPedir('');if(!token){gcalStatus('Autorização não concluída.');return;}
+// Menu de ações: clique em Google Agenda para expandir, sem desconectar acidentalmente.
+el('btn-gcal').setAttribute('aria-expanded','false');
+el('btn-gcal').onclick=(e)=>{
+  e.stopPropagation();
+  const op=el('gcal-opcoes'),abrir=op.classList.contains('oculto');
+  op.classList.toggle('oculto',!abrir);
+  el('btn-gcal').setAttribute('aria-expanded',String(abrir));
+  gcalAtualizarUI();
+};
+el('gcal-opcoes').addEventListener('click',e=>e.stopPropagation());
+function gcalMensagemZaia(msg){
+  const texto='📅 Google Agenda: '+msg;
+  const n=el('gcal-status');if(n)n.textContent=msg;
+  if(typeof chatAdd==='function'){
+    chatAdd('zaia',texto);
+    // Se o chat estiver fechado, sinalizar nova mensagem sem abri-lo à força.
+    if(el('chat').classList.contains('oculto'))el('chat-notif')?.classList.remove('oculto');
+    const lista=el('chat-msgs');
+    while(lista && lista.children.length>60)lista.firstElementChild.remove();
   }
-  await gcalAutoSync(true);
-}; // Importação automática do Google para a Zaia continua desativada.
+}
+function gcalStatus(msg){gcalMensagemZaia(msg);}
+function gcalAtualizarUI(){
+  const on=gcalConectado(),token=!!gcalToken();
+  el('gcal-lbl').textContent='Google Agenda';
+  el('gcal-conexao-info').textContent=!on?'Conta não conectada':token?'Conectado à sua conta Google':'Conta vinculada · autorização expirada';
+  el('btn-gcal-conectar').textContent=!on?'Conectar Google Agenda':token?'Renovar autorização':'Reconectar Google Agenda';
+  el('btn-gcal-desconectar').classList.toggle('oculto',!on);
+  el('btn-gcal-sync').disabled=typeof gcalSyncing!=='undefined'&&gcalSyncing;
+}
+el('btn-gcal-conectar').onclick=async()=>{
+  const token=await gcalPedir(gcalConectado()?'':'consent');
+  if(token){gcalStatus('Conta conectada. Você pode sincronizar seus compromissos quando quiser.');}
+  else gcalStatus('Não consegui concluir a conexão. Tente novamente.');
+  gcalAtualizarUI();
+};
+el('btn-gcal-desconectar').onclick=()=>{
+  if(!confirm('Desconectar o Google Agenda da Zaia? Seus eventos no Google não serão apagados.'))return;
+  ['gcal_token','gcal_exp','gcal_conn'].forEach(k=>localStorage.removeItem(k));
+  gcalAtualizarUI();gcalStatus('Conta desconectada. Seus compromissos existentes permanecem no Google Agenda.');
+};
+el('btn-gcal-sync').onclick=async()=>{
+  if(!gcalConectado()){gcalStatus('Conecte sua conta antes de sincronizar.');return;}
+  if(!gcalToken()){
+    const token=await gcalPedir('');
+    if(!token){gcalStatus('A autorização expirou. Use “Reconectar Google Agenda”.');gcalAtualizarUI();return;}
+  }
+  gcalStatus('Estou verificando os compromissos pendentes…');
+  el('btn-gcal-sync').disabled=true;
+  try{await gcalAutoSync(true);}
+  catch(e){gcalStatus('Não consegui sincronizar: '+(e?.message||'erro desconhecido'));}
+  finally{el('btn-gcal-sync').disabled=false;gcalAtualizarUI();}
+}; // Importação automática Google → Zaia continua desativada.
 /* importa eventos criados na Google Agenda (ex.: convites aceitos) como compromissos */
 let gcalImporting=false;
 async function gcalImportar(){ if(!gcalConectado()||gcalImporting)return; gcalImporting=true;
@@ -2874,8 +2934,8 @@ async function gcalAtualizarEvento(t){
   }catch(e){return {ok:false,erro:e.message||'Falha de rede'};}
 }
 async function gcalAtualizarAoSalvar(t){
-  if(!gcalConectado()){gcalStatus('Alteração salva na Zaia. Reconecte o Google e use Sincronizar agora.');alert('Salvo na Zaia, mas o Google Agenda não está conectado.');return;}
-  if(!gcalToken()){gcalStatus('Alteração salva na Zaia. Autorização Google expirada: use Sincronizar agora.');alert('Salvo na Zaia, mas a autorização do Google expirou. Reconecte e sincronize.');return;}
+  if(!gcalConectado()){gcalStatus('Alteração salva na Zaia, mas o Google Agenda está desconectado. Reconecte pelo menu Google Agenda.');return;}
+  if(!gcalToken()){gcalStatus('Alteração salva na Zaia. A autorização do Google expirou; reconecte pelo menu Google Agenda.');return;}
   if(!t.prazo){gcalStatus('Alteração salva na Zaia, mas o compromisso está sem data. Atualização no Google pendente.');return;}
   const assinatura=gcalAssinatura(t);
   if(t.gcalSyncFingerprint===assinatura)return;
@@ -2886,7 +2946,7 @@ async function gcalAtualizarAoSalvar(t){
     catch(e){gcalStatus('Google atualizado, mas falhou o registro da confirmação na Zaia.');}
   }else {
     gcalStatus('Alteração salva na Zaia, mas não no Google: '+ret.erro);
-    alert('A alteração foi salva na Zaia, porém o Google Agenda não foi atualizado.\n\n'+ret.erro+'\n\nUse Sincronizar agora após conferir o evento.');
+    // A falha já foi registrada no chat da Zaia; não exibir alert bloqueante.
   }
 }
 /* Sincronização idempotente: cria os novos, atualiza os vinculados que mudaram. */
@@ -2926,7 +2986,7 @@ async function gcalAutoSync(manual=false){
     (erros.length?' '+erros.slice(0,2).join(' | '):''));
   if(erros.length)console.warn('Zaia Google Agenda:',erros);
 }
-function gcalAtualizarRotuloSeguro(){el('gcal-lbl').textContent=gcalToken()?'Google Agenda ✓':'Google Agenda · reconectar';}
+function gcalAtualizarRotuloSeguro(){gcalAtualizarUI();}
 gcalInitClient(); gcalAtualizarUI();
 
 /* PWA — registra o service worker */
