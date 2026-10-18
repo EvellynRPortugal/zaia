@@ -911,6 +911,10 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 .zp-steps li{padding:10px 12px;border:1px solid var(--stroke);border-radius:12px;background:var(--card);display:flex;gap:10px;align-items:center}
 .zp-project-selector{background:var(--card);color:var(--txt);border:1px solid var(--stroke);border-radius:12px;padding:11px;width:100%;margin:8px 0 10px}
 @media(min-width:650px){.zp-statrow{grid-template-columns:repeat(3,1fr)}}
+/* V20 — Histórico editável, com foco visível e sem efeitos estimulantes */
+.zaia-hab-dia-editavel{cursor:pointer;font-family:inherit;transition:border-color .15s ease,background-color .15s ease}
+.zaia-hab-dia-editavel:hover{border-color:#c3aaff;background:#4a386e}
+.zaia-hab-dia-editavel:focus-visible{outline:2px solid #fff3d6;outline-offset:2px}
 </style>
 </head>
 <body>
@@ -1786,7 +1790,10 @@ function habCalendario(r,chave){
  const vazios=Array.from({length:inicio},()=>'<span class="zaia-hab-dia-vazio" aria-hidden="true"></span>').join('');
  const celulas=m.dias.map(d=>{
   const rotulo={antes:'antes da criação',futuro:'futuro',pausado:'pausado',feito:'concluído',previsto:'programado, não concluído',livre:'não programado'}[d.estado];
-  return `<span class="zaia-hab-dia ${d.estado} ${d.iso===hojeStr()?'hoje':''}" title="${d.iso}: ${rotulo}" aria-label="${d.iso}: ${rotulo}">${d.n}</span>`;
+  const editavel=d.iso<=hojeStr() && d.programado && d.estado!=='antes' && d.estado!=='pausado';
+  return editavel
+    ? `<button type="button" class="zaia-hab-dia zaia-hab-dia-editavel ${d.estado} ${d.iso===hojeStr()?'hoje':''}" data-hab-dia="${d.iso}" data-hab-id="${esc(r.id)}" title="${d.iso}: ${rotulo}. Clique para ${d.feito?'desmarcar':'marcar'}" aria-label="${d.iso}: ${rotulo}. Alterar conclusão" aria-pressed="${d.feito}">${d.n}</button>`
+    : `<span class="zaia-hab-dia ${d.estado} ${d.iso===hojeStr()?'hoje':''}" title="${d.iso}: ${rotulo}" aria-label="${d.iso}: ${rotulo}">${d.n}</span>`;
  }).join('');
  return `<div class="zaia-hab-grade">${['D','S','T','Q','Q','S','S'].map(x=>`<span class="zaia-hab-semana">${x}</span>`).join('')}${vazios}${celulas}</div>`;
 }
@@ -1811,7 +1818,7 @@ function renderHistoricoHabitos(){
  const nav=`<div class="zaia-hab-mes-nav"><button type="button" data-hab-mes="anterior" aria-label="Mês anterior">‹</button><strong>${nome}</strong><button type="button" data-hab-mes="proximo" ${habMesVisivel>=atual?'disabled':''} aria-label="Próximo mês">›</button></div>`;
  const seletor=`<label class="zaia-hab-seletor-label" for="zaia-hab-seletor">Visualizar histórico de</label><select id="zaia-hab-seletor" class="campo zaia-hab-seletor">${opcoes.join('')}</select>`;
  const resumo=`<div class="zaia-hab-painel"><div><span>Consistência</span><strong>${habPercentual(taxa)}</strong></div><div><span>Concluídos</span><strong>${feitos} de ${previstos}</strong></div><div><span>Evolução mensal</span><strong class="zaia-hab-tendencia">${delta}</strong></div></div>`;
- const explicacao='<p class="zaia-hab-orientacao">Consistência considera apenas os dias programados já transcorridos; pausas e datas anteriores à criação não contam como faltas. Você pode navegar entre os meses sem modificar os dados.</p>';
+ const explicacao='<p class="zaia-hab-orientacao">Consistência considera apenas os dias programados já transcorridos; pausas e datas anteriores à criação não contam como faltas. Toque em um dia programado para registrar ou corrigir sua conclusão, inclusive de meses anteriores.</p>';
  if(!rotinas.length)return nav+'<div class="vazio">Nenhum hábito cadastrado ainda.</div>';
  const cards=selecionadas.map(r=>{
   const m=habMetricas(r,habMesVisivel);
@@ -1820,8 +1827,29 @@ function renderHistoricoHabitos(){
  const legenda='<div class="zaia-hab-legenda zaia-hab-legend"><span><i class="feito"></i> Concluído</span><span><i class="previsto"></i> Pendente</span><span><i class="futuro"></i> Futuro</span><span><i class="pausado"></i> Pausado</span></div>';
  return nav+seletor+resumo+explicacao+cards+legenda;
 }
+// Correção retroativa de hábitos: a mesma data é adicionada/removida uma única vez no array histórico.
+const habEdicoesPendentes = new Set();
+async function corrigirConclusaoHabito(id, data){
+ const r=rotinas.find(x=>x.id===id);
+ if(!r || !/^\d{4}-\d{2}-\d{2}$/.test(data) || data>hojeStr())return;
+ if(habDataInicial(r) && data<habDataInicial(r))return;
+ if(!rotinaPrevistaNaData(r,data) || pausaAtiva(r,data))return;
+ const chave=id+'|'+data;
+ if(habEdicoesPendentes.has(chave))return;
+ const jaFeito=habDatas(r).has(data);
+ if(!confirm(`${jaFeito?'Desmarcar':'Marcar como realizado'} o hábito "${r.titulo}" em ${data.split('-').reverse().join('/')}?`))return;
+ habEdicoesPendentes.add(chave);
+ try{
+  const alteracao={historico:jaFeito?arrayRemove(data):arrayUnion(data)};
+  if(data===hojeStr())alteracao.feitoEm=jaFeito?null:data;
+  else if(jaFeito && r.feitoEm===data)alteracao.feitoEm=null;
+  await updateDoc(doc(db,'rotinas',id),alteracao);
+ }catch(e){console.error('Falha ao atualizar histórico do hábito',e);alert('Não consegui salvar a alteração. Verifique sua conexão e tente novamente.');}
+ finally{habEdicoesPendentes.delete(chave);}
+}
 // Navegação delegada: não recriar ouvintes após cada atualização do Firebase.
 el('lista-rotina').addEventListener('click',e=>{
+ const dia=e.target.closest('[data-hab-dia]');if(dia){corrigirConclusaoHabito(dia.dataset.habId,dia.dataset.habDia);return;}
  const bot=e.target.closest('[data-hab-mes]');if(!bot)return;
  const hojeMes=new Date().getFullYear()*12+new Date().getMonth();
  habMesVisivel=Math.min(hojeMes,habMesVisivel+(bot.dataset.habMes==='anterior'?-1:1));
@@ -2386,6 +2414,13 @@ function renderAssistirStats(){ const s=statsAssistir();
 function totalEps(m){ return (m.temporadas||[]).reduce((s,t)=>s+(t.eps||0),0); }
 function mapAssist(m){ const a=m.assistidos; if(!a)return {}; if(Array.isArray(a)){const o={};a.forEach(k=>o[k]=1);return o;} return {...a}; }
 function epsVistos(m){ const o=mapAssist(m); return Object.keys(o).filter(k=>o[k]>0).length; }
+function ciclosCompletosSerie(m){
+ const o=mapAssist(m), counts=[];
+ (m.temporadas||[]).forEach(t=>{for(let i=1;i<=Number(t.eps||0);i++)counts.push(Math.max(0,Number(o[`${t.n}-${i}`])||0));});
+ if(!counts.length)return {completos:0,reassistindo:false,algum:false};
+ const min=Math.min(...counts),max=Math.max(...counts);
+ return {completos:min,reassistindo:max>min,algum:max>0};
+}
 function statusMidia(m){ if(m.tipo==='filme')return m.visto?'concluido':'quero';
   const tot=totalEps(m); if(!tot)return epsVistos(m)?'assistindo':'quero';
   const o=mapAssist(m), counts=[];
@@ -2398,7 +2433,8 @@ const rotuloStatus=s=>({assistindo:'Assistindo',quero:'Quero ver',concluido:'Con
 function renderFiltroMidia(){ el('filtro-midia').innerHTML=MIDIA_FILTROS.map(([k,l])=>`<button class="chip ${filtroMidia===k?'on':''}" data-mf="${k}">${l}</button>`).join('');
   el('filtro-tipo-midia').innerHTML=TIPO_FILTROS.map(([k,l])=>`<button class="chip ${filtroTipoMidia===k?'on':''}" data-mtf="${k}">${l}</button>`).join(''); }
 function midiaCard(m){ const serie=m.tipo==='serie';
-  const prog=serie?`${epsVistos(m)}/${totalEps(m)||'?'} eps`:(m.vezes>1?`assistido ${m.vezes}x`:'');
+  const ciclos=serie?ciclosCompletosSerie(m):null;
+  const prog=serie?(ciclos.completos>0?`${ciclos.completos}× completa${ciclos.completos>1?'s':''}${ciclos.reassistindo?' · Reassistindo':''}`:`${epsVistos(m)}/${totalEps(m)||'?'} eps`):(m.vezes>1?`assistido ${m.vezes}x`:'');
   return `<button class="poster-card" data-midabrir="${m.id}">
     ${m.poster?`<img src="${m.poster}" alt="">`:`<div class="poster-ph">${serie?'📺':'🎬'}</div>`}
     ${m.fav?'<span class="poster-fav">♥</span>':''}
