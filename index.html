@@ -915,6 +915,10 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 .zaia-hab-dia-editavel{cursor:pointer;font-family:inherit;transition:border-color .15s ease,background-color .15s ease}
 .zaia-hab-dia-editavel:hover{border-color:#c3aaff;background:#4a386e}
 .zaia-hab-dia-editavel:focus-visible{outline:2px solid #fff3d6;outline-offset:2px}
+/* Zaia V21 — conclusão assistida de ciclos de séries */
+.zaia-ciclo-info{background:#30214B;border:1px solid #584576;border-radius:13px;padding:11px 13px;margin:9px 0;font-size:13px;color:#E8D9FF;line-height:1.5}
+.zaia-ciclo-btn{width:100%;background:#6651B7;border:1px solid #947CF1;color:#fff;border-radius:13px;padding:12px;font-weight:700;margin:4px 0 12px}
+.zaia-ciclo-btn:disabled{opacity:.65}
 </style>
 </head>
 <body>
@@ -1250,6 +1254,7 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
     </div>
     <div id="det-serie" class="oculto">
       <div id="det-prog" class="det-prog"></div>
+      <div id="det-ciclos" class="det-prog"></div>
       <div id="det-temporadas"></div>
     </div>
     <label>Anotações</label>
@@ -2415,20 +2420,19 @@ function totalEps(m){ return (m.temporadas||[]).reduce((s,t)=>s+(t.eps||0),0); }
 function mapAssist(m){ const a=m.assistidos; if(!a)return {}; if(Array.isArray(a)){const o={};a.forEach(k=>o[k]=1);return o;} return {...a}; }
 function epsVistos(m){ const o=mapAssist(m); return Object.keys(o).filter(k=>o[k]>0).length; }
 function ciclosCompletosSerie(m){
- const o=mapAssist(m), counts=[];
- (m.temporadas||[]).forEach(t=>{for(let i=1;i<=Number(t.eps||0);i++)counts.push(Math.max(0,Number(o[`${t.n}-${i}`])||0));});
- if(!counts.length)return {completos:0,reassistindo:false,algum:false};
- const min=Math.min(...counts),max=Math.max(...counts);
- return {completos:min,reassistindo:max>min,algum:max>0};
+ const o=mapAssist(m),counts=[];
+ (m.temporadas||[]).forEach(t=>{for(let i=1;i<=Number(t.eps||0);i++) counts.push(Math.max(0,Number(o[`${t.n}-${i}`])||0));});
+ if(!counts.length)return {completos:0,reassistindo:false,algum:false,pendentes:0,total:0,maior:0};
+ const min=Math.min(...counts), max=Math.max(...counts);
+ return {completos:min,reassistindo:max>min,algum:max>0,pendentes:counts.filter(v=>v<max).length,total:counts.length,maior:max};
 }
-function statusMidia(m){ if(m.tipo==='filme')return m.visto?'concluido':'quero';
-  const tot=totalEps(m); if(!tot)return epsVistos(m)?'assistindo':'quero';
-  const o=mapAssist(m), counts=[];
-  (m.temporadas||[]).forEach(t=>{ for(let i=1;i<=t.eps;i++)counts.push(o[`${t.n}-${i}`]||0); });
-  const min=Math.min(...counts), max=Math.max(...counts);
-  if(max===0)return 'quero';
-  if(min>=1 && min===max)return 'concluido';  // ciclo completo e parelho
-  return 'assistindo'; }                        // uns à frente = revendo
+function statusMidia(m){
+ if(m.tipo==='filme')return (m.visto||Number(m.vezes||0)>0)?'concluido':'quero';
+ const c=ciclosCompletosSerie(m);
+ if(!c.total)return epsVistos(m)?'assistindo':'quero';
+ if(!c.algum)return 'quero';
+ return c.completos>=1&&!c.reassistindo?'concluido':'assistindo';
+}
 const rotuloStatus=s=>({assistindo:'Assistindo',quero:'Quero ver',concluido:'Concluído'}[s]||'');
 function renderFiltroMidia(){ el('filtro-midia').innerHTML=MIDIA_FILTROS.map(([k,l])=>`<button class="chip ${filtroMidia===k?'on':''}" data-mf="${k}">${l}</button>`).join('');
   el('filtro-tipo-midia').innerHTML=TIPO_FILTROS.map(([k,l])=>`<button class="chip ${filtroTipoMidia===k?'on':''}" data-mtf="${k}">${l}</button>`).join(''); }
@@ -2526,7 +2530,15 @@ function atualizaSeasonDot(m,n){ const old=el('det-temporadas').querySelector(`.
 function atualizaContadores(m){ const tot=totalEps(m),feitos=epsVistos(m);
   el('det-prog').innerHTML=tot?`<div class="det-prog-txt">${feitos}/${tot} episódios</div><div class="barra"><span style="width:${Math.round(feitos/tot*100)}%"></span></div>`:'';
   (m.temporadas||[]).forEach(t=>{ const s=seaInfo(m,t.n); const c=el('det-temporadas').querySelector(`.temp-cont[data-tc="${t.n}"]`); if(c)c.textContent=`${s.marc}/${s.total}`; });
-  el('det-status').textContent=rotuloStatus(statusMidia(m)); }
+  el('det-status').textContent=rotuloStatus(statusMidia(m));
+  const c=ciclosCompletosSerie(m), info=el('det-ciclos');
+  if(info){
+   if(!c.total) info.innerHTML='<p class="zaia-ciclo-info">Esta série não tem episódios cadastrados para calcular as reassistidas.</p>';
+   else if(!c.algum) info.innerHTML='<p class="zaia-ciclo-info">Marque episódios ou uma temporada para começar.</p>';
+   else if(c.reassistindo) info.innerHTML=`<div class="zaia-ciclo-info">${c.completos} ciclo(s) completo(s). ${c.pendentes} episódio(s) estão abaixo da maior contagem (${c.maior}×). Se você já assistiu tudo ${c.maior} vezes, confirme abaixo.</div><button type="button" class="zaia-ciclo-btn" id="zaia-concluir-ciclo">✓ Confirmar reassistida completa (${c.maior}×)</button>`;
+   else info.innerHTML=`<p class="zaia-ciclo-info">✓ ${c.completos} ciclo(s) completo(s). A série pertence a Concluídos.</p>`;
+  }
+ } 
 function renderTemporadas(m){ atualizaContadores(m);
   el('det-temporadas').innerHTML=(m.temporadas||[]).map(t=>{ const s=seaInfo(m,t.n);
     return `<div class="temp"><div class="temp-head" data-temp="${t.n}">
@@ -2541,6 +2553,20 @@ async function carregarEps(m,n,box){ box.dataset.loaded='1'; box.innerHTML='<div
   if(!eps.length){ const t=(m.temporadas||[]).find(x=>x.n===n); eps=[...Array(t?t.eps:0).keys()].map(i=>({n:i+1,nome:''})); }
   const o=mapAssist(m);
   box.innerHTML=`<div class="ep-list">${eps.map(e=>{const k=`${n}-${e.n}`,c=o[k]||0;return `<button class="ep-row ${c>=1?'on':''}" data-ep="${k}"><span class="ep-check">${epInner(c)}</span><span class="ep-num">E${e.n}</span><span>${esc(e.nome||'')}</span></button>`;}).join('')}</div>`; }
+el('det-serie').addEventListener('click',async e=>{
+ if(!e.target.closest('#zaia-concluir-ciclo'))return;
+ const m=midias.find(x=>x.id===detId);if(!m||m.tipo!=='serie')return;
+ const c=ciclosCompletosSerie(m);
+ if(!c.reassistindo||!c.maior)return;
+ if(!confirm(`Confirmar que TODOS os ${c.total} episódios foram assistidos ${c.maior} vez(es)? Essa ação corrigirá ${c.pendentes} contagens e moverá a série para Concluídos. Não é possível desfazer automaticamente.`))return;
+ const anterior=structuredClone(m.assistidos||{}), atual=mapAssist(m);
+ (m.temporadas||[]).forEach(t=>{for(let i=1;i<=Number(t.eps||0);i++)atual[`${t.n}-${i}`]=c.maior;});
+ const bot=e.target.closest('button');bot.disabled=true;bot.textContent='Salvando…';
+ try{
+  await updateDoc(doc(db,'midias',m.id),{assistidos:atual});
+  m.assistidos=atual;renderTemporadas(m);renderMidia();
+ }catch(err){m.assistidos=anterior;renderTemporadas(m);alert('Não foi possível atualizar a série no Firebase. Tente novamente.');console.error(err);}
+});
 function incEp(m,k){ let o=mapAssist(m); o[k]=(o[k]||0)+1; m.assistidos=o;
   const row=el('det-temporadas').querySelector(`.ep-row[data-ep="${k}"]`);
   if(row){ row.classList.add('on'); row.querySelector('.ep-check').innerHTML=epInner(o[k]); }
