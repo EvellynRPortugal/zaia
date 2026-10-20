@@ -534,6 +534,23 @@
 
   .zaia-hab-mais-tarde{display:inline-block;margin-left:8px;padding:2px 7px;border-radius:999px;background:#44335D;color:#E8D9FF;font-size:11px;font-weight:700}
 #r-dias button.sel{background:#6651B7!important;color:#fff!important;border-color:#C8AFFF!important;box-shadow:inset 0 0 0 1px #A58BFF}
+
+/* V23 — subitens de etapas */
+.zp-subitems{margin:2px 0 13px 46px;display:flex;flex-direction:column;gap:6px}
+.zp-subrow{display:flex;align-items:center;gap:9px;padding:8px 11px;background:#201731;border:1px solid #473362;border-radius:12px}
+.zp-subrow button.zp-subcheck{width:23px;height:23px;border:1.5px solid #9D90B7;border-radius:7px;flex-shrink:0;font-size:14px;color:transparent}
+.zp-subrow button.zp-subcheck.on{background:#6651B7;border-color:#A58BFF;color:white}
+.zp-subrow .zp-subname{flex:1;text-align:left;font-size:13px;color:#F5EEFF;overflow-wrap:anywhere}
+.zp-subrow .zp-subname.done{text-decoration:line-through;opacity:.6}
+.zp-subrow .zp-noteicon{font-size:12px;color:#C8BCE9}
+.zp-subadd{align-self:flex-start;color:#CBB6FF;font-size:12px;font-weight:700;padding:7px 10px;border-radius:9px}
+.zp-subadd:hover{background:#392950}
+.zp-sub-modal-list{display:flex;flex-direction:column;gap:7px;margin:10px 0}
+.zp-sub-modal-row{display:flex;align-items:center;gap:10px;padding:9px;background:#201731;border-radius:11px}
+.zp-sub-modal-row button{flex:1;text-align:left;color:#F5EEFF;font-size:13px}
+.zp-sub-modal-row small{color:#C8BCE9;font-size:11px}
+@media(max-width:560px){.zp-subitems{margin-left:14px}.zp-subrow{padding:9px}}
+
 /* RESPONSIVO — vira topo em telas estreitas */
   @media(max-width:820px){
     .app{flex-direction:column}
@@ -931,6 +948,44 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 .zaia-mover-acoes button:disabled{opacity:.25;cursor:default}
 .zaia-mover-acoes button:not(:disabled):hover{background:#4B3671}
 @media(max-width:620px){.zaia-etapa-movel{flex-wrap:wrap;gap:7px}.zaia-etapa-movel .etapa-txt{min-width:45%}.zaia-mover-acoes button{min-width:35px}}
+
+/* ZAIA V24 — Casa (aba doméstica independente) */
+.casa-topo h2{font-family:var(--fonte-display);font-size:24px;color:var(--lua)}
+.casa-topo p{color:var(--txt-dim);font-size:14px;margin:4px 0 15px}
+.casa-acoes{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:15px}
+.casa-data-label{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--txt-dim)}
+.casa-data-label .campo{margin:0;width:auto;padding:9px 11px;color-scheme:dark}
+.casa-resumo{color:var(--txt-dim);font-size:13px;margin-bottom:12px}
+.casa-cartao{display:flex;align-items:center;gap:12px;padding:13px 14px;margin:8px 0;border:1px solid var(--stroke);border-radius:15px;background:var(--card-solid)}
+.casa-cartao.concluido{opacity:.68}
+.casa-cartao .casa-check{width:27px;height:27px;flex-shrink:0;border-radius:9px;border:2px solid #9984cb;background:transparent;font-size:16px}
+.casa-cartao .casa-check.on{border-color:var(--tranquilo);background:rgba(74,222,128,.22);color:var(--tranquilo)}
+.casa-cartao .casa-info{flex:1;min-width:0}
+.casa-cartao .casa-titulo{font-size:14px;font-weight:700;overflow-wrap:anywhere}
+.casa-cartao.concluido .casa-titulo{text-decoration:line-through}
+.casa-cartao .casa-sub{font-size:12px;color:var(--txt-dim);margin-top:3px}
+.casa-cartao .casa-editar{color:var(--lilas);padding:7px;border-radius:9px}
+.casa-vazio{padding:18px;text-align:center;color:var(--txt-dim);font-size:14px;border:1px dashed var(--stroke);border-radius:14px}
+#casa-dias button.sel{background:#6651B7;color:white;border-color:#C8AFFF}
+@media(max-width:820px){.bottom-nav{overflow-x:auto;justify-content:flex-start;scrollbar-width:none}.bottom-nav button{min-width:57px;flex:1 0 57px}.casa-data-label{width:100%}}
+
+/* ZAIA V25 — ESTUDOS */
+.ze-intro,.ze-library,.ze-panel{background:#261B40;border:1px solid #473362;border-radius:18px;padding:18px;margin:14px 0}
+.ze-intro{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.ze-intro h2{font-size:24px}.ze-pill{background:#443168;padding:7px 12px;border-radius:999px;color:#E8D9FF;white-space:nowrap;font-size:12px}
+.ze-library-head,.ze-panel-head,.ze-subhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.ze-primary{padding:10px 14px;background:#7054DE;color:white;border-radius:12px;font-weight:700}
+.ze-topics{display:flex;flex-wrap:wrap;gap:8px}.ze-topic{padding:12px;text-align:left;display:flex;flex-direction:column;gap:3px;min-width:150px;max-width:100%;background:#30214B;border:1px solid #514064;border-radius:12px;flex:1}
+.ze-topic small{color:#C8BCE9}.ze-topic.on{border-color:#A58BFF;background:#443168}
+.ze-panel h2{font-size:21px}.ze-panel h3{font-size:16px}.ze-danger{color:#ffadb3;font-size:12px;padding:8px;border:1px solid #805067;border-radius:10px}
+.ze-fields{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:10px}.ze-fields label,.ze-label{display:flex;flex-direction:column;gap:5px;color:#D5C9EA;font-size:13px;font-weight:700}
+.ze-fields input,.ze-notas{width:100%;background:#1C1430;color:#fff;border:1px solid #54406F;border-radius:12px;padding:12px;font:inherit;min-width:0}.ze-notas{min-height:160px;resize:vertical;line-height:1.55}
+.ze-label{margin:15px 0 6px}.ze-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.ze-subhead{display:block;margin:22px 0 12px}
+.ze-map{padding:16px;background:#1C1430;border:1px solid #54406F;border-radius:16px;overflow-x:auto}.ze-core{max-width:450px;margin:0 auto 14px;padding:16px;text-align:center;border-radius:15px;background:#7054DE;color:white;font-weight:800;overflow-wrap:anywhere}
+.ze-branches{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.ze-branch{display:flex;align-items:center;gap:6px;border:1px solid #7560A0;background:#30214B;padding:9px;border-radius:12px;min-width:0}.ze-branch-title{flex:1;overflow-wrap:anywhere;font-size:13px}.ze-branch button{padding:6px;font-size:16px;color:#E8D9FF;flex-shrink:0}
+.ze-branch-line{width:7px;height:7px;border-radius:50%;background:#A58BFF;flex-shrink:0}.ze-review{padding:15px;background:#1C1430;border:1px solid #54406F;border-radius:14px;display:flex;flex-direction:column;gap:10px}.ze-review strong,.ze-review p{overflow-wrap:anywhere}
+@media(max-width:580px){.ze-fields{grid-template-columns:1fr}.ze-intro{align-items:flex-start;flex-direction:column}.ze-panel,.ze-library{padding:14px}.ze-topic{min-width:120px}}
+
 </style>
 </head>
 <body>
@@ -1001,6 +1056,9 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
       <button data-aba="rotina">
         <svg class="ic" viewBox="0 0 24 24"><path d="M3 11a8 8 0 0114-5.3L21 9"/><path d="M21 4v5h-5"/><path d="M21 13a8 8 0 01-14 5.3L3 15"/><path d="M3 20v-5h5"/></svg>
         <span class="lbl">Rotina</span></button>
+      <button data-aba="casa">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5V21H3z"/><path d="M9 21v-7h6v7"/></svg>
+        <span class="lbl">Casa</span></button>
       <button data-aba="projetos">
         <svg class="ic" viewBox="0 0 24 24"><path d="M4 7l8-3.5L20 7l-8 3.5L4 7z"/><path d="M4 12l8 3.5 8-3.5M4 17l8 3.5 8-3.5"/></svg>
         <span class="lbl">Projetos</span></button>
@@ -1048,6 +1106,15 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
       <p id="resumo-linha"></p>
     </div>
 
+    <!-- ZAIA V24 — CASA -->
+    <section id="aba-casa" class="oculto">
+      <div class="casa-topo"><h2>🏡 Minha casa</h2><p>Um cantinho para cuidar do seu espaço, no seu ritmo.</p></div>
+      <div class="casa-acoes"><button type="button" id="casa-nova" class="mini-btn">+ Atividade doméstica</button><label class="casa-data-label">Visualizar dia <input type="date" id="casa-data" class="campo"/></label></div>
+      <div id="casa-resumo" class="casa-resumo" aria-live="polite"></div>
+      <div id="casa-lista"></div>
+      <h3 class="sec-titulo">Minhas atividades da casa</h3>
+      <div id="casa-todas"></div>
+    </section>
     <section id="aba-rotina" class="oculto">
       <button id="btn-nova-rotina" class="mini-btn" style="margin-bottom:14px">+ Novo hábito</button>
       <div class="zaia-rotina-tabs" role="group" aria-label="Visualização de hábitos"><button id="hab-tab-hoje" class="on" type="button" aria-pressed="true">Meu dia</button><button id="hab-tab-historico" type="button" aria-pressed="false">Minha evolução</button></div>
@@ -1076,6 +1143,7 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
         <button type="button" class="on" data-zp-tab="visao" aria-pressed="true">Visão geral</button>
         <button type="button" data-zp-tab="etapas" aria-pressed="false">Etapas e missões</button>
         <button type="button" data-zp-tab="foco" aria-pressed="false">Modo Foco</button>
+        <button type="button" data-zp-tab="estudos" aria-pressed="false">Estudos ✦</button>
       </div>
       <div id="zp-dashboard"></div>
       <div id="lista-projetos"></div>
@@ -1107,6 +1175,9 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
     <button data-aba="rotina">
       <svg viewBox="0 0 24 24"><path d="M3 11a8 8 0 0114-5.3L21 9"/><path d="M21 4v5h-5"/><path d="M21 13a8 8 0 01-14 5.3L3 15"/><path d="M3 20v-5h5"/></svg>
       <span>Rotina</span></button>
+    <button data-aba="casa">
+      <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5V21H3z"/><path d="M9 21v-7h6v7"/></svg>
+      <span>Casa</span></button>
     <button data-aba="projetos">
       <svg viewBox="0 0 24 24"><path d="M4 7l8-3.5L20 7l-8 3.5L4 7z"/><path d="M4 12l8 3.5 8-3.5M4 17l8 3.5 8-3.5"/></svg>
       <span>Projetos</span></button>
@@ -1381,11 +1452,35 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
     </div>
     <label>Anotações</label>
     <textarea id="e-nota" class="campo" rows="4" placeholder="observações, links, o que falta…"></textarea>
+    <label>Subitens da etapa</label>
+    <p style="font-size:12px;color:var(--txt-dim)">Clique em um subitem para escrever detalhes e referências dele.</p>
+    <div id="e-subitens" class="zp-sub-modal-list"></div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <input class="campo" id="e-subnovo" placeholder="Ex.: Revisar autores" style="flex:1;min-width:0"/>
+      <button type="button" class="mini-btn" id="e-subadicionar">+ Adicionar</button>
+    </div>
     <div class="modal-acoes">
       <button id="e-cancelar" class="btn btn-sec">Cancelar</button>
       <button id="e-salvar" class="btn btn-primario">Salvar</button>
     </div>
     <button id="e-excluir" class="btn btn-excluir">Excluir etapa</button>
+  </div>
+</div>
+
+
+<!-- V23 — detalhes do subitem -->
+<div id="modal-subetapa" class="modal-bg">
+  <div class="modal">
+    <h3>Detalhes do subitem</h3>
+    <label>Nome</label>
+    <input id="se-titulo" class="campo" maxlength="250" placeholder="Nome do subitem"/>
+    <label>Anotações e referências</label>
+    <textarea id="se-nota" class="campo" rows="8" placeholder="Escreva suas ideias, links, referências e o que falta fazer…"></textarea>
+    <div class="modal-acoes">
+      <button id="se-voltar" type="button" class="btn btn-sec">Voltar</button>
+      <button id="se-salvar" type="button" class="btn btn-primario">Salvar subitem</button>
+    </div>
+    <button id="se-excluir" type="button" class="btn btn-excluir">Excluir subitem</button>
   </div>
 </div>
 
@@ -1572,6 +1667,22 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
   </div>
 </div>
 
+<!-- ZAIA V24 — CADASTRO DOMÉSTICO -->
+<div id="modal-casa" class="modal-bg" role="dialog" aria-modal="true" aria-labelledby="casa-modal-titulo">
+  <div class="modal">
+    <h3 id="casa-modal-titulo">Atividade da casa</h3>
+    <label for="casa-titulo">O que precisa fazer?</label><input class="campo" id="casa-titulo" maxlength="120" placeholder="Ex.: Lavar a louça"/>
+    <label for="casa-freq">Quando?</label>
+    <select class="campo" id="casa-freq"><option value="diaria">Todos os dias</option><option value="semanal">Dias da semana</option><option value="unica">Uma única vez</option></select>
+    <div id="casa-dias-wrap" class="oculto"><label>Em quais dias?</label><div id="casa-dias" class="dias-pick" role="group" aria-label="Dias da semana">
+      <button type="button" data-dia="0">Dom</button><button type="button" data-dia="1">Seg</button><button type="button" data-dia="2">Ter</button><button type="button" data-dia="3">Qua</button><button type="button" data-dia="4">Qui</button><button type="button" data-dia="5">Sex</button><button type="button" data-dia="6">Sáb</button>
+    </div></div>
+    <div id="casa-unica-wrap" class="oculto"><label for="casa-uma-data">Data</label><input type="date" class="campo" id="casa-uma-data"/></div>
+    <label for="casa-nota">Detalhes (opcional)</label><textarea class="campo" id="casa-nota" placeholder="Produtos, lembretes, observações…"></textarea>
+    <div class="modal-acoes"><button id="casa-cancelar" class="btn btn-sec" type="button">Cancelar</button><button id="casa-salvar" class="btn btn-primario" type="button">Salvar</button></div>
+    <button id="casa-excluir" class="btn-excluir oculto" type="button">Excluir atividade</button>
+  </div>
+</div>
 <script src="https://accounts.google.com/gsi/client" async></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
@@ -1594,7 +1705,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let user=null, tarefas=[], projetos=[], etapas=[], sinonimos=[], anexos=[], rotinas=[], midias=[], livros=[];
+let user=null, tarefas=[], projetos=[], etapas=[], sinonimos=[], anexos=[], rotinas=[], midias=[], livros=[], casaAtividades=[];
 let unsub=[]; const notificadas=new Set(), notifRotina=new Set();
 let anexoPend=[], anexoRem=[];
 let subPend=[];
@@ -1666,7 +1777,7 @@ onAuthStateChanged(auth, u=>{
     el('user-nome').textContent=nome;
     saudacao(nome); ligarDados();
   }else{ user=null; unsub.forEach(f=>f()); unsub=[];
-    tarefas=[];projetos=[];etapas=[];sinonimos=[];
+    tarefas=[];projetos=[];etapas=[];sinonimos=[];casaAtividades=[];
     el('tela-app').classList.add('oculto'); el('fab').classList.add('oculto');
     el('btn-crise').classList.add('oculto'); el('btn-chat').classList.add('oculto');
     el('chat').classList.add('oculto'); el('tela-login').classList.remove('oculto'); }
@@ -1697,6 +1808,7 @@ function ligarDados(){ const col=(n)=>query(collection(db,n), where('userId','==
   unsub.push(onSnapshot(col('sinonimos'),s=>{sinonimos=docs(s);render();}, err));
   unsub.push(onSnapshot(col('anexos'), s=>{anexos=docs(s);render();}, err));
   unsub.push(onSnapshot(col('rotinas'), s=>{rotinas=docs(s);render();}, err));
+  unsub.push(onSnapshot(col('casa_atividades'), s=>{casaAtividades=docs(s);renderCasa();}, err));
   unsub.push(onSnapshot(col('midias'), s=>{midias=docs(s);render();}, err));
   unsub.push(onSnapshot(col('livros'), s=>{livros=docs(s);render();}, err));
   unsub.push(onSnapshot(doc(db,'perfil',user.uid), s=>{ const d=s.exists()?s.data():{};
@@ -1727,7 +1839,7 @@ function score(t){ const peso={urgente:100,importante:50,tranquilo:10}[t.priorid
 /* RENDER */
 const KW_COMPROMISSO=/\b(terapia|consulta|reuni[ãa]o|m[ée]dic[oa]|dentista|anivers[áa]rio|compromisso|encontro|entrevista|audi[êe]ncia|cabeleireiro|sal[ãa]o|exame|vacina)\b/i;
 function ehCompromisso(t){ return t.tipo==='compromisso' || (!t.tipo && KW_COMPROMISSO.test(t.titulo||'')); }
-function render(){ renderTarefas();renderProjetos();renderSinonimos();renderRotina();renderMidia();renderLivro();
+function render(){ renderTarefas();renderProjetos();renderSinonimos();renderRotina();renderMidia();renderLivro();renderCasa();
   const ab=tarefas.filter(t=>!t.concluida).length;
   el('resumo-linha').textContent=ab?`Você tem ${ab} tarefa${ab>1?'s':''} em aberto.`:'Tudo em dia por aqui.'; }
 const hojeStr=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
@@ -2072,7 +2184,8 @@ function renderProjetosLegado(){ if(!projetos.length){el('lista-projetos').inner
         <button class="etapa-txt" data-editetapa="${e.id}">${esc(e.titulo)}${e.nota?' <span class="nota-ic" title="tem anotação">📝</span>':''}</button>
         ${e.prazo?`<span class="etapa-prazo ${venceu(e.prazo)&&!e.concluida?'venc':''}">${fmtPrazo(e.prazo)}</span>`:''}
         <div class="zaia-mover-acoes"><button type="button" data-mover-etapa="${e.id}" data-direcao="-1" aria-label="Mover para cima" title="Mover para cima" ${i===0?'disabled':''}>↑</button><button type="button" data-mover-etapa="${e.id}" data-direcao="1" aria-label="Mover para baixo" title="Mover para baixo" ${i===es.length-1?'disabled':''}>↓</button></div>
-        <button data-deletapa="${e.id}" style="color:var(--txt-dim);width:26px">✕</button></div>`).join('')}
+        <button data-deletapa="${e.id}" style="color:var(--txt-dim);width:26px">✕</button></div>
+        <div class="zp-subitems">${(Array.isArray(e.subitens)?e.subitens:[]).map(sub=>`<div class="zp-subrow"><button type="button" class="zp-subcheck ${sub.concluido?'on':''}" data-zp-sub-toggle="${zpEsc(e.id)}" data-zp-sub-id="${zpEsc(sub.id)}" aria-label="${sub.concluido?'Desmarcar':'Concluir'} ${zpEsc(sub.titulo)}">✓</button><button type="button" class="zp-subname ${sub.concluido?'done':''}" data-zp-sub-open="${zpEsc(e.id)}" data-zp-sub-id="${zpEsc(sub.id)}">${zpEsc(sub.titulo)}</button>${sub.nota?'<span class="zp-noteicon" title="Contém anotações">📝</span>':''}</div>`).join('')}<button type="button" class="zp-subadd" data-zp-sub-add="${zpEsc(e.id)}">+ Adicionar subitem</button></div>`).join('')}
       <div class="add-etapa"><input placeholder="nova etapa" data-etapa-nome="${p.id}"/>
         <input class="data" type="date" data-etapa-prazo="${p.id}"/>
         <input class="data" type="time" data-etapa-hora="${p.id}" style="flex:0 0 96px"/>
@@ -2094,6 +2207,7 @@ function renderProjetos(){const root=el('zp-dashboard'),lista=el('lista-projetos
  if(!projetos.length){root.innerHTML='<div class="zp-hero">Comece criando um projeto. Depois, divida-o em pequenas etapas para acompanhar seu progresso.</div>';lista.innerHTML='';return;}
  const {p,es,feitas,proxima}=zpStatus();zpSelecionado=p.id;const pct=es.length?Math.round(feitas/es.length*100):0;
  const selector=zpSelecionarHTML(p);
+ if(zpAba==='estudos'){lista.innerHTML='';root.innerHTML=zpEstudosTela(p);return;}
  if(zpAba==='etapas'){root.innerHTML=`${selector}<p class="zp-muted">Arraste pelo símbolo ⠿ para reorganizar. No celular, você também pode usar as setas. A ordem é salva automaticamente.</p>`;renderProjetosLegado();return;}
  lista.innerHTML='';
  if(zpAba==='visao'){
@@ -2103,6 +2217,74 @@ function renderProjetos(){const root=el('zp-dashboard'),lista=el('lista-projetos
  zpAtualizaRelogio();
  }
 }
+
+/* ZAIA V25 — ESTUDOS: conteúdo, anotações, mapa mental e revisão no projeto existente. */
+let zeSelecionado=null,zeRevelada=false,zeCartao=0,zeSalvando=false;
+const zeID=()=>('e'+Date.now().toString(36)+Math.random().toString(36).slice(2,8));
+function zeLista(p){return Array.isArray(p?.estudos)?p.estudos:[];}
+function zeEscolhido(p){const lista=zeLista(p);return lista.find(x=>x.id===zeSelecionado)||lista[0]||null;}
+function zeTexto(s){return zpEsc(String(s??''));}
+function zeItem(p,id){return zeLista(p).find(x=>x.id===id);}
+async function zeAtualizar(mudar){
+ const p=zpProjeto();if(!p||zeSalvando)return;
+ const antiga=zeLista(p),nova=mudar(antiga.map(x=>({...x,ramificacoes:[...(x.ramificacoes||[])],cartoes:[...(x.cartoes||[])]})));
+ if(!Array.isArray(nova))return;
+ zeSalvando=true;
+ try{await updateDoc(doc(db,'projetos',p.id),{estudos:nova});}
+ catch(e){console.error('Falha ao salvar estudos',e);alert('Não consegui salvar os estudos no Firebase. Tente novamente.');}
+ finally{zeSalvando=false;}
+}
+function zeMapa(item){const nodes=(item.ramificacoes||[]);
+ return `<div class="ze-map" aria-label="Mapa mental do conteúdo"><div class="ze-core">${zeTexto(item.titulo)}</div><div class="ze-branches">${nodes.map((n,i)=>`<div class="ze-branch"><span class="ze-branch-line" aria-hidden="true"></span><span class="ze-branch-title">${zeTexto(n.texto)}</span><button type="button" data-ze-edit-ramo="${i}" title="Editar ramificação" aria-label="Editar ${zeTexto(n.texto)}">✎</button><button type="button" data-ze-del-ramo="${i}" aria-label="Excluir ramificação ${zeTexto(n.texto)}" title="Excluir ramificação">×</button></div>`).join('')||'<p class="zp-muted">Crie sua primeira ramificação para formar o mapa.</p>'}</div></div>`;
+}
+function zpEstudosTela(p){const lista=zeLista(p),item=zeEscolhido(p),concluidos=lista.filter(x=>x.revisadoEm).length;
+ const sel=zpSelecionarHTML(p);
+ const opcoes=lista.map(x=>`<button type="button" class="ze-topic ${item?.id===x.id?'on':''}" data-ze-select="${zeTexto(x.id)}"><strong>${zeTexto(x.titulo)}</strong><small>${x.revisadoEm?'✓ Revisado':x.prova?'Prova: '+zeTexto(x.prova):'Em estudo'}</small></button>`).join('');
+ let detalhes='';
+ if(item){const qs=item.cartoes||[];const q=qs[zeCartao%Math.max(1,qs.length)];
+ detalhes=`<section class="ze-panel" aria-label="Conteúdo selecionado"><div class="ze-panel-head"><div><p class="zp-muted">MATERIAL DE ESTUDO</p><h2>${zeTexto(item.titulo)}</h2></div><button class="ze-danger" type="button" data-ze-apagar="${zeTexto(item.id)}">Excluir conteúdo</button></div>
+ <div class="ze-fields"><label>Nome do conteúdo<input id="ze-titulo" value="${zeTexto(item.titulo)}" maxlength="120"/></label><label>Data da prova (opcional)<input id="ze-prova" type="date" value="${zeTexto(item.prova||'')}"/></label></div>
+ <label class="ze-label" for="ze-notas">Anotações e resumo</label><textarea id="ze-notas" class="ze-notas" placeholder="Escreva conceitos, exemplos, fórmulas, referências e dúvidas...">${zeTexto(item.notas||'')}</textarea>
+ <div class="ze-actions"><button type="button" class="ze-primary" id="ze-salvar">Salvar título, data e anotações</button><button type="button" class="mini-btn" data-ze-revisar="${zeTexto(item.id)}">${item.revisadoEm?'✓ Revisado · Marcar como pendente':'Marcar como revisado ✓'}</button></div>
+ <div class="ze-subhead"><h3>Mapa mental</h3><p class="zp-muted">Um tema central e ramificações editáveis.</p></div>${zeMapa(item)}<button class="mini-btn" type="button" id="ze-add-ramo">+ Ramificação</button>
+ <div class="ze-subhead"><h3>Revisão ativa</h3><p class="zp-muted">Crie perguntas e tente responder antes de revelar a resposta.</p></div>
+ ${q?`<div class="ze-review"><span class="zp-muted">Pergunta ${zeCartao%qs.length+1} de ${qs.length}</span><strong>${zeTexto(q.pergunta)}</strong>${zeRevelada?`<p>${zeTexto(q.resposta)}</p>`:'<p class="zp-muted">Pense na resposta antes de revelar.</p>'}<div class="ze-actions"><button type="button" class="mini-btn" id="ze-revelar">${zeRevelada?'Ocultar resposta':'Revelar resposta'}</button><button type="button" class="mini-btn" id="ze-proxima">Próxima pergunta →</button><button type="button" class="ze-danger" id="ze-remover-cartao">Excluir pergunta</button></div></div>`:'<p class="zp-muted">Ainda não há perguntas de revisão neste conteúdo.</p>'}
+ <button class="mini-btn" type="button" id="ze-add-cartao">+ Pergunta e resposta</button></section>`;
+ }else{detalhes='<div class="ze-panel"><p class="zp-muted">Cadastre um conteúdo para começar a estudar.</p></div>';}
+ return `${sel}<section class="ze-intro"><div><p class="zp-muted">SEU ESPAÇO DE APRENDIZADO ✦</p><h2>Estudos</h2><p class="zp-muted">Organize conteúdos, faça mapas mentais e revise para suas provas.</p></div><span class="ze-pill">${concluidos}/${lista.length} revisados</span></section><section class="ze-library"><div class="ze-library-head"><h3>Conteúdos do projeto</h3><button type="button" class="ze-primary" id="ze-novo">+ Conteúdo</button></div><div class="ze-topics">${opcoes||'<p class="zp-muted">Nenhum conteúdo criado ainda.</p>'}</div></section>${detalhes}`;
+}
+function zeRedesenhar(){const p=zpProjeto();if(p&&zpAba==='estudos')renderProjetos();}
+document.body.addEventListener('click',async ev=>{
+ const b=ev.target.closest('button');if(!b||zpAba!=='estudos'||!ev.target.closest('#aba-projetos'))return;
+ const p=zpProjeto();if(!p)return;
+ if(b.id==='ze-novo'){
+  const titulo=prompt('Qual conteúdo você quer estudar? Ex.: Macroeconomia — IS-LM');if(!titulo?.trim())return;
+  const id=zeID();await zeAtualizar(a=>[...a,{id,titulo:titulo.trim().slice(0,120),notas:'',prova:'',ramificacoes:[],cartoes:[],revisadoEm:null}]);zeSelecionado=id;zeCartao=0;zeRevelada=false;zeRedesenhar();return;
+ }
+ if(b.dataset.zeSelect){zeSelecionado=b.dataset.zeSelect;zeCartao=0;zeRevelada=false;zeRedesenhar();return;}
+ const item=zeEscolhido(p);if(!item)return;
+ if(b.id==='ze-salvar'){
+  const titulo=el('ze-titulo').value.trim();if(!titulo)return alert('Informe o título do conteúdo.');
+  const notas=el('ze-notas').value,prova=el('ze-prova').value;
+  await zeAtualizar(a=>a.map(x=>x.id===item.id?{...x,titulo:titulo.slice(0,120),notas,prova}:x));return;
+ }
+ if(b.dataset.zeRevisar){await zeAtualizar(a=>a.map(x=>x.id===item.id?{...x,revisadoEm:x.revisadoEm?null:new Date().toISOString()}:x));return;}
+ if(b.dataset.zeApagar){if(!confirm(`Excluir o conteúdo “${item.titulo}” e suas anotações, mapa e perguntas?`))return;await zeAtualizar(a=>a.filter(x=>x.id!==item.id));zeSelecionado=null;return;}
+ if(b.id==='ze-add-ramo'){
+  const texto=prompt('Digite a ideia da nova ramificação:');if(!texto?.trim())return;
+  await zeAtualizar(a=>a.map(x=>x.id===item.id?{...x,ramificacoes:[...(x.ramificacoes||[]),{id:zeID(),texto:texto.trim().slice(0,200)}]}:x));return;
+ }
+ if(b.dataset.zeEditRamo!==undefined){const i=Number(b.dataset.zeEditRamo),ramo=item.ramificacoes?.[i];if(!ramo)return;const texto=prompt('Editar ramificação:',ramo.texto);if(!texto?.trim())return;await zeAtualizar(a=>a.map(x=>x.id===item.id?{...x,ramificacoes:x.ramificacoes.map((r,j)=>j===i?{...r,texto:texto.trim().slice(0,200)}:r)}:x));return;}
+ if(b.dataset.zeDelRamo!==undefined){const i=Number(b.dataset.zeDelRamo);if(!confirm('Remover esta ramificação?'))return;await zeAtualizar(a=>a.map(x=>x.id===item.id?{...x,ramificacoes:x.ramificacoes.filter((_,j)=>j!==i)}:x));return;}
+ if(b.id==='ze-add-cartao'){
+  const pergunta=prompt('Pergunta de revisão:');if(!pergunta?.trim())return;const resposta=prompt('Resposta:');if(!resposta?.trim())return;
+  await zeAtualizar(a=>a.map(x=>x.id===item.id?{...x,cartoes:[...(x.cartoes||[]),{id:zeID(),pergunta:pergunta.trim().slice(0,500),resposta:resposta.trim().slice(0,1500)}]}:x));return;
+ }
+ if(b.id==='ze-revelar'){zeRevelada=!zeRevelada;zeRedesenhar();return;}
+ if(b.id==='ze-proxima'){zeCartao++;zeRevelada=false;zeRedesenhar();return;}
+ if(b.id==='ze-remover-cartao'){const qs=item.cartoes||[];const i=zeCartao%Math.max(1,qs.length);if(!confirm('Excluir esta pergunta?'))return;await zeAtualizar(a=>a.map(x=>x.id===item.id?{...x,cartoes:x.cartoes.filter((_,j)=>j!==i)}:x));zeCartao=0;zeRevelada=false;return;}
+});
+
 let zpMin=25,zpRestante=25*60,zpRodando=false,zpFim=0,zpTimer=null,zpProjetoFoco=null;
 function zpTempoStr(s){return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;}
 function zpAtualizaRelogio(){const x=el('zp-clock');if(x)x.textContent=zpTempoStr(Math.max(0,zpRestante));}
@@ -2155,6 +2337,9 @@ document.body.addEventListener('click', async e=>{
   if(d.subtoggle){ const [tid,idx]=d.subtoggle.split('|'); return toggleSub(tid,+idx); }
   if(d.remanexo){ anexoRem.push(d.remanexo); return renderAnexosModal(); }
   if(d.rempend!==undefined){ anexoPend.splice(+d.rempend,1); return renderAnexosModal(); }
+  if(d.zpSubToggle) return zpSubToggle(d.zpSubToggle,d.zpSubId);
+  if(d.zpSubOpen) return zpSubAbrir(d.zpSubOpen,d.zpSubId);
+  if(d.zpSubAdd) { abrirEtapa(d.zpSubAdd);el('e-subnovo').focus();return; }
   if(d.moverEtapa) return zpMoverEtapa(d.moverEtapa,Number(d.direcao));
   if(d.checketapa) return toggleEtapa(d.checketapa);
   if(d.editetapa) return abrirEtapa(d.editetapa);
@@ -2178,8 +2363,48 @@ async function toggleSub(tid,idx){ const t=tarefas.find(x=>x.id===tid); if(!t||!
   const arr=t.subitens.map((s,i)=>i===idx?{t:s.t,ok:!s.ok}:s);
   await updateDoc(doc(db,'tarefas',tid),{subitens:arr}); }
 
+
+/* ZAIA V24 — Casa: recorrências virtuais e marcação por data sem duplicar documentos */
+let casaEditId=null;
+let casaDiasSel=[];
+const casaData=el('casa-data');
+function casaIsoHoje(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function casaDiaSemana(iso){const [a,m,d]=iso.split('-').map(Number);return new Date(a,m-1,d).getDay();}
+function casaPrevista(c,iso){if(c.criadaEmDia && iso<c.criadaEmDia)return false;if(c.freq==='unica')return c.data===iso;if(c.freq==='semanal')return (c.dias||[]).includes(casaDiaSemana(iso));return true;}
+function casaLabel(c){return c.freq==='diaria'?'Todos os dias':c.freq==='unica'?'Uma vez · '+(c.data||''): 'Semanal · '+(c.dias||[]).map(d=>['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][d]).join(', ');}
+function casaLinha(c,iso,gerenciar=false){const ok=!!(c.conclusoes||{})[iso];return `<div class="casa-cartao ${ok&&!gerenciar?'concluido':''}">
+  ${gerenciar?'':`<button type="button" class="casa-check ${ok?'on':''}" data-casa-check="${esc(c.id)}" aria-label="${ok?'Desmarcar':'Concluir'} ${esc(c.titulo)}" aria-pressed="${ok}">${ok?'✓':''}</button>`}
+  <div class="casa-info"><div class="casa-titulo">${esc(c.titulo)}</div><div class="casa-sub">${esc(gerenciar?casaLabel(c):(c.nota||casaLabel(c)))}</div></div>
+  <button class="casa-editar" data-casa-edit="${esc(c.id)}" type="button" aria-label="Editar ${esc(c.titulo)}">✎</button></div>`;}
+function renderCasa(){if(!el('casa-lista'))return;const hoje=casaIsoHoje();if(!casaData.value)casaData.value=hoje;
+ const iso=casaData.value;const doDia=casaAtividades.filter(c=>casaPrevista(c,iso));const feitas=doDia.filter(c=>(c.conclusoes||{})[iso]);
+ el('casa-resumo').textContent=`${iso===hoje?'Hoje':iso.split('-').reverse().join('/')} · ${feitas.length} de ${doDia.length} concluídas`;
+ el('casa-lista').innerHTML=doDia.length?doDia.map(c=>casaLinha(c,iso)).join(''):'<div class="casa-vazio">Nenhuma atividade doméstica programada para esse dia.</div>';
+ el('casa-todas').innerHTML=casaAtividades.length?casaAtividades.slice().sort((a,b)=>(a.titulo||'').localeCompare(b.titulo||'')).map(c=>casaLinha(c,iso,true)).join(''):'<div class="casa-vazio">Crie sua primeira atividade da casa ✨</div>';
+}
+function casaMostrarFreq(){el('casa-dias-wrap').classList.toggle('oculto',el('casa-freq').value!=='semanal');el('casa-unica-wrap').classList.toggle('oculto',el('casa-freq').value!=='unica');document.querySelectorAll('#casa-dias [data-dia]').forEach(b=>{const ok=casaDiasSel.includes(Number(b.dataset.dia));b.classList.toggle('sel',ok);b.setAttribute('aria-pressed',String(ok));});}
+function abrirCasa(id=null){casaEditId=id;const c=casaAtividades.find(x=>x.id===id);el('casa-modal-titulo').textContent=c?'Editar atividade da casa':'Nova atividade da casa';el('casa-titulo').value=c?.titulo||'';el('casa-freq').value=c?.freq||'diaria';casaDiasSel=[...(c?.dias||[])];el('casa-uma-data').value=c?.data||casaIsoHoje();el('casa-nota').value=c?.nota||'';el('casa-excluir').classList.toggle('oculto',!c);casaMostrarFreq();el('modal-casa').classList.add('on');}
+el('casa-nova').onclick=()=>abrirCasa();el('casa-cancelar').onclick=()=>el('modal-casa').classList.remove('on');
+el('casa-freq').onchange=casaMostrarFreq;
+el('casa-dias').onclick=e=>{const b=e.target.closest('[data-dia]');if(!b)return;const n=Number(b.dataset.dia);casaDiasSel=casaDiasSel.includes(n)?casaDiasSel.filter(x=>x!==n):[...casaDiasSel,n];casaMostrarFreq();};
+casaData.onchange=renderCasa;
+el('casa-salvar').onclick=async()=>{if(!user)return;const titulo=el('casa-titulo').value.trim();const freq=el('casa-freq').value;
+ if(!titulo)return alert('Digite o nome da atividade.');if(freq==='semanal'&&!casaDiasSel.length)return alert('Escolha ao menos um dia da semana.');
+ const dados={titulo,freq,dias:freq==='semanal'?[...casaDiasSel].sort():[],data:freq==='unica'?el('casa-uma-data').value:'',nota:el('casa-nota').value.trim()};
+ if(freq==='unica'&&!dados.data)return alert('Escolha uma data.');const btn=el('casa-salvar');btn.disabled=true;
+ try{if(casaEditId){await updateDoc(doc(db,'casa_atividades',casaEditId),dados);}else{await addDoc(collection(db,'casa_atividades'),{...dados,userId:user.uid,criadaEmDia:casaIsoHoje(),conclusoes:{}});}el('modal-casa').classList.remove('on');}
+ catch(e){console.error(e);alert('Não foi possível salvar. Confira as regras do Firestore para casa_atividades.');}finally{btn.disabled=false;}
+};
+el('casa-excluir').onclick=async()=>{if(!casaEditId||!user||!confirm('Excluir esta atividade e todo seu histórico de conclusões?'))return;try{await deleteDoc(doc(db,'casa_atividades',casaEditId));el('modal-casa').classList.remove('on');}catch(e){console.error(e);alert('Não foi possível excluir.');}};
+function casaClick(e){const edit=e.target.closest('[data-casa-edit]');if(edit){abrirCasa(edit.dataset.casaEdit);return;}const mark=e.target.closest('[data-casa-check]');if(!mark)return;
+ const iso=casaData.value;if(iso>casaIsoHoje())return alert('Não é possível concluir atividades em datas futuras.');const c=casaAtividades.find(x=>x.id===mark.dataset.casaCheck);if(!c||!user||!casaPrevista(c,iso))return;
+ const atual=!!(c.conclusoes||{})[iso];mark.disabled=true;
+ updateDoc(doc(db,'casa_atividades',c.id),{['conclusoes.'+iso]:!atual}).catch(e=>{console.error(e);alert('Não foi possível atualizar a conclusão.');}).finally(()=>mark.disabled=false);
+}
+el('casa-lista').addEventListener('click',casaClick);el('casa-todas').addEventListener('click',casaClick);
+setInterval(()=>{if(user&&casaData.value!==casaIsoHoje()&&document.activeElement!==casaData){/* A data selecionada pelo usuário permanece intocada. */}else if(user){renderCasa();}},60000);
 /* ABAS */
-const ABAS=['tarefas','rotina','projetos','assistir','livros'];
+const ABAS=['tarefas','rotina','casa','projetos','assistir','livros'];
 let abaAtual='tarefas';
 function irParaAba(name){ if(!ABAS.includes(name))return; abaAtual=name;
   document.querySelectorAll('[data-aba]').forEach(x=>x.classList.toggle('ativa',x.dataset.aba===name));
@@ -2416,6 +2641,63 @@ document.addEventListener('pointerup',event=>{
 });
 document.addEventListener('pointercancel',()=>{zpPointer=null;document.querySelectorAll('.zaia-destino').forEach(el=>el.classList.remove('zaia-destino'));});
 
+
+/* V23: subitens guardados no próprio documento da etapa; sem documentos duplicados. */
+const zpSubLista=e=>(Array.isArray(e?.subitens)?e.subitens:[]);
+function zpSubRenderModal(e){
+  el('e-subitens').innerHTML=zpSubLista(e).length?zpSubLista(e).map(sub=>`<div class="zp-sub-modal-row"><button type="button" data-zp-sub-open="${zpEsc(e.id)}" data-zp-sub-id="${zpEsc(sub.id)}">${sub.concluido?'✓ ':''}${zpEsc(sub.titulo)} ${sub.nota?'📝':''}</button><small>Editar ›</small></div>`).join(''):'<p style="font-size:12px;color:var(--txt-dim)">Esta etapa ainda não tem subitens.</p>';
+}
+let zpSubAtual=null;
+function zpSubAbrir(etapaId,subId){
+  const etapa=etapas.find(e=>e.id===etapaId),sub=zpSubLista(etapa).find(x=>x.id===subId);
+  if(!sub)return;
+  zpSubAtual={etapaId,subId};
+  el('se-titulo').value=sub.titulo||'';
+  el('se-nota').value=sub.nota||'';
+  el('modal-etapa').classList.remove('on');
+  el('modal-subetapa').classList.add('on');
+}
+function zpSubVoltar(){
+  el('modal-subetapa').classList.remove('on');
+  if(zpSubAtual){abrirEtapa(zpSubAtual.etapaId);}
+  zpSubAtual=null;
+}
+el('se-voltar').onclick=zpSubVoltar;
+async function zpSubAtualizar(etapaId,transform){
+  const e=etapas.find(x=>x.id===etapaId);if(!e)return;
+  const copia=zpSubLista(e).map(x=>({...x}));
+  const novos=transform(copia);
+  await updateDoc(doc(db,'etapas',etapaId),{subitens:novos});
+  e.subitens=novos;
+  zpSubRenderModal(e);
+  renderProjetos();
+}
+el('e-subadicionar').onclick=async()=>{
+  const id=el('e-id').value,titulo=el('e-subnovo').value.trim();
+  if(!id||!titulo)return;
+  const novoId=(typeof crypto!=='undefined'&&crypto.randomUUID)?crypto.randomUUID():'sub-'+Date.now()+'-'+Math.random().toString(36).slice(2);
+  try{await zpSubAtualizar(id,subs=>[...subs,{id:novoId,titulo,nota:'',concluido:false}]);el('e-subnovo').value='';}
+  catch(err){console.error(err);alert('Não foi possível adicionar o subitem.');}
+};
+el('e-subnovo').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();el('e-subadicionar').click();}});
+async function zpSubToggle(etapaId,subId){
+  try{await zpSubAtualizar(etapaId,subs=>subs.map(s=>s.id===subId?{...s,concluido:!s.concluido}:s));}
+  catch(err){console.error(err);alert('Não foi possível atualizar o subitem.');}
+}
+el('se-salvar').onclick=async()=>{
+  if(!zpSubAtual)return;const {etapaId,subId}=zpSubAtual;
+  const titulo=el('se-titulo').value.trim(),nota=el('se-nota').value.trim();
+  if(!titulo){alert('Informe um nome para o subitem.');return;}
+  try{await zpSubAtualizar(etapaId,subs=>subs.map(s=>s.id===subId?{...s,titulo,nota}:s));zpSubVoltar();}
+  catch(err){console.error(err);alert('Não foi possível salvar os detalhes.');}
+};
+el('se-excluir').onclick=async()=>{
+  if(!zpSubAtual||!confirm('Excluir este subitem e suas anotações?'))return;
+  const {etapaId,subId}=zpSubAtual;
+  try{await zpSubAtualizar(etapaId,subs=>subs.filter(s=>s.id!==subId));zpSubVoltar();}
+  catch(err){console.error(err);alert('Não foi possível excluir o subitem.');}
+};
+
 /* editar etapa */
 function abrirEtapa(id){ const e=etapas.find(x=>x.id===id); if(!e)return;
   el('e-id').value=id; el('e-titulo').value=e.titulo;
@@ -2424,6 +2706,7 @@ function abrirEtapa(id){ const e=etapas.find(x=>x.id===id); if(!e)return;
     const hh=d.getHours(),mm=d.getMinutes(); el('e-hora').value=(hh||mm)?`${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`:'';
   } else { el('e-data').value=''; el('e-hora').value=''; }
   el('e-nota').value=e.nota||'';
+  el('e-subnovo').value='';zpSubRenderModal(e);
   el('modal-etapa').classList.add('on'); }
 el('e-cancelar').onclick=()=>el('modal-etapa').classList.remove('on');
 el('e-salvar').onclick=async()=>{ const id=el('e-id').value,tit=el('e-titulo').value.trim(); if(!tit)return;
