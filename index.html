@@ -919,6 +919,18 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 .zaia-ciclo-info{background:#30214B;border:1px solid #584576;border-radius:13px;padding:11px 13px;margin:9px 0;font-size:13px;color:#E8D9FF;line-height:1.5}
 .zaia-ciclo-btn{width:100%;background:#6651B7;border:1px solid #947CF1;color:#fff;border-radius:13px;padding:12px;font-weight:700;margin:4px 0 12px}
 .zaia-ciclo-btn:disabled{opacity:.65}
+
+/* V22 — Ordenação das etapas: mouse, toque e teclado */
+.zaia-etapa-movel{min-width:0;transition:background-color .12s,border-color .12s; border-radius:12px;padding:6px 3px;}
+.zaia-etapa-movel.zaia-arrastando{opacity:.45;background:#3A2958}
+.zaia-etapa-movel.zaia-destino{outline:2px solid #B39DFF;outline-offset:1px;background:#30214B}
+.zaia-arrastar{min-width:35px;min-height:44px;display:grid;place-items:center;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;color:#D9C9F5;font-size:24px;flex-shrink:0}
+.zaia-arrastar:active{cursor:grabbing}
+.zaia-mover-acoes{display:flex;flex-shrink:0;gap:3px}
+.zaia-mover-acoes button{min-width:28px;min-height:38px;border-radius:9px;background:#33244E;color:#E8D9FF;font-size:17px}
+.zaia-mover-acoes button:disabled{opacity:.25;cursor:default}
+.zaia-mover-acoes button:not(:disabled):hover{background:#4B3671}
+@media(max-width:620px){.zaia-etapa-movel{flex-wrap:wrap;gap:7px}.zaia-etapa-movel .etapa-txt{min-width:45%}.zaia-mover-acoes button{min-width:35px}}
 </style>
 </head>
 <body>
@@ -1567,7 +1579,7 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword,
   createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut }
   from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, setDoc,
-  onSnapshot, query, where, arrayUnion, arrayRemove, increment }
+  onSnapshot, query, where, arrayUnion, arrayRemove, increment, writeBatch }
   from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -2045,7 +2057,7 @@ function renderTarefas(){renderFiltros();
 
 function renderProjetosLegado(){ if(!projetos.length){el('lista-projetos').innerHTML='<div class="vazio">Crie um projeto para montar um cronograma.</div>';return;}
   el('lista-projetos').innerHTML=projetos.map(p=>{
-    const es=etapas.filter(e=>e.projetoId===p.id).sort((a,b)=>(a.prazo||9e15)-(b.prazo||9e15)||(a.ordem||0)-(b.ordem||0));
+    const es=zpOrdenadas(p);
     const ft=es.filter(e=>e.concluida).length, pct=es.length?Math.round(ft/es.length*100):0;
     return `<div class="proj">
       <div class="proj-topo"><div>
@@ -2054,10 +2066,12 @@ function renderProjetosLegado(){ if(!projetos.length){el('lista-projetos').inner
         <button data-delproj="${p.id}" class="t-acoes" style="color:var(--txt-dim)">🗑</button></div>
       <div class="barra"><span style="width:${pct}%"></span></div>
       <div style="font-size:12px;color:var(--txt-dim);margin-bottom:6px">${ft}/${es.length} etapas • ${pct}%</div>
-      ${es.map(e=>`<div class="etapa ${e.concluida?'feita':''}">
+      ${es.map((e,i)=>`<div class="etapa zaia-etapa-movel ${e.concluida?'feita':''}" data-sort-project="${p.id}" data-sort-etapa="${e.id}">
+        <button type="button" class="zaia-arrastar" draggable="true" data-drag-etapa="${e.id}" aria-label="Arrastar ${esc(e.titulo)} para mudar a posição" title="Arraste para reorganizar">⠿</button>
         <button class="check ${e.concluida?'on':''}" data-checketapa="${e.id}">✓</button>
         <button class="etapa-txt" data-editetapa="${e.id}">${esc(e.titulo)}${e.nota?' <span class="nota-ic" title="tem anotação">📝</span>':''}</button>
         ${e.prazo?`<span class="etapa-prazo ${venceu(e.prazo)&&!e.concluida?'venc':''}">${fmtPrazo(e.prazo)}</span>`:''}
+        <div class="zaia-mover-acoes"><button type="button" data-mover-etapa="${e.id}" data-direcao="-1" aria-label="Mover para cima" title="Mover para cima" ${i===0?'disabled':''}>↑</button><button type="button" data-mover-etapa="${e.id}" data-direcao="1" aria-label="Mover para baixo" title="Mover para baixo" ${i===es.length-1?'disabled':''}>↓</button></div>
         <button data-deletapa="${e.id}" style="color:var(--txt-dim);width:26px">✕</button></div>`).join('')}
       <div class="add-etapa"><input placeholder="nova etapa" data-etapa-nome="${p.id}"/>
         <input class="data" type="date" data-etapa-prazo="${p.id}"/>
@@ -2068,7 +2082,7 @@ function renderProjetosLegado(){ if(!projetos.length){el('lista-projetos').inner
 /* V17: cada estrela é uma etapa existente no Firebase, sem criar documentos extras. */
 let zpAba='visao', zpSelecionado=null;
 const zpEsc=s=>esc(s);
-function zpOrdenadas(p){return etapas.filter(e=>e.projetoId===p.id).sort((a,b)=>(a.ordem||0)-(b.ordem||0)||(a.prazo||9e15)-(b.prazo||9e15));}
+function zpOrdenadas(p){return etapas.filter(e=>e.projetoId===p.id).sort((a,b)=>(Number.isFinite(Number(a.ordem))?Number(a.ordem):Infinity)-(Number.isFinite(Number(b.ordem))?Number(b.ordem):Infinity)||(a.prazo||9e15)-(b.prazo||9e15)||a.id.localeCompare(b.id));}
 function zpProjeto(){return projetos.find(p=>p.id===zpSelecionado)||projetos[0]||null;}
 function zpStatus(){const p=zpProjeto();if(!p)return null;const es=zpOrdenadas(p);return {p,es,feitas:es.filter(e=>e.concluida).length,proxima:es.find(e=>!e.concluida)};}
 function zpSelecionarHTML(p){return `<label class="zp-muted" for="zp-projeto">Projeto selecionado</label><select id="zp-projeto" class="zp-project-selector" aria-label="Escolher projeto">${projetos.map(x=>`<option value="${zpEsc(x.id)}" ${x.id===p.id?'selected':''}>${zpEsc(x.nome)}</option>`).join('')}</select>`;}
@@ -2080,7 +2094,7 @@ function renderProjetos(){const root=el('zp-dashboard'),lista=el('lista-projetos
  if(!projetos.length){root.innerHTML='<div class="zp-hero">Comece criando um projeto. Depois, divida-o em pequenas etapas para acompanhar seu progresso.</div>';lista.innerHTML='';return;}
  const {p,es,feitas,proxima}=zpStatus();zpSelecionado=p.id;const pct=es.length?Math.round(feitas/es.length*100):0;
  const selector=zpSelecionarHTML(p);
- if(zpAba==='etapas'){root.innerHTML=`${selector}<p class="zp-muted">Todas as etapas são mantidas como foram salvas. Clique em cada uma para editar ou adicionar notas.</p>`;renderProjetosLegado();return;}
+ if(zpAba==='etapas'){root.innerHTML=`${selector}<p class="zp-muted">Arraste pelo símbolo ⠿ para reorganizar. No celular, você também pode usar as setas. A ordem é salva automaticamente.</p>`;renderProjetosLegado();return;}
  lista.innerHTML='';
  if(zpAba==='visao'){
  root.innerHTML=`${selector}<section class="zp-hero" aria-label="Progresso do projeto"><p class="zp-muted">SEU UNIVERSO DE PROJETOS ✦</p><h2>${zpEsc(p.nome)}</h2><p class="zp-muted">Grandes ideias, pequenos passos.</p><div class="zp-statrow"><div class="zp-stat"><strong>${pct}%</strong>progresso</div><div class="zp-stat"><strong>${feitas}/${es.length}</strong>etapas</div><div class="zp-stat"><strong>${Math.round((p.focoMinutos||0))}</strong>min de foco</div></div><div class="barra" role="progressbar" aria-label="Progresso do projeto" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><span style="width:${pct}%"></span></div><p class="zp-muted" style="margin:14px 0 4px">Sua constelação de progresso</p>${zpConstelacao(es)}<div class="zp-missao"><div class="zp-missao-main"><strong>${proxima?'Próxima pequena missão':'Etapas em dia'}</strong><p class="zp-muted">${proxima?zpEsc(proxima.titulo):es.length?'Todas as etapas cadastradas foram concluídas.':'Adicione uma etapa na aba Etapas e missões.'}</p></div>${proxima?`<button type="button" class="zp-action" data-zp-missao="${zpEsc(proxima.id)}">Concluir</button>`:''}</div><div style="margin-top:14px"><button class="zp-action" type="button" data-zp-ir="foco">Iniciar sessão de foco →</button> <button type="button" class="mini-btn" data-zp-ir="etapas">Ver etapas</button></div></section>`;
@@ -2141,6 +2155,7 @@ document.body.addEventListener('click', async e=>{
   if(d.subtoggle){ const [tid,idx]=d.subtoggle.split('|'); return toggleSub(tid,+idx); }
   if(d.remanexo){ anexoRem.push(d.remanexo); return renderAnexosModal(); }
   if(d.rempend!==undefined){ anexoPend.splice(+d.rempend,1); return renderAnexosModal(); }
+  if(d.moverEtapa) return zpMoverEtapa(d.moverEtapa,Number(d.direcao));
   if(d.checketapa) return toggleEtapa(d.checketapa);
   if(d.editetapa) return abrirEtapa(d.editetapa);
   if(d.editprojeto) return abrirProjEdit(d.editprojeto);
@@ -2314,8 +2329,92 @@ el('p-salvar').onclick=async()=>{ const nome=el('p-nome').value.trim(); if(!nome
 async function addEtapaUI(pid){ const nomeI=document.querySelector(`[data-etapa-nome="${pid}"]`),prazoI=document.querySelector(`[data-etapa-prazo="${pid}"]`),horaI=document.querySelector(`[data-etapa-hora="${pid}"]`);
   const nome=nomeI.value.trim(); if(!nome)return;
   const prazo=prazoI.value?new Date(prazoI.value+'T'+(horaI.value||'12:00')).getTime():null;
-  await addDoc(collection(db,'etapas'),{projetoId:pid,titulo:nome,prazo,concluida:false,ordem:Date.now(),userId:user.uid});
+  await addDoc(collection(db,'etapas'),{projetoId:pid,titulo:nome,prazo,concluida:false,ordem:Math.max(0,...etapas.filter(e=>e.projetoId===pid).map(e=>Number(e.ordem)||0))+1,userId:user.uid});
   nomeI.value='';prazoI.value='';if(horaI)horaI.value=''; }
+
+
+/* V22 — cada etapa é atualizada no seu próprio documento existente;
+   o lote atômico evita salvar somente parte da ordem no Firebase. */
+let zpSalvandoOrdem=false;
+async function zpSalvarOrdem(projetoId,ids){
+  if(zpSalvandoOrdem||!user)return;
+  const atuais=etapas.filter(e=>e.projetoId===projetoId);
+  if(ids.length!==atuais.length||new Set(ids).size!==ids.length||ids.some(id=>!atuais.some(e=>e.id===id)))return;
+  zpSalvandoOrdem=true;
+  try{
+    const batch=writeBatch(db);
+    ids.forEach((id,i)=>batch.update(doc(db,'etapas',id),{ordem:i+1}));
+    await batch.commit();
+  }catch(error){console.error('Não foi possível salvar a ordem das etapas',error);fala('Não consegui salvar a nova ordem das etapas. Tente novamente.');}
+  finally{zpSalvandoOrdem=false;}
+}
+async function zpMoverEtapa(id,direcao){
+  const etapa=etapas.find(e=>e.id===id);if(!etapa||zpSalvandoOrdem)return;
+  const p=projetos.find(x=>x.id===etapa.projetoId);if(!p)return;
+  const ids=zpOrdenadas(p).map(e=>e.id);const i=ids.indexOf(id),j=i+direcao;
+  if(i<0||j<0||j>=ids.length)return;
+  [ids[i],ids[j]]=[ids[j],ids[i]];
+  await zpSalvarOrdem(p.id,ids);
+}
+// HTML Drag & Drop: desktops com mouse
+let zpDragId=null;
+document.addEventListener('dragstart',event=>{
+  const h=event.target.closest('[data-drag-etapa]');if(!h||zpSalvandoOrdem)return;
+  zpDragId=h.dataset.dragEtapa;
+  event.dataTransfer.effectAllowed='move';event.dataTransfer.setData('text/plain',zpDragId);
+  h.closest('[data-sort-etapa]')?.classList.add('zaia-arrastando');
+});
+document.addEventListener('dragover',event=>{
+  if(!zpDragId)return;
+  const target=event.target.closest('[data-sort-etapa]');
+  if(!target)return;
+  event.preventDefault();event.dataTransfer.dropEffect='move';
+  document.querySelectorAll('.zaia-destino').forEach(el=>el.classList.remove('zaia-destino'));
+  target.classList.add('zaia-destino');
+});
+document.addEventListener('drop',async event=>{
+  if(!zpDragId)return;
+  event.preventDefault();const id=zpDragId;zpDragId=null;
+  const alvo=event.target.closest('[data-sort-etapa]');
+  document.querySelectorAll('.zaia-destino,.zaia-arrastando').forEach(el=>el.classList.remove('zaia-destino','zaia-arrastando'));
+  if(!alvo||alvo.dataset.sortEtapa===id)return;
+  await zpSoltarEtapa(id,alvo.dataset.sortEtapa);
+});
+document.addEventListener('dragend',()=>{
+  zpDragId=null;document.querySelectorAll('.zaia-destino,.zaia-arrastando').forEach(el=>el.classList.remove('zaia-destino','zaia-arrastando'));
+});
+async function zpSoltarEtapa(origem,destino){
+  const etapa=etapas.find(e=>e.id===origem),outra=etapas.find(e=>e.id===destino);
+  if(!etapa||!outra||etapa.projetoId!==outra.projetoId||zpSalvandoOrdem)return;
+  const p=projetos.find(x=>x.id===etapa.projetoId);if(!p)return;
+  const ids=zpOrdenadas(p).map(e=>e.id),inicio=ids.indexOf(origem),fim=ids.indexOf(destino);
+  if(inicio<0||fim<0||inicio===fim)return;
+  ids.splice(inicio,1);ids.splice(fim,0,origem);
+  await zpSalvarOrdem(p.id,ids);
+}
+// Arrastar com o dedo, usando Pointer Events. Apenas no puxador ⠿.
+let zpPointer=null;
+document.addEventListener('pointerdown',event=>{
+  if(event.pointerType==='mouse'||zpSalvandoOrdem)return;
+  const handle=event.target.closest('[data-drag-etapa]');if(!handle)return;
+  zpPointer={id:handle.dataset.dragEtapa,pointerId:event.pointerId,targetId:null,handle};
+  handle.setPointerCapture(event.pointerId);
+  event.preventDefault();
+});
+document.addEventListener('pointermove',event=>{
+  if(!zpPointer||zpPointer.pointerId!==event.pointerId)return;
+  const target=document.elementFromPoint(event.clientX,event.clientY)?.closest('[data-sort-etapa]');
+  document.querySelectorAll('.zaia-destino').forEach(el=>el.classList.remove('zaia-destino'));
+  zpPointer.targetId=target?.dataset.sortEtapa||null;
+  if(target)target.classList.add('zaia-destino');
+});
+document.addEventListener('pointerup',event=>{
+  if(!zpPointer||zpPointer.pointerId!==event.pointerId)return;
+  const {id,targetId}=zpPointer;zpPointer=null;
+  document.querySelectorAll('.zaia-destino').forEach(el=>el.classList.remove('zaia-destino'));
+  if(targetId&&id!==targetId)zpSoltarEtapa(id,targetId);
+});
+document.addEventListener('pointercancel',()=>{zpPointer=null;document.querySelectorAll('.zaia-destino').forEach(el=>el.classList.remove('zaia-destino'));});
 
 /* editar etapa */
 function abrirEtapa(id){ const e=etapas.find(x=>x.id===id); if(!e)return;
