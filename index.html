@@ -2985,7 +2985,9 @@ function renderMidia(){ renderFiltroMidia(); renderAssistirStats();
   if(filtroMidia==='fav')lista=lista.filter(m=>m.fav); else lista=lista.filter(m=>statusMidia(m)===filtroMidia);
   if(filtroTipoMidia!=='tudo')lista=lista.filter(m=>m.tipo===filtroTipoMidia);
   if(buscaMidiaTxt)lista=lista.filter(m=>(m.titulo||'').toLowerCase().includes(buscaMidiaTxt));
-  lista.sort((a,b)=>(b.criadaEm||0)-(a.criadaEm||0));
+  // Prioridade: última atividade assistida; fallback para data de cadastro (registros antigos).
+  const atividadeEm=m=>{const n=m.ultimaAtividadeEm;return typeof n==='number'?n:(n?.toMillis?.()||0);};
+  lista.sort((a,b)=>(atividadeEm(b)||Number(b.criadaEm)||0)-(atividadeEm(a)||Number(a.criadaEm)||0));
   el('lista-midia').innerHTML=lista.length?`<div class="poster-grid">${lista.map(midiaCard).join('')}</div>`:'<div class="vazio">Nada aqui.</div>'; }
 el('filtro-midia').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;filtroMidia=b.dataset.mf;renderMidia();});
 el('filtro-tipo-midia').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;filtroTipoMidia=b.dataset.mtf;renderMidia();});
@@ -3054,7 +3056,12 @@ function abrirDet(id){ const m=midias.find(x=>x.id===id); if(!m)return; detId=id
   el('modal-det').classList.add('on'); }
 const epCache={};
 const epInner=c=>c>1?`<span class="dot-num">${c}</span>`:(c>=1?'✓':'');
-function salvarAssist(m){ try{ updateDoc(doc(db,'midias',detId),{assistidos:m.assistidos}); }catch(e){} }
+function salvarAssist(m){
+  const atualizado=Date.now();m.ultimaAtividadeEm=atualizado;
+  renderMidia(); // Reordena imediatamente sem esperar pelo retorno do Firebase.
+  updateDoc(doc(db,'midias',m.id),{assistidos:m.assistidos,ultimaAtividadeEm:atualizado})
+    .catch(e=>console.error('Erro ao salvar episódio e última atividade:',e));
+}
 function seaInfo(m,n){ const o=mapAssist(m),t=(m.temporadas||[]).find(x=>x.n===n);
   const counts=[...Array(t.eps).keys()].map(i=>o[`${n}-${i+1}`]||0);
   return {marc:counts.filter(c=>c>=1).length, total:t.eps, allW:counts.every(c=>c>=1), min:Math.min(...counts)}; }
@@ -3098,7 +3105,7 @@ el('det-serie').addEventListener('click',async e=>{
  (m.temporadas||[]).forEach(t=>{for(let i=1;i<=Number(t.eps||0);i++)atual[`${t.n}-${i}`]=c.maior;});
  const bot=e.target.closest('button');bot.disabled=true;bot.textContent='Salvando…';
  try{
-  await updateDoc(doc(db,'midias',m.id),{assistidos:atual});
+  await updateDoc(doc(db,'midias',m.id),{assistidos:atual,ultimaAtividadeEm:Date.now()});
   m.assistidos=atual;renderTemporadas(m);renderMidia();
  }catch(err){m.assistidos=anterior;renderTemporadas(m);alert('Não foi possível atualizar a série no Firebase. Tente novamente.');console.error(err);}
 });
@@ -3133,8 +3140,8 @@ el('det-visto').onclick=async()=>{ const m=midias.find(x=>x.id===detId); const n
   el('det-visto').classList.toggle('on',novo); el('det-visto').textContent=novo?'✓ Assistido':'Marcar como assistido';
   if(novo&&(!m.vezes||m.vezes<1)){m.vezes=1;el('det-vezes').value=1;}
   el('det-status').textContent=rotuloStatus(statusMidia(m));
-  try{ await updateDoc(doc(db,'midias',detId),{visto:novo,vezes:m.vezes||0}); }catch(e){} };
-el('det-vezes').onchange=async()=>{ try{ await updateDoc(doc(db,'midias',detId),{vezes:+el('det-vezes').value||0}); }catch(e){} };
+  try{ const agora=Date.now();m.ultimaAtividadeEm=agora;renderMidia(); await updateDoc(doc(db,'midias',detId),{visto:novo,vezes:m.vezes||0,ultimaAtividadeEm:agora}); }catch(e){console.error(e);}  };
+el('det-vezes').onchange=async()=>{ const m=midias.find(x=>x.id===detId);if(!m)return;const agora=Date.now();m.vezes=+el('det-vezes').value||0;m.ultimaAtividadeEm=agora;renderMidia();try{await updateDoc(doc(db,'midias',detId),{vezes:m.vezes,ultimaAtividadeEm:agora});}catch(e){console.error(e);} };
 el('det-fav').onclick=async()=>{ const m=midias.find(x=>x.id===detId); const novo=!m.fav; m.fav=novo;
   el('det-fav').classList.toggle('on',novo); el('det-fav').innerHTML=novo?'♥ Favorito':'♡ Favorito';
   try{ await updateDoc(doc(db,'midias',detId),{fav:novo}); }catch(e){} };
