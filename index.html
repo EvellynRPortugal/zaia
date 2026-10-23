@@ -969,6 +969,10 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 #casa-dias button.sel{background:#6651B7;color:white;border-color:#C8AFFF}
 @media(max-width:820px){.bottom-nav{overflow-x:auto;justify-content:flex-start;scrollbar-width:none}.bottom-nav button{min-width:57px;flex:1 0 57px}.casa-data-label{width:100%}}
 
+.casa-colecao{margin-top:18px;border-top:1px solid var(--stroke);padding-top:12px}
+.casa-colecao summary{cursor:pointer;font-size:13px;letter-spacing:.3px;font-weight:800;color:var(--lilas);padding:8px 2px}
+.casa-colecao summary span{color:var(--txt-dim);font-weight:600}
+.casa-ajuda{font-size:12.5px;color:var(--txt-dim);margin:8px 0 12px;line-height:1.5}
 /* ZAIA V25 — ESTUDOS */
 .ze-intro,.ze-library,.ze-panel{background:#261B40;border:1px solid #473362;border-radius:18px;padding:18px;margin:14px 0}
 .ze-intro{display:flex;justify-content:space-between;gap:12px;align-items:center}
@@ -986,6 +990,18 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 .ze-branch-line{width:7px;height:7px;border-radius:50%;background:#A58BFF;flex-shrink:0}.ze-review{padding:15px;background:#1C1430;border:1px solid #54406F;border-radius:14px;display:flex;flex-direction:column;gap:10px}.ze-review strong,.ze-review p{overflow-wrap:anywhere}
 @media(max-width:580px){.ze-fields{grid-template-columns:1fr}.ze-intro{align-items:flex-start;flex-direction:column}.ze-panel,.ze-library{padding:14px}.ze-topic{min-width:120px}}
 
+
+/* ZAIA V27 — ESTUDOS LIVRES / EDITOR DE MAPAS E ANOTAÇÕES */
+.ze27-head,.ze27-pane{border-radius:20px;background:#261B40;border:1px solid #473362;padding:20px;margin-bottom:14px}
+.ze27-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;background:linear-gradient(115deg,#2c204b,#251a3f)}
+.ze27-head h2{color:#FFF3D6;font-size:25px}.ze27-muted{color:#D5C9EA;font-size:13px}.ze27-kicker{font-size:11px;font-weight:800;letter-spacing:1.2px;color:#BEA6FF;text-transform:uppercase}
+.ze27-primary{background:#7054DE;color:white;border-radius:12px;padding:10px 16px;font-weight:800}.ze27-secondary{padding:9px 13px;color:#E8D9FF;background:#3b2a57;border:1px solid #624d88;border-radius:11px;font-size:13px;font-weight:700}.ze27-danger{color:#ffb8c5;border:1px solid #805067;padding:8px 12px;border-radius:11px}
+.ze27-toolbar{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:12px}.ze27-toolbar input,.ze27-toolbar select{background:#1C1430;border:1px solid #584471;color:white;border-radius:12px;padding:11px;min-width:0}
+.ze27-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:11px}.ze27-study{background:#30214B;border:1px solid #514064;border-radius:15px;padding:16px;text-align:left;min-height:116px;display:flex;flex-direction:column;gap:8px}.ze27-study.on{border-color:#b69dff;background:#403061}.ze27-study strong{color:#fff;font-size:15px}.ze27-tag{font-size:11px;color:#decfff;background:#473362;padding:5px 8px;border-radius:999px;align-self:flex-start}
+.ze27-detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}.ze27-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}.ze27-note{font-size:14px;color:#E8D9FF;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere;background:#1C1430;padding:16px;border-radius:14px;min-height:90px}
+.ze27-map{position:relative;overflow:auto;border-radius:18px;border:1px solid #574479;background:#1B142D;min-height:400px;touch-action:pan-x pan-y}.ze27-map-surface{position:relative;min-width:690px;min-height:400px}.ze27-lines{position:absolute;inset:0;pointer-events:none;width:100%;height:100%;overflow:visible}.ze27-node{position:absolute;transform:translate(-50%,-50%);width:160px;min-height:76px;background:#352750;border:1px solid #8068ad;border-radius:16px;padding:12px;z-index:1;box-shadow:0 10px 20px #08051077;text-align:center;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px}.ze27-node.root{background:#7054DE;border-color:#bca5ff}.ze27-node strong{font-size:13px;overflow-wrap:anywhere}.ze27-node small{font-size:10px;color:#DED1FF}.ze27-map-hint{margin-top:9px;color:#C8BCE9;font-size:12px}
+.ze27-modal-bg{position:fixed;inset:0;z-index:230;background:#070411ca;backdrop-filter:blur(7px);display:flex;align-items:center;justify-content:center;padding:18px}.ze27-dialog{width:100%;max-width:570px;max-height:90dvh;overflow-y:auto;background:#281D42;border:1px solid #685089;border-radius:24px;padding:24px;box-shadow:0 22px 90px #05020fc7}.ze27-dialog h3{font-size:23px;color:#FFF3D6;margin-bottom:5px}.ze27-dialog label{display:flex;flex-direction:column;gap:6px;color:#E8D9FF;font-weight:700;font-size:13px;margin-top:17px}.ze27-dialog input,.ze27-dialog select,.ze27-dialog textarea{width:100%;padding:13px;background:#171127;color:#fff;border:1px solid #584471;border-radius:13px;font:inherit;outline:none}.ze27-dialog textarea{min-height:170px;line-height:1.65;resize:vertical}.ze27-dialog input:focus,.ze27-dialog textarea:focus,.ze27-dialog select:focus{border-color:#b69dff;box-shadow:0 0 0 3px #7A5CFF33}.ze27-dialog-actions{display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap;margin-top:23px}.ze27-dialog .ze27-muted{line-height:1.5}
+@media(max-width:700px){.ze27-head{flex-direction:column}.ze27-grid{grid-template-columns:1fr}.ze27-head,.ze27-pane{padding:15px}.ze27-dialog{padding:19px}.ze27-map-surface{min-width:610px}}
 </style>
 </head>
 <body>
@@ -1062,6 +1078,7 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
       <button data-aba="projetos">
         <svg class="ic" viewBox="0 0 24 24"><path d="M4 7l8-3.5L20 7l-8 3.5L4 7z"/><path d="M4 12l8 3.5 8-3.5M4 17l8 3.5 8-3.5"/></svg>
         <span class="lbl">Projetos</span></button>
+      <button data-aba="estudos"><svg class="ic" viewBox="0 0 24 24"><path d="M3 5.5c3-1.5 6-1.5 9 0 3-1.5 6-1.5 9 0V19c-3-1.5-6-1.5-9 0-3-1.5-6-1.5-9 0z"/><path d="M12 5.5V19"/></svg><span class="lbl">Estudos</span></button>
       <button data-aba="assistir">
         <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16.5V20"/><path d="M10.6 8.3l3.2 2.2-3.2 2.2z"/></svg>
         <span class="lbl">Assistir</span></button>
@@ -1112,8 +1129,8 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
       <div class="casa-acoes"><button type="button" id="casa-nova" class="mini-btn">+ Atividade doméstica</button><label class="casa-data-label">Visualizar dia <input type="date" id="casa-data" class="campo"/></label></div>
       <div id="casa-resumo" class="casa-resumo" aria-live="polite"></div>
       <div id="casa-lista"></div>
-      <h3 class="sec-titulo">Minhas atividades da casa</h3>
-      <div id="casa-todas"></div>
+      <details class="casa-colecao" id="casa-recorrencias-wrap"><summary>↻ Atividades recorrentes <span id="casa-recorrentes-num"></span></summary><p class="casa-ajuda">Gerencie a frequência e os dias de cada atividade. As ocorrências do dia ficam na lista acima.</p><div id="casa-todas"></div></details>
+      <details class="casa-colecao"><summary>✓ Atividades avulsas concluídas <span id="casa-finalizadas-num"></span></summary><div id="casa-finalizadas"></div></details>
     </section>
     <section id="aba-rotina" class="oculto">
       <button id="btn-nova-rotina" class="mini-btn" style="margin-bottom:14px">+ Novo hábito</button>
@@ -1143,12 +1160,15 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
         <button type="button" class="on" data-zp-tab="visao" aria-pressed="true">Visão geral</button>
         <button type="button" data-zp-tab="etapas" aria-pressed="false">Etapas e missões</button>
         <button type="button" data-zp-tab="foco" aria-pressed="false">Modo Foco</button>
-        <button type="button" data-zp-tab="estudos" aria-pressed="false">Estudos ✦</button>
+
       </div>
       <div id="zp-dashboard"></div>
       <div id="lista-projetos"></div>
     </section>
 
+    <section id="aba-estudos" class="oculto">
+      <div id="ze27-root"></div>
+    </section>
     <section id="aba-assistir" class="oculto">
       <button id="btn-nova-midia" class="mini-btn" style="margin-bottom:12px">+ Adicionar</button>
       <div id="assistir-stats" class="stats-grid"></div>
@@ -1181,6 +1201,7 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
     <button data-aba="projetos">
       <svg viewBox="0 0 24 24"><path d="M4 7l8-3.5L20 7l-8 3.5L4 7z"/><path d="M4 12l8 3.5 8-3.5M4 17l8 3.5 8-3.5"/></svg>
       <span>Projetos</span></button>
+    <button data-aba="estudos"><svg viewBox="0 0 24 24"><path d="M3 5.5c3-1.5 6-1.5 9 0 3-1.5 6-1.5 9 0V19c-3-1.5-6-1.5-9 0-3-1.5-6-1.5-9 0z"/><path d="M12 5.5V19"/></svg><span>Estudos</span></button>
     <button data-aba="assistir">
       <svg viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16.5V20"/><path d="M10.6 8.3l3.2 2.2-3.2 2.2z"/></svg>
       <span>Assistir</span></button>
@@ -1673,11 +1694,12 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
     <h3 id="casa-modal-titulo">Atividade da casa</h3>
     <label for="casa-titulo">O que precisa fazer?</label><input class="campo" id="casa-titulo" maxlength="120" placeholder="Ex.: Lavar a louça"/>
     <label for="casa-freq">Quando?</label>
-    <select class="campo" id="casa-freq"><option value="diaria">Todos os dias</option><option value="semanal">Dias da semana</option><option value="unica">Uma única vez</option></select>
+    <select class="campo" id="casa-freq"><option value="avulsa">Sem recorrência — até eu concluir</option><option value="diaria">Todos os dias</option><option value="semanal">Dias da semana</option></select>
+    <p class="casa-ajuda">Sem recorrência, a atividade fica na lista até você concluir. Se escolher uma frequência, ela volta nos dias programados.</p>
     <div id="casa-dias-wrap" class="oculto"><label>Em quais dias?</label><div id="casa-dias" class="dias-pick" role="group" aria-label="Dias da semana">
       <button type="button" data-dia="0">Dom</button><button type="button" data-dia="1">Seg</button><button type="button" data-dia="2">Ter</button><button type="button" data-dia="3">Qua</button><button type="button" data-dia="4">Qui</button><button type="button" data-dia="5">Sex</button><button type="button" data-dia="6">Sáb</button>
     </div></div>
-    <div id="casa-unica-wrap" class="oculto"><label for="casa-uma-data">Data</label><input type="date" class="campo" id="casa-uma-data"/></div>
+
     <label for="casa-nota">Detalhes (opcional)</label><textarea class="campo" id="casa-nota" placeholder="Produtos, lembretes, observações…"></textarea>
     <div class="modal-acoes"><button id="casa-cancelar" class="btn btn-sec" type="button">Cancelar</button><button id="casa-salvar" class="btn btn-primario" type="button">Salvar</button></div>
     <button id="casa-excluir" class="btn-excluir oculto" type="button">Excluir atividade</button>
@@ -1803,7 +1825,7 @@ setInterval(()=>{if(user){renderTarefas();renderRotina();renderRotinaHoje();}},6
 /* DADOS */
 function ligarDados(){ const col=(n)=>query(collection(db,n), where('userId','==',user.uid));
   unsub.push(onSnapshot(col('tarefas'), s=>{tarefas=docs(s);render(); /* Google: sincronização manual para evitar envios inesperados */}, err));
-  unsub.push(onSnapshot(col('projetos'),s=>{projetos=docs(s);render();}, err));
+  unsub.push(onSnapshot(col('projetos'),s=>{projetos=docs(s);render();if(abaAtual==='estudos')ze27Render();}, err));
   unsub.push(onSnapshot(col('etapas'),  s=>{etapas=docs(s);render();}, err));
   unsub.push(onSnapshot(col('sinonimos'),s=>{sinonimos=docs(s);render();}, err));
   unsub.push(onSnapshot(col('anexos'), s=>{anexos=docs(s);render();}, err));
@@ -1812,6 +1834,7 @@ function ligarDados(){ const col=(n)=>query(collection(db,n), where('userId','==
   unsub.push(onSnapshot(col('midias'), s=>{midias=docs(s);render();}, err));
   unsub.push(onSnapshot(col('livros'), s=>{livros=docs(s);render();}, err));
   unsub.push(onSnapshot(doc(db,'perfil',user.uid), s=>{ const d=s.exists()?s.data():{};
+    ze27Saved=Array.isArray(d.estudosIndependentes)?d.estudosIndependentes:[];if(abaAtual==='estudos')ze27Render();
     aplicarFoto(d.foto||null); crisePlaylistLink=d.crisePlaylist||''; if(el('crise-pl'))el('crise-pl').value=crisePlaylistLink; }, ()=>{}));
 }
 function aplicarFoto(url){ const a=el('avatar'); if(url){a.style.backgroundImage=`url(${url})`;a.textContent='';}else{a.style.backgroundImage='';} }
@@ -2218,6 +2241,67 @@ function renderProjetos(){const root=el('zp-dashboard'),lista=el('lista-projetos
  }
 }
 
+
+/* ZAIA V27 — Estudos independentes. Os antigos continuam nos projetos e podem ser importados. */
+let ze27Saved=[],ze27Selected=null,ze27Search='',ze27Filter='todos',ze27Busy=false;
+const ze27Esc=x=>esc(String(x??''));
+const ze27Id=()=>('s'+Date.now().toString(36)+Math.random().toString(36).slice(2,9));
+const ze27Get=()=>ze27Saved.find(x=>x.id===ze27Selected)||ze27Saved[0]||null;
+const ze27Project=id=>projetos.find(p=>p.id===id);
+const ze27ProjectName=id=>ze27Project(id)?.nome||'Projeto não encontrado';
+function ze27Render(){const root=el('ze27-root');if(!root)return;
+ const all=ze27Saved, filtered=all.filter(x=>(ze27Filter==='todos'||(ze27Filter==='avulsos'?!x.projetoId:x.projetoId===ze27Filter))&&(!ze27Search||[x.titulo,x.materia,x.notas].join(' ').toLowerCase().includes(ze27Search.toLowerCase())));
+ const study=ze27Get(),pending=projetos.flatMap(p=>(p.estudos||[]).filter(x=>!all.some(y=>y.importadoDe===p.id+':'+x.id)).map(x=>({p,x})));
+ root.innerHTML=`<div class="ze27-head"><div><p class="ze27-kicker">ZAIA ✦ ESPAÇO DE APRENDIZAGEM</p><h2>Meus estudos</h2><p class="ze27-muted">Estude para provas, organize disciplinas e conecte conhecimentos — com ou sem projeto.</p></div><button class="ze27-primary" data-ze27="novo">+ Novo estudo</button></div>
+ <div class="ze27-pane"><div class="ze27-toolbar"><h3>Biblioteca de estudos <span class="ze27-muted">(${all.length})</span></h3><div style="display:flex;gap:8px;flex-wrap:wrap"><input aria-label="Buscar estudos" id="ze27-search" placeholder="Buscar matéria ou tema…" value="${ze27Esc(ze27Search)}"/><select id="ze27-filter" aria-label="Filtrar estudos"><option value="todos" ${ze27Filter==='todos'?'selected':''}>Todos</option><option value="avulsos" ${ze27Filter==='avulsos'?'selected':''}>Avulsos</option>${projetos.map(p=>`<option value="${ze27Esc(p.id)}" ${ze27Filter===p.id?'selected':''}>${ze27Esc(p.nome)}</option>`).join('')}</select></div></div>
+ <div class="ze27-list">${filtered.map(x=>`<button class="ze27-study ${study?.id===x.id?'on':''}" data-ze27="selecionar" data-id="${ze27Esc(x.id)}"><span class="ze27-tag">${x.projetoId?'Vinculado · '+ze27Esc(ze27ProjectName(x.projetoId)):'Estudo avulso'}</span><strong>${ze27Esc(x.titulo)}</strong><span class="ze27-muted">${ze27Esc(x.materia||'Sem matéria definida')}${x.prova?' · Prova: '+ze27Esc(x.prova):''}</span></button>`).join('')||'<p class="ze27-muted">Nenhum estudo corresponde aos filtros.</p>'}</div></div>
+ ${pending.length?`<details class="ze27-pane"><summary>Importar estudos da versão anterior (${pending.length})</summary><p class="ze27-muted">Cria uma cópia independente, sem excluir as informações antigas dos projetos.</p>${pending.map(({p,x})=>`<div class="ze27-toolbar"><span>${ze27Esc(x.titulo)} · ${ze27Esc(p.nome)}</span><button class="ze27-secondary" data-ze27="importar" data-proj="${ze27Esc(p.id)}" data-antigo="${ze27Esc(x.id)}">Importar</button></div>`).join('')}</details>`:''}
+ ${study?ze27Detail(study):'<div class="ze27-pane"><p class="ze27-muted">Crie um estudo avulso ou vincule-o a um projeto. Cada estudo pode ter mapa mental, notas e perguntas.</p></div>'}`;
+}
+function ze27Nodes(study){const a=Array.isArray(study.nos)?study.nos:[];return [{id:'root',texto:study.titulo,nota:study.notas||'',pai:null},...a];}
+function ze27Map(study){const nodes=ze27Nodes(study);const root={x:390,y:200};const pts={root};const other=nodes.slice(1);const groups={};other.forEach(n=>{const parent=nodes.some(a=>a.id===n.pai)?n.pai:'root';(groups[parent]??=[]).push(n);});
+ // Left-to-right concept tree: groups by depth; use stable full layout rather than manual coordinates.
+ const depths={root:0};let remaining=[...other],limit=0;while(remaining.length&&limit++<other.length+2){const found=remaining.filter(n=>depths[n.pai??'root']!==undefined);if(!found.length)break;found.forEach(n=>depths[n.id]=Math.min(5,depths[n.pai??'root']+1));remaining=remaining.filter(n=>!found.includes(n));}remaining.forEach(n=>depths[n.id]=1);
+ const byDepth={};other.forEach(n=>(byDepth[depths[n.id]]??=[]).push(n));const maxItems=Math.max(1,...Object.values(byDepth).map(a=>a.length));const height=Math.max(420,maxItems*110+100);const width=Math.max(780,(Math.max(1,...Object.keys(byDepth).map(Number))+1)*215+110);pts.root={x:110,y:height/2};Object.entries(byDepth).forEach(([depth,list])=>list.forEach((n,i)=>pts[n.id]={x:110+Number(depth)*215,y:(i+1)*height/(list.length+1)}));
+ const lines=other.map(n=>{const a=pts[pts[n.pai]?n.pai:'root'],b=pts[n.id];return `<path d="M ${a.x+75} ${a.y} C ${a.x+145} ${a.y}, ${b.x-145} ${b.y}, ${b.x-76} ${b.y}" fill="none" stroke="#A58BFF" stroke-width="2" stroke-linecap="round" marker-end="url(#ze27arr)"/>`;}).join('');
+ return `<div class="ze27-map" aria-label="Mapa mental com conexões"><div class="ze27-map-surface" style="width:${width}px;height:${height}px"><svg class="ze27-lines" viewBox="0 0 ${width} ${height}" aria-hidden="true"><defs><marker id="ze27arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0L6 3L0 6" fill="none" stroke="#A58BFF" stroke-width="1.4"/></marker></defs>${lines}</svg>${nodes.map(n=>`<button type="button" class="ze27-node ${n.id==='root'?'root':''}" style="left:${pts[n.id]?.x||110}px;top:${pts[n.id]?.y||height/2}px" data-ze27="node" data-node="${ze27Esc(n.id)}"><strong>${ze27Esc(n.texto)}</strong><small>${n.nota?'✎ Anotações':'Toque para escrever'}</small></button>`).join('')}</div></div>`;
+}
+function ze27Detail(s){const cards=Array.isArray(s.cartoes)?s.cartoes:[];return `<div class="ze27-pane"><div class="ze27-detail-head"><div><p class="ze27-kicker">${s.projetoId?'PROJETO: '+ze27Esc(ze27ProjectName(s.projetoId)):'ESTUDO AVULSO'}</p><h2>${ze27Esc(s.titulo)}</h2><p class="ze27-muted">${ze27Esc(s.materia||'Sem matéria')}${s.prova?' · Prova '+ze27Esc(s.prova):''}</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="ze27-secondary" data-ze27="editar">Editar estudo</button><button class="ze27-danger" data-ze27="excluir">Excluir</button></div></div></div>
+ <div class="ze27-grid"><section class="ze27-pane"><div class="ze27-toolbar"><h3>✎ Anotações gerais</h3><button class="ze27-secondary" data-ze27="notas">Escrever</button></div><div class="ze27-note">${ze27Esc(s.notas||'Guarde aqui resumos, exemplos, fórmulas e referências. Toque em Escrever para editar.')}</div></section><section class="ze27-pane"><div class="ze27-toolbar"><h3>Preparação para prova</h3><button class="ze27-secondary" data-ze27="cartao">+ Pergunta</button></div><p class="ze27-muted">${cards.length} pergunta(s) para revisão ativa.</p>${cards.map((c,i)=>`<details style="background:#1C1430;border-radius:12px;padding:12px;margin-top:8px"><summary>${ze27Esc(c.pergunta)}</summary><p class="ze27-note">${ze27Esc(c.resposta)}</p><button class="ze27-secondary" data-ze27="editarcartao" data-idx="${i}">Editar pergunta</button></details>`).join('')}</section></div>
+ <section class="ze27-pane"><div class="ze27-toolbar"><div><h3>✦ Mapa mental conectado</h3><p class="ze27-muted">Setas mostram as conexões. Toque em qualquer conceito para abrir o cartão de anotações.</p></div><button class="ze27-primary" data-ze27="addnode" data-node="root">+ Conceito</button></div>${ze27Map(s)}<p class="ze27-map-hint">Você também pode criar ramificações dentro de outras ramificações. Em telas menores, deslize o mapa na horizontal.</p></section>`;}
+function ze27Modal(title,fields,onSubmit,{danger=null}={}){
+ document.getElementById('ze27-modal')?.remove();const bg=document.createElement('div');bg.id='ze27-modal';bg.className='ze27-modal-bg';bg.innerHTML=`<div class="ze27-dialog" role="dialog" aria-modal="true" aria-label="${ze27Esc(title)}"><div class="ze27-detail-head"><div><p class="ze27-kicker">ZAIA ✦ ESTUDOS</p><h3>${ze27Esc(title)}</h3></div><button class="ze27-secondary" type="button" id="ze27-close" aria-label="Fechar">✕</button></div><form id="ze27-form">${fields}<div class="ze27-dialog-actions">${danger?'<button type="button" class="ze27-danger" id="ze27-remove">Excluir conceito</button>':''}<button type="button" class="ze27-secondary" id="ze27-cancel">Cancelar</button><button type="submit" class="ze27-primary" id="ze27-submit">Salvar alterações</button></div></form></div>`;
+ document.body.append(bg);const close=()=>bg.remove();bg.querySelector('#ze27-close').onclick=close;bg.querySelector('#ze27-cancel').onclick=close;bg.addEventListener('click',e=>{if(e.target===bg)close();});if(danger)bg.querySelector('#ze27-remove').onclick=()=>danger(close);
+ const f=bg.querySelector('form');f.onsubmit=async e=>{e.preventDefault();const btn=bg.querySelector('#ze27-submit');btn.disabled=true;try{const ok=await onSubmit(f);if(ok!==false)close();}finally{btn.disabled=false;}};f.querySelector('input,textarea,select')?.focus();
+}
+const ze27Input=(id,label,value='',type='text',extra='')=>`<label>${ze27Esc(label)}<input name="${id}" type="${type}" value="${ze27Esc(value)}" ${extra}/></label>`;
+const ze27Area=(id,label,value='')=>`<label>${ze27Esc(label)}<textarea name="${id}" placeholder="Escreva livremente: referências, observações, conceitos, exemplos…">${ze27Esc(value)}</textarea></label>`;
+const ze27ProjSelect=id=>`<label>Vincular a projeto (opcional)<select name="projetoId"><option value="">Estudo avulso — sem projeto</option>${projetos.map(p=>`<option value="${ze27Esc(p.id)}" ${p.id===id?'selected':''}>${ze27Esc(p.nome)}</option>`).join('')}</select></label>`;
+async function ze27Commit(next){if(!user||ze27Busy)return false;ze27Busy=true;try{await setDoc(doc(db,'perfil',user.uid),{userId:user.uid,estudosIndependentes:next},{merge:true});ze27Saved=next;ze27Render();return true;}catch(e){console.error('Zaia estudos:',e);alert('Não foi possível salvar. Confira a conexão e as permissões do perfil no Firebase.');return false;}finally{ze27Busy=false;}}
+const ze27Change=async fn=>ze27Commit(fn(ze27Saved.map(x=>({...x,nos:(x.nos||[]).map(n=>({...n})),cartoes:(x.cartoes||[]).map(c=>({...c}))}))));
+function ze27Edit(study){ze27Modal(study?'Editar estudo':'Novo estudo',ze27Input('titulo','Título do estudo',study?.titulo||'','text','required maxlength="120"')+ze27Input('materia','Matéria ou disciplina',study?.materia||'')+ze27Input('prova','Data da prova (opcional)',study?.prova||'','date')+ze27ProjSelect(study?.projetoId||''),async f=>{const titulo=f.elements.titulo.value.trim();if(!titulo)return false;const data={titulo,materia:f.elements.materia.value.trim(),prova:f.elements.prova.value,projetoId:f.elements.projetoId.value};if(study)return ze27Change(a=>a.map(x=>x.id===study.id?{...x,...data}:x));const id=ze27Id(),ok=await ze27Change(a=>[...a,{id,...data,notas:'',nos:[],cartoes:[],criadoEm:new Date().toISOString()}]);if(ok)ze27Selected=id;ze27Render();return ok;});}
+function ze27EditNode(s,id){const root=id==='root',n=root?{texto:s.titulo,nota:s.notas||''}:(s.nos||[]).find(x=>x.id===id);if(!n)return;
+ let fields=ze27Input('texto','Nome do conceito',n.texto,'text','required maxlength="160"')+ze27Area('nota','Anotações deste cartão',n.nota||'');if(!root){fields+=`<label>Conectado a<select name="pai"><option value="root">Tema central</option>${(s.nos||[]).filter(x=>x.id!==id&&!ze27Desc(s,x.id,id)).map(x=>`<option value="${ze27Esc(x.id)}" ${x.id===n.pai?'selected':''}>${ze27Esc(x.texto)}</option>`).join('')}</select></label>`;}
+ fields+=`<button class="ze27-secondary" id="ze27-add-child" type="button" style="margin-top:16px;width:100%">+ Criar ramificação conectada a este conceito</button>`;
+ ze27Modal(root?'Tema central e anotações':'Cartão do conceito',fields,async f=>{const texto=f.elements.texto.value.trim();if(!texto)return false;return ze27Change(a=>a.map(x=>x.id!==s.id?x:root?{...x,titulo:texto,notas:f.elements.nota.value}:{...x,nos:x.nos.map(z=>z.id===id?{...z,texto,nota:f.elements.nota.value,pai:f.elements.pai.value}:z)}));},{danger:root?null:async close=>{if(!confirm('Excluir este conceito e suas conexões? Os conceitos subordinados serão ligados ao tema central.'))return;const ok=await ze27Change(a=>a.map(x=>x.id!==s.id?x:{...x,nos:x.nos.filter(z=>z.id!==id).map(z=>z.pai===id?{...z,pai:'root'}:z)}));if(ok)close();}});
+ const child=document.getElementById('ze27-add-child');if(child)child.onclick=()=>{document.getElementById('ze27-modal')?.remove();ze27AddNode(s,id);};
+}
+function ze27Desc(s,candidate,id){let n=(s.nos||[]).find(x=>x.id===candidate),seen=new Set();while(n&&!seen.has(n.id)){if(n.pai===id)return true;seen.add(n.id);n=(s.nos||[]).find(x=>x.id===n.pai);}return false;}
+function ze27AddNode(s,parent){ze27Modal('Novo conceito conectado',ze27Input('texto','Nome do conceito','','text','required maxlength="160"')+ze27Area('nota','Detalhes deste conceito'),async f=>{const nome=f.elements.texto.value.trim();if(!nome)return false;return ze27Change(a=>a.map(x=>x.id===s.id?{...x,nos:[...(x.nos||[]),{id:ze27Id(),texto:nome,nota:f.elements.nota.value,pai:parent}]}:x));});}
+function ze27EditCard(s,index){const old=(s.cartoes||[])[index];ze27Modal(old?'Editar pergunta':'Nova pergunta de revisão',ze27Area('pergunta','Pergunta',old?.pergunta||'')+ze27Area('resposta','Resposta',old?.resposta||''),async f=>{const pergunta=f.elements.pergunta.value.trim(),resposta=f.elements.resposta.value.trim();if(!pergunta||!resposta){alert('Preencha pergunta e resposta.');return false;}return ze27Change(a=>a.map(x=>x.id===s.id?{...x,cartoes:old?x.cartoes.map((c,i)=>i===index?{...c,pergunta,resposta}:c):[...(x.cartoes||[]),{id:ze27Id(),pergunta,resposta}]}:x));},{danger:old?async close=>{if(!confirm('Excluir esta pergunta?'))return;const ok=await ze27Change(a=>a.map(x=>x.id===s.id?{...x,cartoes:x.cartoes.filter((_,i)=>i!==index)}:x));if(ok)close();}:null});}
+el('ze27-root').addEventListener('click',async e=>{const b=e.target.closest('button[data-ze27]');if(!b)return;const s=ze27Get(),a=b.dataset.ze27;
+ if(a==='novo'){ze27Edit(null);return;}if(a==='selecionar'){ze27Selected=b.dataset.id;ze27Render();return;}
+ if(a==='importar'){const p=ze27Project(b.dataset.proj),old=(p?.estudos||[]).find(x=>x.id===b.dataset.antigo);if(!old)return;const id=ze27Id();const next={id,titulo:old.titulo,materia:'',prova:old.prova||'',projetoId:p.id,notas:old.notas||'',nos:(old.ramificacoes||[]).map(x=>({id:x.id||ze27Id(),texto:x.texto,nota:x.nota||'',pai:'root'})),cartoes:old.cartoes||[],importadoDe:p.id+':'+old.id};const ok=await ze27Change(a=>[...a,next]);if(ok){ze27Selected=id;ze27Render();}return;}
+ if(!s)return;if(a==='editar')ze27Edit(s);if(a==='notas')ze27Modal('Anotações gerais',ze27Area('nota','Resumo e referências',s.notas||''),f=>ze27Change(x=>x.map(t=>t.id===s.id?{...t,notas:f.elements.nota.value}:t)));
+ if(a==='excluir'){if(confirm('Excluir este estudo permanentemente? Essa ação não exclui o projeto vinculado.')){const ok=await ze27Change(x=>x.filter(t=>t.id!==s.id));if(ok){ze27Selected=null;ze27Render();}}}
+ if(a==='node')ze27EditNode(s,b.dataset.node);
+ if(a==='addnode')ze27AddNode(s,b.dataset.node||'root');
+ if(a==='cartao')ze27EditCard(s,-1);
+ if(a==='editarcartao')ze27EditCard(s,Number(b.dataset.idx));
+});
+el('ze27-root').addEventListener('change',e=>{if(e.target.id==='ze27-filter'){ze27Filter=e.target.value;ze27Render();}});
+el('ze27-root').addEventListener('input',e=>{if(e.target.id==='ze27-search'){ze27Search=e.target.value;const pos=e.target.selectionStart;ze27Render();const input=el('ze27-search');input?.focus();input?.setSelectionRange(pos,pos);}});
+
 /* ZAIA V25 — ESTUDOS: conteúdo, anotações, mapa mental e revisão no projeto existente. */
 let zeSelecionado=null,zeRevelada=false,zeCartao=0,zeSalvando=false;
 const zeID=()=>('e'+Date.now().toString(36)+Math.random().toString(36).slice(2,8));
@@ -2364,51 +2448,120 @@ async function toggleSub(tid,idx){ const t=tarefas.find(x=>x.id===tid); if(!t||!
   await updateDoc(doc(db,'tarefas',tid),{subitens:arr}); }
 
 
-/* ZAIA V24 — Casa: recorrências virtuais e marcação por data sem duplicar documentos */
+/* ZAIA V26 — Casa: pendências sem data e recorrências sem duplicação */
 let casaEditId=null;
 let casaDiasSel=[];
+let casaDataManual=false;
 const casaData=el('casa-data');
 function casaIsoHoje(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function casaDiaSemana(iso){const [a,m,d]=iso.split('-').map(Number);return new Date(a,m-1,d).getDay();}
-function casaPrevista(c,iso){if(c.criadaEmDia && iso<c.criadaEmDia)return false;if(c.freq==='unica')return c.data===iso;if(c.freq==='semanal')return (c.dias||[]).includes(casaDiaSemana(iso));return true;}
-function casaLabel(c){return c.freq==='diaria'?'Todos os dias':c.freq==='unica'?'Uma vez · '+(c.data||''): 'Semanal · '+(c.dias||[]).map(d=>['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][d]).join(', ');}
-function casaLinha(c,iso,gerenciar=false){const ok=!!(c.conclusoes||{})[iso];return `<div class="casa-cartao ${ok&&!gerenciar?'concluido':''}">
-  ${gerenciar?'':`<button type="button" class="casa-check ${ok?'on':''}" data-casa-check="${esc(c.id)}" aria-label="${ok?'Desmarcar':'Concluir'} ${esc(c.titulo)}" aria-pressed="${ok}">${ok?'✓':''}</button>`}
-  <div class="casa-info"><div class="casa-titulo">${esc(c.titulo)}</div><div class="casa-sub">${esc(gerenciar?casaLabel(c):(c.nota||casaLabel(c)))}</div></div>
-  <button class="casa-editar" data-casa-edit="${esc(c.id)}" type="button" aria-label="Editar ${esc(c.titulo)}">✎</button></div>`;}
-function renderCasa(){if(!el('casa-lista'))return;const hoje=casaIsoHoje();if(!casaData.value)casaData.value=hoje;
- const iso=casaData.value;const doDia=casaAtividades.filter(c=>casaPrevista(c,iso));const feitas=doDia.filter(c=>(c.conclusoes||{})[iso]);
- el('casa-resumo').textContent=`${iso===hoje?'Hoje':iso.split('-').reverse().join('/')} · ${feitas.length} de ${doDia.length} concluídas`;
- el('casa-lista').innerHTML=doDia.length?doDia.map(c=>casaLinha(c,iso)).join(''):'<div class="casa-vazio">Nenhuma atividade doméstica programada para esse dia.</div>';
- el('casa-todas').innerHTML=casaAtividades.length?casaAtividades.slice().sort((a,b)=>(a.titulo||'').localeCompare(b.titulo||'')).map(c=>casaLinha(c,iso,true)).join(''):'<div class="casa-vazio">Crie sua primeira atividade da casa ✨</div>';
+function casaAvulsa(c){return !c.freq||c.freq==='unica'||c.freq==='avulsa';}
+function casaConcluidaEm(c){
+  // Compatível com o histórico da V24 e V25. Não reescreve documentos antigos.
+  const marcacoes=Object.entries(c.conclusoes||{}).filter(([dia,feito])=>/^\d{4}-\d{2}-\d{2}$/.test(dia)&&feito).map(([dia])=>dia).sort();
+  return marcacoes[0]||null;
 }
-function casaMostrarFreq(){el('casa-dias-wrap').classList.toggle('oculto',el('casa-freq').value!=='semanal');el('casa-unica-wrap').classList.toggle('oculto',el('casa-freq').value!=='unica');document.querySelectorAll('#casa-dias [data-dia]').forEach(b=>{const ok=casaDiasSel.includes(Number(b.dataset.dia));b.classList.toggle('sel',ok);b.setAttribute('aria-pressed',String(ok));});}
-function abrirCasa(id=null){casaEditId=id;const c=casaAtividades.find(x=>x.id===id);el('casa-modal-titulo').textContent=c?'Editar atividade da casa':'Nova atividade da casa';el('casa-titulo').value=c?.titulo||'';el('casa-freq').value=c?.freq||'diaria';casaDiasSel=[...(c?.dias||[])];el('casa-uma-data').value=c?.data||casaIsoHoje();el('casa-nota').value=c?.nota||'';el('casa-excluir').classList.toggle('oculto',!c);casaMostrarFreq();el('modal-casa').classList.add('on');}
-el('casa-nova').onclick=()=>abrirCasa();el('casa-cancelar').onclick=()=>el('modal-casa').classList.remove('on');
+function casaInicio(c){return c.criadaEmDia||c.data||'0000-01-01';}
+function casaPrevista(c,iso){
+  if(iso<casaInicio(c))return false;
+  if(casaAvulsa(c)){
+    const fim=casaConcluidaEm(c);
+    return !fim||iso<=fim;
+  }
+  if(c.freq==='semanal')return (c.dias||[]).map(Number).includes(casaDiaSemana(iso));
+  return c.freq==='diaria';
+}
+function casaLabel(c){
+  if(casaAvulsa(c))return 'Sem recorrência · até concluir';
+  return c.freq==='diaria'?'Todos os dias':'Semanal · '+(c.dias||[]).map(d=>['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][d]).join(', ');
+}
+function casaLinha(c,iso,gerenciar=false,finalizada=false){
+  const ok=casaAvulsa(c)?!!casaConcluidaEm(c):!!(c.conclusoes||{})[iso];
+  return `<div class="casa-cartao ${ok&&!gerenciar?'concluido':''}">
+    ${gerenciar?'':`<button type="button" class="casa-check ${ok?'on':''}" data-casa-check="${esc(c.id)}" aria-label="${ok?'Desmarcar':'Concluir'} ${esc(c.titulo)}" aria-pressed="${ok}">${ok?'✓':''}</button>`}
+    <div class="casa-info"><div class="casa-titulo">${esc(c.titulo)}</div><div class="casa-sub">${esc(c.nota||casaLabel(c))}${finalizada?' · Finalizada em '+casaConcluidaEm(c).split('-').reverse().join('/'):''}</div></div>
+    <button class="casa-editar" data-casa-edit="${esc(c.id)}" type="button" aria-label="Editar ${esc(c.titulo)}">✎</button></div>`;
+}
+function renderCasa(){
+  if(!el('casa-lista'))return;
+  const hoje=casaIsoHoje();if(!casaData.value||(!casaDataManual&&casaData.value!==hoje))casaData.value=hoje;
+  const iso=casaData.value;
+  const lista=casaAtividades.filter(c=>casaPrevista(c,iso)&&(!casaAvulsa(c)||!casaConcluidaEm(c)||casaConcluidaEm(c)===iso));
+  const concluidas=lista.filter(c=>casaAvulsa(c)?casaConcluidaEm(c)===iso:!!(c.conclusoes||{})[iso]);
+  const pendentes=lista.filter(c=>!concluidas.includes(c));
+  const recorrentes=casaAtividades.filter(c=>!casaAvulsa(c));
+  const encerradas=casaAtividades.filter(c=>casaAvulsa(c)&&casaConcluidaEm(c)&&!lista.some(visivel=>visivel.id===c.id));
+  el('casa-resumo').textContent=`${iso===hoje?'Hoje':iso.split('-').reverse().join('/')} · ${concluidas.length} de ${lista.length} concluídas`;
+  el('casa-lista').innerHTML=lista.length?[...pendentes,...concluidas].map(c=>casaLinha(c,iso)).join(''):'<div class="casa-vazio">Tudo em dia! Nenhuma atividade pendente para esta data.</div>';
+  el('casa-recorrentes-num').textContent=`(${recorrentes.length})`;
+  el('casa-todas').innerHTML=recorrentes.length?recorrentes.slice().sort((a,b)=>(a.titulo||'').localeCompare(b.titulo||'')).map(c=>casaLinha(c,iso,true)).join(''):'<div class="casa-vazio">Nenhuma atividade recorrente cadastrada.</div>';
+  el('casa-finalizadas-num').textContent=`(${encerradas.length})`;
+  el('casa-finalizadas').innerHTML=encerradas.length?encerradas.slice().sort((a,b)=>(casaConcluidaEm(b)||'').localeCompare(casaConcluidaEm(a)||'')).map(c=>casaLinha(c,iso,false,true)).join(''):'<div class="casa-vazio">Nenhuma atividade avulsa concluída.</div>';
+}
+function casaMostrarFreq(){
+  el('casa-dias-wrap').classList.toggle('oculto',el('casa-freq').value!=='semanal');
+  document.querySelectorAll('#casa-dias [data-dia]').forEach(b=>{const ok=casaDiasSel.includes(Number(b.dataset.dia));b.classList.toggle('sel',ok);b.setAttribute('aria-pressed',String(ok));});
+}
+function abrirCasa(id=null){
+  casaEditId=id;const c=casaAtividades.find(x=>x.id===id);
+  el('casa-modal-titulo').textContent=c?'Editar atividade da casa':'Nova atividade da casa';
+  el('casa-titulo').value=c?.titulo||'';
+  el('casa-freq').value=casaAvulsa(c||{})?'avulsa':c.freq;
+  casaDiasSel=[...(c?.dias||[])].map(Number);
+  el('casa-nota').value=c?.nota||'';
+  el('casa-excluir').classList.toggle('oculto',!c);
+  casaMostrarFreq();el('modal-casa').classList.add('on');
+}
+el('casa-nova').onclick=()=>abrirCasa();
+el('casa-cancelar').onclick=()=>el('modal-casa').classList.remove('on');
 el('casa-freq').onchange=casaMostrarFreq;
 el('casa-dias').onclick=e=>{const b=e.target.closest('[data-dia]');if(!b)return;const n=Number(b.dataset.dia);casaDiasSel=casaDiasSel.includes(n)?casaDiasSel.filter(x=>x!==n):[...casaDiasSel,n];casaMostrarFreq();};
-casaData.onchange=renderCasa;
-el('casa-salvar').onclick=async()=>{if(!user)return;const titulo=el('casa-titulo').value.trim();const freq=el('casa-freq').value;
- if(!titulo)return alert('Digite o nome da atividade.');if(freq==='semanal'&&!casaDiasSel.length)return alert('Escolha ao menos um dia da semana.');
- const dados={titulo,freq,dias:freq==='semanal'?[...casaDiasSel].sort():[],data:freq==='unica'?el('casa-uma-data').value:'',nota:el('casa-nota').value.trim()};
- if(freq==='unica'&&!dados.data)return alert('Escolha uma data.');const btn=el('casa-salvar');btn.disabled=true;
- try{if(casaEditId){await updateDoc(doc(db,'casa_atividades',casaEditId),dados);}else{await addDoc(collection(db,'casa_atividades'),{...dados,userId:user.uid,criadaEmDia:casaIsoHoje(),conclusoes:{}});}el('modal-casa').classList.remove('on');}
- catch(e){console.error(e);alert('Não foi possível salvar. Confira as regras do Firestore para casa_atividades.');}finally{btn.disabled=false;}
+casaData.onchange=()=>{casaDataManual=casaData.value!==casaIsoHoje();renderCasa();};
+el('casa-salvar').onclick=async()=>{
+  if(!user)return;
+  const titulo=el('casa-titulo').value.trim();const freq=el('casa-freq').value;
+  if(!titulo)return alert('Digite o nome da atividade.');
+  if(freq==='semanal'&&!casaDiasSel.length)return alert('Escolha ao menos um dia da semana.');
+  const dados={titulo,freq,dias:freq==='semanal'?[...casaDiasSel].sort():[],data:'',nota:el('casa-nota').value.trim()};
+  const btn=el('casa-salvar');btn.disabled=true;
+  try{
+    if(casaEditId){
+      const antigo=casaAtividades.find(c=>c.id===casaEditId);
+      // Não limpa conclusões ao editar. A mudança de frequência não cria cópias.
+      if(antigo&&casaAvulsa(antigo)!==casaAvulsa(dados)&&!confirm('Alterar a recorrência mantém o histórico de conclusões existente. Continuar?'))return;
+      await updateDoc(doc(db,'casa_atividades',casaEditId),dados);
+    }else{
+      await addDoc(collection(db,'casa_atividades'),{...dados,userId:user.uid,criadaEmDia:casaIsoHoje(),conclusoes:{}});
+    }
+    el('modal-casa').classList.remove('on');
+  }catch(e){console.error(e);alert('Não foi possível salvar. Confira as permissões do Firestore.');}
+  finally{btn.disabled=false;}
 };
 el('casa-excluir').onclick=async()=>{if(!casaEditId||!user||!confirm('Excluir esta atividade e todo seu histórico de conclusões?'))return;try{await deleteDoc(doc(db,'casa_atividades',casaEditId));el('modal-casa').classList.remove('on');}catch(e){console.error(e);alert('Não foi possível excluir.');}};
-function casaClick(e){const edit=e.target.closest('[data-casa-edit]');if(edit){abrirCasa(edit.dataset.casaEdit);return;}const mark=e.target.closest('[data-casa-check]');if(!mark)return;
- const iso=casaData.value;if(iso>casaIsoHoje())return alert('Não é possível concluir atividades em datas futuras.');const c=casaAtividades.find(x=>x.id===mark.dataset.casaCheck);if(!c||!user||!casaPrevista(c,iso))return;
- const atual=!!(c.conclusoes||{})[iso];mark.disabled=true;
- updateDoc(doc(db,'casa_atividades',c.id),{['conclusoes.'+iso]:!atual}).catch(e=>{console.error(e);alert('Não foi possível atualizar a conclusão.');}).finally(()=>mark.disabled=false);
+function casaClick(e){
+  const edit=e.target.closest('[data-casa-edit]');if(edit){abrirCasa(edit.dataset.casaEdit);return;}
+  const mark=e.target.closest('[data-casa-check]');if(!mark)return;
+  const iso=casaData.value;if(iso>casaIsoHoje())return alert('Não é possível concluir atividades em datas futuras.');
+  const c=casaAtividades.find(x=>x.id===mark.dataset.casaCheck);if(!c||!user)return;
+  const dataConclusao=casaAvulsa(c)?casaConcluidaEm(c):null;
+  if(!casaPrevista(c,iso)&&!dataConclusao)return;
+  // Atividade avulsa: um único registro, removível inclusive depois de trocar o dia.
+  const diaRegistro=casaAvulsa(c)?(dataConclusao||iso):iso;
+  const atual=!!(c.conclusoes||{})[diaRegistro];mark.disabled=true;
+  updateDoc(doc(db,'casa_atividades',c.id),{['conclusoes.'+diaRegistro]:!atual})
+    .catch(e=>{console.error(e);alert('Não foi possível atualizar a conclusão.');}).finally(()=>mark.disabled=false);
 }
-el('casa-lista').addEventListener('click',casaClick);el('casa-todas').addEventListener('click',casaClick);
-setInterval(()=>{if(user&&casaData.value!==casaIsoHoje()&&document.activeElement!==casaData){/* A data selecionada pelo usuário permanece intocada. */}else if(user){renderCasa();}},60000);
+el('casa-lista').addEventListener('click',casaClick);
+el('casa-todas').addEventListener('click',casaClick);
+el('casa-finalizadas').addEventListener('click',casaClick);
+setInterval(()=>{if(user)renderCasa();},60000);
 /* ABAS */
-const ABAS=['tarefas','rotina','casa','projetos','assistir','livros'];
+const ABAS=['tarefas','rotina','casa','projetos','estudos','assistir','livros'];
 let abaAtual='tarefas';
 function irParaAba(name){ if(!ABAS.includes(name))return; abaAtual=name;
   document.querySelectorAll('[data-aba]').forEach(x=>x.classList.toggle('ativa',x.dataset.aba===name));
   ABAS.forEach(a=>el('aba-'+a).classList.toggle('oculto',a!==name));
+  if(name==='estudos')ze27Render();
   const btn=document.querySelector(`.aba-nav button[data-aba="${name}"]`);
   if(btn)btn.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});
   const c=document.querySelector('.conteudo'); if(c){c.classList.remove('aba-anim');void c.offsetWidth;c.classList.add('aba-anim');} }
