@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#2E1B6B" />
-<title>Zaia V30 — Caderno Cósmico</title>
+<title>Zaia V31 — Caderno Cósmico</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -1979,8 +1979,11 @@ function habitoItem(r){ const ok=habDatas(r).has(hojeStr());
 function grupos(lista){ let h=''; MOMENTOS.forEach(([m,lbl,ic])=>{ const g=lista.filter(r=>(r.momento||'manha')===m).sort((a,b)=>(a.hora||'').localeCompare(b.hora||''));
     if(g.length)h+=`<div class="hab-grupo">${ic}${lbl}</div>`+g.map(habitoItem).join(''); }); return h; }
 function renderRotinaHoje(){ const hoje=rotinas.filter(rotinaHoje);
-  el('rotina-hoje-sec').classList.toggle('oculto',!hoje.length);
-  el('rotina-hoje').innerHTML=hoje.length?grupos(hoje):''; }
+  const sec=el('rotina-hoje-sec'), lista=el('rotina-hoje');
+  // Algumas versões da tela não possuem esses elementos; não interromper os demais renders.
+  if(!sec||!lista)return;
+  sec.classList.toggle('oculto',!hoje.length);
+  lista.innerHTML=hoje.length?grupos(hoje):''; }
 let modoHabitos='hoje';
 function habFormatoDia(d){return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;}
 // ZAIA V16 — calendário mensal; somente leitura dos registros existentes.
@@ -2372,7 +2375,21 @@ function ze27Modal(title,fields,onSubmit,{danger=null,wide=true,hint='As altera�
 const ze27Input=(id,label,value='',type='text',extra='')=>`<label>${ze27Esc(label)}<input name="${id}" type="${type}" value="${ze27Esc(value)}" ${extra}/></label>`;
 const ze27Area=(id,label,value='',placeholder='Escreva livremente…')=>`<label>${ze27Esc(label)}<textarea name="${id}" placeholder="${ze27Esc(placeholder)}">${ze27Esc(value)}</textarea></label>`;
 const ze27ProjSelect=id=>`<label>Vincular a projeto (opcional)<select name="projetoId"><option value="">Estudo avulso — sem projeto</option>${projetos.map(p=>`<option value="${ze27Esc(p.id)}" ${p.id===id?'selected':''}>${ze27Esc(p.nome)}</option>`).join('')}</select></label>`;
-async function ze27Commit(next){if(!user||ze27Busy)return false;ze27Busy=true;try{await setDoc(doc(db,'perfil',user.uid),{userId:user.uid,estudosIndependentes:next},{merge:true});ze27Saved=next;ze27Render();return true;}catch(e){console.error('Zaia estudos:',e);alert('Não foi possível salvar. Confira a conexão e as permissões do perfil no Firebase.');return false;}finally{ze27Busy=false;}}
+async function ze27Commit(next){
+ if(!user||ze27Busy)return false;
+ ze27Busy=true;
+ try{
+  await setDoc(doc(db,'perfil',user.uid),{userId:user.uid,estudosIndependentes:next},{merge:true});
+ }catch(e){
+  const code=e?.code||'sem-codigo', message=e?.message||String(e);
+  console.error('Zaia estudos — falha na gravação do Firestore:',{code,message,error:e});
+  alert('Não foi possível gravar os estudos no Firebase.\nCódigo: '+code+'\nDetalhe: '+message);
+  return false;
+ }finally{ze27Busy=false;}
+ ze27Saved=next;
+ try{ze27Render();}catch(e){console.error('Estudos gravados, mas houve erro ao atualizar a tela:',e);}
+ return true;
+}
 const ze27Change=async fn=>ze27Commit(fn(ze27Saved.map(x=>({...x,nos:(x.nos||[]).map(n=>({...n})),cartoes:(x.cartoes||[]).map(c=>({...c})),conexoes:(x.conexoes||[]).map(c=>({...c})),mapaRoot:x.mapaRoot?{...x.mapaRoot}:undefined}))));
 function ze27Edit(study){ze27Modal(study?'Editar estudo':'Novo estudo',ze27Input('titulo','Título do estudo',study?.titulo||'','text','required maxlength="120"')+ze27Input('materia','Matéria ou disciplina',study?.materia||'')+ze27Input('prova','Data da prova (opcional)',study?.prova||'','date')+ze27ProjSelect(study?.projetoId||''),async f=>{const titulo=f.elements.titulo.value.trim();if(!titulo)return false;const data={titulo,materia:f.elements.materia.value.trim(),prova:f.elements.prova.value,projetoId:f.elements.projetoId.value};if(study)return ze27Change(a=>a.map(x=>x.id===study.id?{...x,...data}:x));const id=ze27Id(),ok=await ze27Change(a=>[...a,{id,...data,notas:'',nos:[],conexoes:[],cartoes:[],criadoEm:new Date().toISOString()}]);if(ok){ze27Selected=id;ze27Section='resumo';}ze27Render();return ok;});}
 function ze27EditNode(s,id){const root=id==='root',n=root?{texto:s.titulo,nota:s.notas||''}:(s.nos||[]).find(x=>x.id===id);if(!n)return;
