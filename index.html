@@ -2375,11 +2375,25 @@ function ze27Modal(title,fields,onSubmit,{danger=null,wide=true,hint='As altera�
 const ze27Input=(id,label,value='',type='text',extra='')=>`<label>${ze27Esc(label)}<input name="${id}" type="${type}" value="${ze27Esc(value)}" ${extra}/></label>`;
 const ze27Area=(id,label,value='',placeholder='Escreva livremente…')=>`<label>${ze27Esc(label)}<textarea name="${id}" placeholder="${ze27Esc(placeholder)}">${ze27Esc(value)}</textarea></label>`;
 const ze27ProjSelect=id=>`<label>Vincular a projeto (opcional)<select name="projetoId"><option value="">Estudo avulso — sem projeto</option>${projetos.map(p=>`<option value="${ze27Esc(p.id)}" ${p.id===id?'selected':''}>${ze27Esc(p.nome)}</option>`).join('')}</select></label>`;
+// Remove recursivamente qualquer campo undefined — o Firestore não aceita undefined.
+function ze27LimparUndefined(valor){
+ if(Array.isArray(valor))return valor.map(ze27LimparUndefined);
+ if(valor&&typeof valor==='object'){
+  const limpo={};
+  for(const [k,v] of Object.entries(valor)){
+   if(v===undefined)continue;
+   limpo[k]=ze27LimparUndefined(v);
+  }
+  return limpo;
+ }
+ return valor;
+}
 async function ze27Commit(next){
  if(!user||ze27Busy)return false;
  ze27Busy=true;
+ const limpo=ze27LimparUndefined(next);
  try{
-  await setDoc(doc(db,'perfil',user.uid),{userId:user.uid,estudosIndependentes:next},{merge:true});
+  await setDoc(doc(db,'perfil',user.uid),{userId:user.uid,estudosIndependentes:limpo},{merge:true});
  }catch(e){
   const code=e?.code||'sem-codigo', message=e?.message||String(e);
   console.error('Zaia estudos — falha na gravação do Firestore:',{code,message,error:e});
