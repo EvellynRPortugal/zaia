@@ -2191,7 +2191,10 @@ function renderTarefas(){renderFiltros();
 }
 
 function renderProjetosLegado(){ if(!projetos.length){el('lista-projetos').innerHTML='<div class="vazio">Crie um projeto para montar um cronograma.</div>';return;}
-  el('lista-projetos').innerHTML=projetos.map(p=>{
+  // Em “Etapas e missões”, exibir somente o projeto escolhido no seletor.
+  // As outras telas continuam usando seus próprios resumos e não são alteradas.
+  const projetosExibidos = zpAba === 'etapas' ? [zpProjeto()].filter(Boolean) : projetos;
+  el('lista-projetos').innerHTML=projetosExibidos.map(p=>{
     const es=zpOrdenadas(p);
     const ft=es.filter(e=>e.concluida).length, pct=es.length?Math.round(ft/es.length*100):0;
     return `<div class="proj">
