@@ -1350,7 +1350,8 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
       <label for="m-link">Link da reunião (opcional)</label>
       <input id="m-link" class="campo" type="url" placeholder="https://meet.google.com/..." />
       <label for="m-rec-freq">Repetir</label>
-      <select id="m-rec-freq" class="campo"><option value="none">Não repetir</option><option value="daily">Todos os dias</option><option value="weekly">Dias da semana personalizados</option><option value="monthly">Todo mês</option><option value="yearly">Todo ano</option></select>
+      <select id="m-rec-freq" class="campo"><option value="none">Não repetir</option><option value="periodo">Período — de uma data até outra</option><option value="daily">Todos os dias</option><option value="weekly">Dias da semana personalizados</option><option value="monthly">Todo mês</option><option value="yearly">Todo ano</option></select>
+      <p id="m-rec-periodo" class="zaia-help oculto">O compromisso aparece em todos os dias entre a data inicial (acima) e o último dia que você escolher abaixo. Ex.: de 06 a 07.</p>
       <div id="m-rec-extra" class="oculto">
         <label>Dias em que se repete</label>
         <div class="dias-pick zaia-rec-dias" id="m-rec-dias">
@@ -1363,7 +1364,7 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
         <p class="zaia-help">Em meses mais curtos, a repetição será no último dia do mês. Ex.: dia 31 → 28/29 de fevereiro.</p>
       </div>
       <p id="m-rec-anual" class="zaia-help oculto">A repetição anual usa o dia e o mês da primeira ocorrência. Para 29 de fevereiro, ocorre apenas em anos bissextos.</p>
-      <label for="m-rec-end">Repetir até (inclusive)</label>
+      <label for="m-rec-end" id="m-rec-end-label">Repetir até (inclusive)</label>
       <input id="m-rec-end" class="campo" type="date" />
       <p class="zaia-help">A recorrência aparece na Zaia sem criar tarefas duplicadas. Séries recorrentes podem ser sincronizadas com o Google Agenda. Ao alterar a data inicial de uma repetição semanal, confira também os dias selecionados.</p>
     </div>
@@ -2151,7 +2152,7 @@ function renderFiltros(){ const etqs=etiquetasExistentes(); const box=el('filtro
 /* Recorrências calculadas em tempo de exibição, sem duplicar documentos no Firebase */
 const zaiaDia = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 function zaiaRecOcorrencias(t, inicio, fim){
-  const cfg=t.recorrencia; if(!cfg||!['daily','weekly','monthly','yearly'].includes(cfg.freq)||!t.prazo)return [];
+  const cfg=t.recorrencia; if(!cfg||!['daily','periodo','weekly','monthly','yearly'].includes(cfg.freq)||!t.prazo)return [];
   const base=new Date(t.prazo), hora=base.getHours(), min=base.getMinutes();
   const limite=cfg.ate?new Date(cfg.ate+'T23:59:59').getTime():Infinity;
   const inicioMs=Math.max(inicio,new Date(base.getFullYear(),base.getMonth(),base.getDate()).getTime());
@@ -2186,6 +2187,12 @@ function zaiaProximaOcorrencia(t, inicio, horizonteDias=370){
 }
 function zaiaDescricaoRecorrencia(t){
   const c=t.recorrencia||{};
+  if(c.freq==='periodo'){
+    const ini=t.prazo?new Date(t.prazo).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}):'';
+    const fim=c.ate?c.ate.split('-').reverse().slice(0,2).join('/'):'';
+    const horario=t.prazo?new Date(t.prazo).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'';
+    return ['Período · de '+ini+' a '+fim,horario].filter(Boolean).join(' · ');
+  }
   const freq=c.freq==='daily'?'Todos os dias':c.freq==='weekly'
     ? 'Toda '+(c.dias||[]).slice().sort((a,b)=>a-b).map(d=>DIAS_ABBR[d]).join(', ')
     : c.freq==='monthly'?'Mensal · dia '+(c.diaMes||new Date(t.prazo).getDate())
@@ -2727,7 +2734,9 @@ function zaiaPintarRec(){
   el('m-rec-extra').classList.toggle('oculto',f!=='weekly');
   el('m-rec-mensal').classList.toggle('oculto',f!=='monthly');
   el('m-rec-anual').classList.toggle('oculto',f!=='yearly');
+  el('m-rec-periodo').classList.toggle('oculto',f!=='periodo');
   el('m-rec-end').disabled=f==='none';
+  el('m-rec-end-label').textContent=f==='periodo'?'Último dia do período (inclusive)':'Repetir até (inclusive)';
   document.querySelectorAll('[data-rec-day]').forEach(b=>b.classList.toggle('sel',zaiaDiasSel.includes(+b.dataset.recDay)));
 }
 el('m-rec-freq').addEventListener('change',()=>{
@@ -2803,6 +2812,7 @@ el('m-salvar').onclick=async()=>{ const tit=el('m-titulo').value.trim(); if(!tit
   const prazo=lerPrazoInputs();
   const freq=el('m-rec-freq').value, ate=el('m-rec-end').value||null;
   if(freq!=='none'&&!prazo){fala('Para repetir, informe a data e a hora da primeira ocorrência.',true);return;}
+  if(freq==='periodo'&&!ate){fala('Informe o último dia do período (a data final).',true);return;}
   if(freq==='weekly'&&!zaiaDiasSel.length){fala('Selecione ao menos um dia da semana.',true);return;}
   if(freq==='weekly'&&prazo&&!zaiaDiasSel.includes(new Date(prazo).getDay())){
     const ok=confirm('A data inicial escolhida não corresponde aos dias da semana selecionados. A primeira ocorrência real será no próximo dia selecionado. Deseja continuar?');
@@ -3768,7 +3778,7 @@ function gcalIdEvento(taskId){ let h=''; for(let i=0;i<taskId.length;i++){ h+=ta
 function gcalRegraRecorrencia(t){
   const r=t.recorrencia;
   if(!r||!r.freq||r.freq==='none')return null;
-  const mapa={daily:'DAILY',weekly:'WEEKLY',monthly:'MONTHLY',yearly:'YEARLY'};
+  const mapa={daily:'DAILY',periodo:'DAILY',weekly:'WEEKLY',monthly:'MONTHLY',yearly:'YEARLY'};
   if(!mapa[r.freq])return null;
   const partes=['FREQ='+mapa[r.freq]];
   if(r.freq==='weekly'){
