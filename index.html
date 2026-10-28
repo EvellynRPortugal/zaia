@@ -354,6 +354,8 @@
     font-size:13px;font-weight:600;color:var(--txt-dim);background:rgba(0,0,0,.2)}
   .dias-pick button[data-d="todos"]{flex:0 0 100%}
   .dias-pick button.sel{background:rgba(122,92,255,.3);color:#fff;border-color:var(--magenta)}
+  #m-rec-data-add{flex:0 0 auto;width:auto;min-height:46px;padding:0 16px;border-radius:13px;background:#403054;border:1px solid #6B5584;color:#F1E9FF;font-weight:700;font-size:14px;white-space:nowrap;cursor:pointer;margin-top:0}
+  #m-rec-data-add:hover{background:#4B385F}
   .zaia-rec-datas{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 2px}
   .zaia-rec-chip{display:inline-flex;align-items:center;gap:7px;background:#30214B;border:1px solid #514064;color:#E8D9FF;padding:6px 7px 6px 11px;border-radius:999px;font-size:13px;font-weight:600}
   .zaia-rec-chip button{color:#decfff;font-size:14px;line-height:1;padding:0 2px;background:none;border:none;cursor:pointer}
@@ -1358,10 +1360,11 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
       <div id="m-rec-datas-wrap" class="oculto">
         <label for="m-rec-data-nova">Datas do compromisso</label>
         <div style="display:flex;gap:8px">
-          <input id="m-rec-data-nova" class="campo" type="date" style="flex:1"/>
-          <button type="button" id="m-rec-data-add" class="btn btn-sec" style="flex:0 0 auto;white-space:nowrap">+ Adicionar</button>
+          <input id="m-rec-data-nova" class="campo" type="date" style="flex:1;min-width:0"/>
+          <button type="button" id="m-rec-data-add">+ Adicionar</button>
         </div>
         <div id="m-rec-datas-lista" class="zaia-rec-datas"></div>
+        <p id="m-rec-datas-aviso" class="zaia-help oculto" style="color:#ffcf8f;margin-top:4px"></p>
         <p class="zaia-help">Adicione cada dia, um por vez. Podem ser dias seguidos (ex.: 06 e 07) ou dias soltos (ex.: 09 e 20). O horário é o do campo de horário acima.</p>
       </div>
       <div id="m-rec-extra" class="oculto">
@@ -2779,11 +2782,21 @@ function zaiaPintarRec(){
   document.querySelectorAll('[data-rec-day]').forEach(b=>b.classList.toggle('sel',zaiaDiasSel.includes(+b.dataset.recDay)));
   if(isPer)zaiaRenderRecDatas();
 }
-el('m-rec-data-add').onclick=()=>{
-  const v=el('m-rec-data-nova').value; if(!v){fala('Escolha uma data para adicionar.',true);return;}
-  if(!zaiaRecDatasSel.includes(v))zaiaRecDatasSel.push(v);
-  el('m-rec-data-nova').value=''; zaiaRenderRecDatas();
-};
+function zaiaRecDatasAviso(msg){
+  const p=el('m-rec-datas-aviso'); if(!p)return;
+  if(!msg){p.classList.add('oculto');p.textContent='';return;}
+  p.textContent=msg; p.classList.remove('oculto');
+  clearTimeout(zaiaRecDatasAviso._t); zaiaRecDatasAviso._t=setTimeout(()=>{p.classList.add('oculto');},4000);
+}
+function zaiaRecDatasAdd(){
+  const inp=el('m-rec-data-nova'), v=inp.value;
+  if(!v){ zaiaRecDatasAviso('Escolha uma data no campo ao lado antes de adicionar.'); inp.focus(); if(inp.showPicker){try{inp.showPicker();}catch(_){}} return; }
+  if(zaiaRecDatasSel.includes(v)){ zaiaRecDatasAviso('Essa data já está na lista.'); }
+  else { zaiaRecDatasSel.push(v); zaiaRecDatasAviso(''); }
+  inp.value=''; zaiaRenderRecDatas(); inp.focus();
+}
+el('m-rec-data-add').onclick=zaiaRecDatasAdd;
+el('m-rec-data-nova').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); zaiaRecDatasAdd(); } });
 el('m-rec-datas-lista').addEventListener('click',e=>{const b=e.target.closest('[data-rmdata]');if(!b)return;
   zaiaRecDatasSel=zaiaRecDatasSel.filter(x=>x!==b.dataset.rmdata); zaiaRenderRecDatas();});
 el('m-rec-freq').addEventListener('change',()=>{
@@ -2801,6 +2814,7 @@ function zaiaPreencherExtra(t={}){
  zaiaDiasSel=[...(t.recorrencia?.dias||[])];
  zaiaRecDatasSel=[...(t.recorrencia?.datas||[])];
  el('m-rec-data-nova').value='';
+ zaiaRecDatasAviso('');
  zaiaPintarRec();
 }
 el('fab').onclick=()=>abrirNova();
