@@ -354,6 +354,10 @@
     font-size:13px;font-weight:600;color:var(--txt-dim);background:rgba(0,0,0,.2)}
   .dias-pick button[data-d="todos"]{flex:0 0 100%}
   .dias-pick button.sel{background:rgba(122,92,255,.3);color:#fff;border-color:var(--magenta)}
+  .zaia-rec-datas{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 2px}
+  .zaia-rec-chip{display:inline-flex;align-items:center;gap:7px;background:#30214B;border:1px solid #514064;color:#E8D9FF;padding:6px 7px 6px 11px;border-radius:999px;font-size:13px;font-weight:600}
+  .zaia-rec-chip button{color:#decfff;font-size:14px;line-height:1;padding:0 2px;background:none;border:none;cursor:pointer}
+  .zaia-rec-chip button:hover{color:#fff}
   #r-momento button.sel,#r-freq button.sel{background:rgba(122,92,255,.3);color:#fff;border-color:var(--magenta)}
   .habito{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--stroke);
     border-radius:16px;padding:13px 15px;margin-bottom:9px;backdrop-filter:blur(8px)}
@@ -1339,7 +1343,7 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
       <button data-p="importante" class="sel"><span aria-hidden="true" class="zaia-priority-dot" style="background:#FF8A5B"></span> Importante</button>
       <button data-p="tranquilo"><span aria-hidden="true" class="zaia-priority-dot" style="background:#4ade80"></span> Tranquilo</button>
     </div>
-    <label>Data e horário limite</label>
+    <label id="m-data-label">Data e horário limite</label>
     <div style="display:flex;gap:8px">
       <input id="m-data" class="campo" type="date" style="flex:1"/>
       <input id="m-hora" class="campo" type="time" style="flex:0 0 118px"/>
@@ -1350,8 +1354,16 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
       <label for="m-link">Link da reunião (opcional)</label>
       <input id="m-link" class="campo" type="url" placeholder="https://meet.google.com/..." />
       <label for="m-rec-freq">Repetir</label>
-      <select id="m-rec-freq" class="campo"><option value="none">Não repetir</option><option value="periodo">Período — de uma data até outra</option><option value="daily">Todos os dias</option><option value="weekly">Dias da semana personalizados</option><option value="monthly">Todo mês</option><option value="yearly">Todo ano</option></select>
-      <p id="m-rec-periodo" class="zaia-help oculto">O compromisso aparece em todos os dias entre a data inicial (acima) e o último dia que você escolher abaixo. Ex.: de 06 a 07.</p>
+      <select id="m-rec-freq" class="campo"><option value="none">Não repetir</option><option value="periodo">Período / datas específicas</option><option value="daily">Todos os dias</option><option value="weekly">Dias da semana personalizados</option><option value="monthly">Todo mês</option><option value="yearly">Todo ano</option></select>
+      <div id="m-rec-datas-wrap" class="oculto">
+        <label for="m-rec-data-nova">Datas do compromisso</label>
+        <div style="display:flex;gap:8px">
+          <input id="m-rec-data-nova" class="campo" type="date" style="flex:1"/>
+          <button type="button" id="m-rec-data-add" class="btn btn-sec" style="flex:0 0 auto;white-space:nowrap">+ Adicionar</button>
+        </div>
+        <div id="m-rec-datas-lista" class="zaia-rec-datas"></div>
+        <p class="zaia-help">Adicione cada dia, um por vez. Podem ser dias seguidos (ex.: 06 e 07) ou dias soltos (ex.: 09 e 20). O horário é o do campo de horário acima.</p>
+      </div>
       <div id="m-rec-extra" class="oculto">
         <label>Dias em que se repete</label>
         <div class="dias-pick zaia-rec-dias" id="m-rec-dias">
@@ -1364,9 +1376,11 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
         <p class="zaia-help">Em meses mais curtos, a repetição será no último dia do mês. Ex.: dia 31 → 28/29 de fevereiro.</p>
       </div>
       <p id="m-rec-anual" class="zaia-help oculto">A repetição anual usa o dia e o mês da primeira ocorrência. Para 29 de fevereiro, ocorre apenas em anos bissextos.</p>
-      <label for="m-rec-end" id="m-rec-end-label">Repetir até (inclusive)</label>
-      <input id="m-rec-end" class="campo" type="date" />
-      <p class="zaia-help">A recorrência aparece na Zaia sem criar tarefas duplicadas. Séries recorrentes podem ser sincronizadas com o Google Agenda. Ao alterar a data inicial de uma repetição semanal, confira também os dias selecionados.</p>
+      <div id="m-rec-ate-wrap">
+        <label for="m-rec-end" id="m-rec-end-label">Repetir até (inclusive)</label>
+        <input id="m-rec-end" class="campo" type="date" />
+        <p class="zaia-help">A recorrência aparece na Zaia sem criar tarefas duplicadas. Séries recorrentes podem ser sincronizadas com o Google Agenda. Ao alterar a data inicial de uma repetição semanal, confira também os dias selecionados.</p>
+      </div>
     </div>
     <label>Etiqueta</label>
     <input id="m-etiqueta" class="campo"/>
@@ -2152,7 +2166,20 @@ function renderFiltros(){ const etqs=etiquetasExistentes(); const box=el('filtro
 /* Recorrências calculadas em tempo de exibição, sem duplicar documentos no Firebase */
 const zaiaDia = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 function zaiaRecOcorrencias(t, inicio, fim){
-  const cfg=t.recorrencia; if(!cfg||!['daily','periodo','weekly','monthly','yearly'].includes(cfg.freq)||!t.prazo)return [];
+  const cfg=t.recorrencia; if(!cfg||!t.prazo)return [];
+  if(cfg.freq==='periodo'){
+    const b=new Date(t.prazo), h=b.getHours(), mi=b.getMinutes();
+    const datas=[...new Set(cfg.datas||[])].filter(Boolean).sort();
+    const res=[];
+    for(const ds of datas){
+      const [Y,M,D]=ds.split('-').map(Number); if(!Y||!M||!D)continue;
+      const ms=new Date(Y,M-1,D,h,mi).getTime();
+      if(ms<inicio||ms>=fim)continue;
+      res.push({t,ms,chave:ds,feito:(t.ocorrenciasConcluidas||[]).includes(ds)});
+    }
+    return res.sort((a,b2)=>a.ms-b2.ms);
+  }
+  if(!['daily','weekly','monthly','yearly'].includes(cfg.freq))return [];
   const base=new Date(t.prazo), hora=base.getHours(), min=base.getMinutes();
   const limite=cfg.ate?new Date(cfg.ate+'T23:59:59').getTime():Infinity;
   const inicioMs=Math.max(inicio,new Date(base.getFullYear(),base.getMonth(),base.getDate()).getTime());
@@ -2188,10 +2215,11 @@ function zaiaProximaOcorrencia(t, inicio, horizonteDias=370){
 function zaiaDescricaoRecorrencia(t){
   const c=t.recorrencia||{};
   if(c.freq==='periodo'){
-    const ini=t.prazo?new Date(t.prazo).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}):'';
-    const fim=c.ate?c.ate.split('-').reverse().slice(0,2).join('/'):'';
+    const datas=[...new Set(c.datas||[])].filter(Boolean).sort();
+    const fmt=ds=>ds.split('-').reverse().slice(0,2).join('/');
+    const lista=datas.length<=4?datas.map(fmt).join(', '):fmt(datas[0])+' … '+fmt(datas[datas.length-1])+' ('+datas.length+' dias)';
     const horario=t.prazo?new Date(t.prazo).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'';
-    return ['Período · de '+ini+' a '+fim,horario].filter(Boolean).join(' · ');
+    return ['Datas: '+lista,horario].filter(Boolean).join(' · ');
   }
   const freq=c.freq==='daily'?'Todos os dias':c.freq==='weekly'
     ? 'Toda '+(c.dias||[]).slice().sort((a,b)=>a-b).map(d=>DIAS_ABBR[d]).join(', ')
@@ -2729,16 +2757,35 @@ el('m-tipo').addEventListener('click',e=>{ const b=e.target.closest('button'); i
   document.querySelectorAll('#m-tipo button').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); tipoSel=b.dataset.tp; });
 function setTipo(tp){ tipoSel=tp; document.querySelectorAll('#m-tipo button').forEach(x=>x.classList.toggle('sel',x.dataset.tp===tp)); }
 let zaiaDiasSel=[];
+let zaiaRecDatasSel=[];
+function zaiaRenderRecDatas(){
+  const box=el('m-rec-datas-lista'); if(!box)return;
+  zaiaRecDatasSel=[...new Set(zaiaRecDatasSel)].filter(Boolean).sort();
+  const fmt=d=>d.split('-').reverse().slice(0,2).join('/');
+  box.innerHTML=zaiaRecDatasSel.length
+    ? zaiaRecDatasSel.map(d=>`<span class="zaia-rec-chip">${fmt(d)}<button type="button" data-rmdata="${d}" aria-label="Remover ${fmt(d)}">✕</button></span>`).join('')
+    : '<span class="zaia-help">Nenhuma data adicionada ainda.</span>';
+}
 function zaiaPintarRec(){
-  const f=el('m-rec-freq').value;
+  const f=el('m-rec-freq').value, isPer=f==='periodo';
   el('m-rec-extra').classList.toggle('oculto',f!=='weekly');
   el('m-rec-mensal').classList.toggle('oculto',f!=='monthly');
   el('m-rec-anual').classList.toggle('oculto',f!=='yearly');
-  el('m-rec-periodo').classList.toggle('oculto',f!=='periodo');
+  el('m-rec-datas-wrap').classList.toggle('oculto',!isPer);
+  el('m-rec-ate-wrap').classList.toggle('oculto',isPer);
+  el('m-data').classList.toggle('oculto',isPer);
+  el('m-data-label').textContent=isPer?'Horário do compromisso':'Data e horário limite';
   el('m-rec-end').disabled=f==='none';
-  el('m-rec-end-label').textContent=f==='periodo'?'Último dia do período (inclusive)':'Repetir até (inclusive)';
   document.querySelectorAll('[data-rec-day]').forEach(b=>b.classList.toggle('sel',zaiaDiasSel.includes(+b.dataset.recDay)));
+  if(isPer)zaiaRenderRecDatas();
 }
+el('m-rec-data-add').onclick=()=>{
+  const v=el('m-rec-data-nova').value; if(!v){fala('Escolha uma data para adicionar.',true);return;}
+  if(!zaiaRecDatasSel.includes(v))zaiaRecDatasSel.push(v);
+  el('m-rec-data-nova').value=''; zaiaRenderRecDatas();
+};
+el('m-rec-datas-lista').addEventListener('click',e=>{const b=e.target.closest('[data-rmdata]');if(!b)return;
+  zaiaRecDatasSel=zaiaRecDatasSel.filter(x=>x!==b.dataset.rmdata); zaiaRenderRecDatas();});
 el('m-rec-freq').addEventListener('change',()=>{
   if(el('m-rec-freq').value==='monthly'&&!el('m-rec-dia').value){
     el('m-rec-dia').value=el('m-data').value?Number(el('m-data').value.slice(-2)):new Date().getDate();
@@ -2751,7 +2798,10 @@ function zaiaPreencherExtra(t={}){
  el('m-local').value=t.local||'';el('m-link').value=t.linkReuniao||'';
  el('m-rec-freq').value=t.recorrencia?.freq||'none';el('m-rec-end').value=t.recorrencia?.ate||'';
  el('m-rec-dia').value=t.recorrencia?.diaMes|| (t.prazo?new Date(t.prazo).getDate():'');
- zaiaDiasSel=[...(t.recorrencia?.dias||[])];zaiaPintarRec();
+ zaiaDiasSel=[...(t.recorrencia?.dias||[])];
+ zaiaRecDatasSel=[...(t.recorrencia?.datas||[])];
+ el('m-rec-data-nova').value='';
+ zaiaPintarRec();
 }
 el('fab').onclick=()=>abrirNova();
 function abrirNova(pre={}){ el('modal-titulo').textContent='Nova tarefa';
@@ -2809,10 +2859,15 @@ function setPrazoInputs(ms){ if(ms){ const d=new Date(ms);
 function lerPrazoInputs(){ const dt=el('m-data').value; if(!dt)return null; return new Date(dt+'T'+(el('m-hora').value||'09:00')).getTime(); }
 el('m-cancelar').onclick=()=>el('modal-tarefa').classList.remove('on');
 el('m-salvar').onclick=async()=>{ const tit=el('m-titulo').value.trim(); if(!tit){fala('Dá um título pra tarefa.');return;}
-  const prazo=lerPrazoInputs();
-  const freq=el('m-rec-freq').value, ate=el('m-rec-end').value||null;
-  if(freq!=='none'&&!prazo){fala('Para repetir, informe a data e a hora da primeira ocorrência.',true);return;}
-  if(freq==='periodo'&&!ate){fala('Informe o último dia do período (a data final).',true);return;}
+  let prazo=lerPrazoInputs();
+  const freq=el('m-rec-freq').value, ate=freq==='periodo'?null:(el('m-rec-end').value||null);
+  let recDatas=null;
+  if(freq==='periodo'){
+    recDatas=[...new Set(zaiaRecDatasSel)].filter(Boolean).sort();
+    if(!recDatas.length){fala('Adicione pelo menos uma data ao compromisso.',true);return;}
+    prazo=new Date(recDatas[0]+'T'+(el('m-hora').value||'09:00')).getTime();
+  }
+  if(freq!=='none'&&freq!=='periodo'&&!prazo){fala('Para repetir, informe a data e a hora da primeira ocorrência.',true);return;}
   if(freq==='weekly'&&!zaiaDiasSel.length){fala('Selecione ao menos um dia da semana.',true);return;}
   if(freq==='weekly'&&prazo&&!zaiaDiasSel.includes(new Date(prazo).getDay())){
     const ok=confirm('A data inicial escolhida não corresponde aos dias da semana selecionados. A primeira ocorrência real será no próximo dia selecionado. Deseja continuar?');
@@ -2826,7 +2881,7 @@ el('m-salvar').onclick=async()=>{ const tit=el('m-titulo').value.trim(); if(!tit
   const link=el('m-link').value.trim();
   if(link){try{if(new URL(link).protocol!=='https:')throw new Error('Protocolo');}catch(e){fala('Insira um link HTTPS válido.',true);return;}}
   const dados={titulo:tit,descricao:el('m-desc').value.trim()||null,prioridade:prioSel,tipo:tipoSel,etiqueta:el('m-etiqueta').value.trim()||null,prazo,lembrete:prazo,local:el('m-local').value.trim()||null,linkReuniao:link||null,
-    recorrencia:freq==='none'?null:{freq,dias:freq==='weekly'?[...zaiaDiasSel]:[],diaMes:freq==='monthly'?diaMes:null,ate,pausada:!!tarefas.find(t=>t.id===el('m-id').value)?.recorrencia?.pausada},subitens:subPend.map(s=>({t:s.t,ok:!!s.ok}))};
+    recorrencia:freq==='none'?null:{freq,dias:freq==='weekly'?[...zaiaDiasSel]:[],diaMes:freq==='monthly'?diaMes:null,datas:freq==='periodo'?recDatas:null,ate,pausada:!!tarefas.find(t=>t.id===el('m-id').value)?.recorrencia?.pausada},subitens:subPend.map(s=>({t:s.t,ok:!!s.ok}))};
   let id=el('m-id').value; el('m-salvar').disabled=true;
   try{ if(id) await updateDoc(doc(db,'tarefas',id),dados);
     else{ const ref=await addDoc(collection(db,'tarefas'),{...dados,userId:user.uid,concluida:false,criadaEm:Date.now()}); id=ref.id; }
@@ -3778,7 +3833,20 @@ function gcalIdEvento(taskId){ let h=''; for(let i=0;i<taskId.length;i++){ h+=ta
 function gcalRegraRecorrencia(t){
   const r=t.recorrencia;
   if(!r||!r.freq||r.freq==='none')return null;
-  const mapa={daily:'DAILY',periodo:'DAILY',weekly:'WEEKLY',monthly:'MONTHLY',yearly:'YEARLY'};
+  if(r.freq==='periodo'){
+    const datas=[...new Set(r.datas||[])].filter(Boolean).sort();
+    if(datas.length<2)return null; // uma só data = compromisso único
+    const b=new Date(t.prazo), hh=String(b.getHours()).padStart(2,'0'), mi=String(b.getMinutes()).padStart(2,'0');
+    const consecutivo=datas.every((d,i)=>i===0||Math.round((new Date(d+'T00:00')-new Date(datas[i-1]+'T00:00'))/86400000)===1);
+    if(consecutivo){
+      const limite=new Date(datas[datas.length-1]+'T23:59:59');
+      return 'RRULE:FREQ=DAILY;UNTIL='+limite.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
+    }
+    // dias soltos: a primeira data é o início do evento; as demais vão como RDATE
+    const extras=datas.slice(1).map(d=>d.replace(/-/g,'')+'T'+hh+mi+'00');
+    return 'RDATE;TZID='+TZ+':'+extras.join(',');
+  }
+  const mapa={daily:'DAILY',weekly:'WEEKLY',monthly:'MONTHLY',yearly:'YEARLY'};
   if(!mapa[r.freq])return null;
   const partes=['FREQ='+mapa[r.freq]];
   if(r.freq==='weekly'){
@@ -3850,7 +3918,7 @@ async function gcalAtualizarEvento(t){
     const esperadoInicio=new Date(t.prazo).getTime();
     const inicioGoogle=Date.parse(atualizado.start?.dateTime||'');
     const regraEsperada=gcalRegraRecorrencia(t);
-    const regraGoogle=(atualizado.recurrence||[]).find(x=>x.startsWith('RRULE:'))||null;
+    const regraGoogle=(atualizado.recurrence||[]).find(x=>x.startsWith('RRULE:')||x.startsWith('RDATE'))||null;
     if(!Number.isFinite(inicioGoogle)||Math.abs(inicioGoogle-esperadoInicio)>1000||regraGoogle!==regraEsperada){
       return {ok:false,erro:'O Google recebeu a edição, mas os dados retornados não coincidem com a programação. Confira o evento antes de sincronizar novamente.'};
     }
