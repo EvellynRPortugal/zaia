@@ -1319,6 +1319,7 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 .zaia-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 20px}
 .zaia-overview-item{display:flex;flex-direction:column;gap:3px;padding:13px 15px;border:1px solid var(--ui-line);border-radius:16px;background:linear-gradient(145deg,#2C2145,#251B39);min-width:0}
 .zaia-overview-item strong{font-family:'Nunito',sans-serif;font-size:22px;line-height:1.1;color:#F1E6FF;font-weight:850;font-variant-numeric:tabular-nums}.zaia-overview-item span{font-size:11px;color:#C9BBDD;font-weight:700;letter-spacing:.02em}
+.zaia-overview-item{appearance:none;text-align:left;width:100%;font-family:inherit;cursor:pointer;transition:transform .16s,border-color .16s,background .16s;position:relative}.zaia-overview-item:hover{transform:translateY(-2px);border-color:#9276C2;background:linear-gradient(145deg,#382951,#2C2043)}.zaia-overview-item:focus-visible{outline:2px solid #FFF3D6;outline-offset:3px}.zaia-overview-item.selecionado{border-color:#B99AE8;background:linear-gradient(145deg,#44305F,#302343);box-shadow:inset 0 0 0 1px rgba(219,194,255,.16),0 8px 22px -16px #000}.zaia-overview-item span{display:flex;align-items:center;justify-content:space-between;gap:5px}.zaia-overview-item span i{font-style:normal;font-size:13px;opacity:.65}.zaia-painel-lista-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin:3px 0 14px;padding-bottom:12px;border-bottom:1px solid rgba(216,205,238,.12)}.zaia-painel-lista-head .sec-titulo{margin:0 0 3px}.zaia-painel-lista-head p{font-size:12px;color:var(--txt-dim)}.zaia-painel-voltar{flex-shrink:0;padding:8px 12px;border:1px solid var(--stroke);border-radius:11px;background:#302343;color:#E8D9FF;font-size:12px;font-weight:800}.zaia-painel-voltar:hover{border-color:#9276C2;background:#3A2A52}
 .zaia-timeline-tabs,.zaia-rotina-tabs{padding:4px;background:#20172F;border:1px solid #49375F;border-radius:15px;width:max-content;max-width:100%;margin:0 0 16px}
 .zaia-timeline-tabs button,.zaia-rotina-tabs button{border:0;border-radius:11px;background:transparent;min-height:40px;padding:9px 15px;color:#CFC1E4}.zaia-timeline-tabs button.on,.zaia-rotina-tabs button.on{background:#60488C;border:1px solid #9276C2;box-shadow:0 4px 12px -9px #000;color:white}
 .zaia-intro{padding:0 2px 10px;border-bottom:1px solid rgba(216,205,238,.1);margin-bottom:15px}
@@ -2435,6 +2436,7 @@ function renderBreve(){ const lim=Date.now()+7*DIA;
   const b=tarefas.filter(t=>!t.concluida&&!ehCompromisso(t)&&t.prazo&&t.prazo<=lim).sort((a,b)=>a.prazo-b.prazo);
   el('lista-breve').innerHTML=b.length?b.map(itemTarefa).join(''):'<div class="vazio">Sem prazos nos próximos 7 dias.</div>'; }
 let filtroEtq=null;
+let tarefasPainelFiltro=null;
 function etiquetasExistentes(){ const s=new Set(); tarefas.forEach(t=>{ if(t.etiqueta)s.add(t.etiqueta); }); return [...s].sort(); }
 function renderFiltros(){ const etqs=etiquetasExistentes(); const box=el('filtro-etq');
   if(!etqs.length){ box.innerHTML=''; return; }
@@ -2556,7 +2558,7 @@ function renderTarefas(){renderFiltros();
   const futuras=normais.filter(t=>t.prazo&&t.prazo>=fimHoje).map(t=>({ms:t.prazo,html:itemTarefa(t)}));
   const recorrHoje=[],recorrFuturo=[];
   const feitasHoje=tarefas.filter(t=>t.concluida&&t.prazo&&t.prazo>=inicioHoje&&t.prazo<fimHoje).length;
-  const atrasadas=abertas.filter(t=>t.prazo&&t.prazo<inicioHoje).length;
+  const atrasadas=abertas.filter(t=>t.prazo&&t.prazo<inicioHoje&&(!t.recorrencia||t.recorrencia.freq==='none')).length;
   const overview=el('tarefas-overview');
   for(const t of series){
     // Uma ocorrência no dia e somente a PRIMEIRA futura de cada série.
@@ -2565,9 +2567,22 @@ function renderTarefas(){renderFiltros();
     const prox=zaiaProximaOcorrencia(t,fimHoje,370);
     if(prox)recorrFuturo.push(prox);
   }
-  if(overview)overview.innerHTML=`<div class="zaia-overview-item"><strong>${hoje.length+recorrHoje.length}</strong><span>em aberto</span></div><div class="zaia-overview-item"><strong>${atrasadas}</strong><span>atrasadas</span></div><div class="zaia-overview-item"><strong>${feitasHoje}</strong><span>concluídas hoje</span></div>`;
+  if(overview)overview.innerHTML=`<button type="button" class="zaia-overview-item ${tarefasPainelFiltro==='abertas'?'selecionado':''}" data-painel-tarefas="abertas" aria-pressed="${tarefasPainelFiltro==='abertas'}"><strong>${hoje.length+recorrHoje.length}</strong><span>em aberto <i>↗</i></span></button><button type="button" class="zaia-overview-item ${tarefasPainelFiltro==='atrasadas'?'selecionado':''}" data-painel-tarefas="atrasadas" aria-pressed="${tarefasPainelFiltro==='atrasadas'}"><strong>${atrasadas}</strong><span>atrasadas <i>↗</i></span></button><button type="button" class="zaia-overview-item ${tarefasPainelFiltro==='concluidas'?'selecionado':''}" data-painel-tarefas="concluidas" aria-pressed="${tarefasPainelFiltro==='concluidas'}"><strong>${feitasHoje}</strong><span>concluídas hoje <i>↗</i></span></button>`;
   hoje.sort((a,b)=>(a.prazo||9e15)-(b.prazo||9e15)||score(b)-score(a));
   recorrHoje.sort((a,b)=>a.ms-b.ms);
+  if(tarefasPainelFiltro){
+    let titulo='',lista=[],vazio='';
+    if(tarefasPainelFiltro==='abertas'){
+      titulo='Tarefas em aberto'; lista=[...hoje.map(itemTarefa),...recorrHoje.map(zaiaCardOcorrencia)]; vazio='Você não tem tarefas pendentes para hoje. ✦';
+    }else if(tarefasPainelFiltro==='atrasadas'){
+      titulo='Tarefas atrasadas'; lista=abertas.filter(t=>t.prazo&&t.prazo<inicioHoje&&(!t.recorrencia||t.recorrencia.freq==='none')).sort((a,b)=>a.prazo-b.prazo).map(itemTarefa); vazio='Nenhuma tarefa atrasada. Está tudo em dia! ✦';
+    }else{
+      titulo='Concluídas hoje'; lista=tarefas.filter(t=>t.concluida&&t.prazo&&t.prazo>=inicioHoje&&t.prazo<fimHoje&&(!filtroEtq||t.etiqueta===filtroEtq)).sort((a,b)=>(a.prazo||0)-(b.prazo||0)).map(itemTarefa); vazio='Nenhuma tarefa concluída hoje ainda.';
+    }
+    const descricao=tarefasPainelFiltro==='atrasadas'?'Confira os prazos vencidos e atualize o que precisar.':tarefasPainelFiltro==='concluidas'?'Aqui ficam as tarefas finalizadas com prazo de hoje.':'Tarefas previstas para hoje e pendências anteriores.';
+    el('lista-tarefas').innerHTML=`<div class="zaia-painel-lista-head"><div><div class="sec-titulo">${titulo} (${lista.length})</div><p>${descricao}</p></div><button type="button" class="zaia-painel-voltar" data-painel-voltar>← Ver agenda</button></div>${lista.length?lista.join(''):`<div class="vazio">${vazio}</div>`}`;
+    renderMinhasRecorrencias(); return;
+  }
   let html='<p class="zaia-intro">Compromissos de hoje e pendências anteriores. As próximas datas ficam recolhidas.</p>';
   if(hoje.length||recorrHoje.length){
     html+=`<div class="sec-titulo">Hoje e pendentes (${hoje.length+recorrHoje.length})</div>`
@@ -3077,6 +3092,11 @@ function irParaAba(name){ if(!ABAS.includes(name))return; abaAtual=name;
   if(btn)btn.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});
   const c=document.querySelector('.conteudo'); if(c){c.classList.remove('aba-anim');void c.offsetWidth;c.classList.add('aba-anim');} }
 document.querySelectorAll('.aba-nav button, #bottom-nav button').forEach(b=>b.onclick=()=>irParaAba(b.dataset.aba));
+el('tarefas-overview').addEventListener('click',e=>{
+  const card=e.target.closest('[data-painel-tarefas]');
+  if(card){tarefasPainelFiltro=card.dataset.painelTarefas;renderTarefas();return;}
+  if(e.target.closest('[data-painel-voltar]')){tarefasPainelFiltro=null;renderTarefas();}
+});
 el('filtro-etq').addEventListener('click',e=>{ const b=e.target.closest('.chip'); if(!b)return;
   filtroEtq=b.dataset.etq||null; renderTarefas(); });
 /* deslizar pro lado pra trocar de aba (estilo Insta) */
