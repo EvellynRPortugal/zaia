@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -3094,7 +3093,10 @@ function irParaAba(name){ if(!ABAS.includes(name))return; abaAtual=name;
 document.querySelectorAll('.aba-nav button, #bottom-nav button').forEach(b=>b.onclick=()=>irParaAba(b.dataset.aba));
 el('tarefas-overview').addEventListener('click',e=>{
   const card=e.target.closest('[data-painel-tarefas]');
-  if(card){tarefasPainelFiltro=card.dataset.painelTarefas;renderTarefas();return;}
+  if(card){const filtroClicado=card.dataset.painelTarefas;
+    // Clicar novamente no painel ativo limpa o filtro e restaura a agenda completa.
+    tarefasPainelFiltro=(tarefasPainelFiltro===filtroClicado)?null:filtroClicado;
+    renderTarefas();return;}
   if(e.target.closest('[data-painel-voltar]')){tarefasPainelFiltro=null;renderTarefas();}
 });
 el('filtro-etq').addEventListener('click',e=>{ const b=e.target.closest('.chip'); if(!b)return;
