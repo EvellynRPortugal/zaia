@@ -389,10 +389,10 @@
   .midia-corpo{flex:1;min-width:0}
   .midia-tit{font-size:15px;font-weight:600}
   .midia-meta{font-size:12.5px;color:var(--txt-dim);margin-top:3px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-  .midia-estrelas{color:#E7C66F;font-size:13px;letter-spacing:1px;margin-top:4px;text-shadow:0 1px 8px rgba(231,198,111,.16)}
+  .midia-estrelas{color:var(--laranja-claro);font-size:13px;letter-spacing:1px;margin-top:4px}
   .estrelas{display:flex;gap:6px}
   .estrelas button{font-size:24px;color:#4a3b70;line-height:1;background:none;transition:.1s}
-  .estrelas button.on{color:#E7C66F;text-shadow:0 1px 9px rgba(231,198,111,.22)}
+  .estrelas button.on{color:var(--laranja-claro)}
   /* grade de pôsteres */
   .poster-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px}
   .poster-card{position:relative;text-align:left;background:none;display:flex;flex-direction:column;gap:6px}
@@ -1085,109 +1085,193 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 
 
 
-/* ZAIA V32 — acabamento editorial: biblioteca, projetos e formulários */
-/* Avaliações: dourado suave, sem brilho excessivo. */
-.estrelas button{color:#665b70;min-width:30px;min-height:34px;border-radius:8px}
-.estrelas button:hover{color:#d8b95f;transform:translateY(-1px)}
-.estrelas button.on{color:#E7C66F;text-shadow:0 1px 9px rgba(231,198,111,.22)}
-
-/* Biblioteca de estudos: página inicial separada da página de conteúdo. */
-.ze27-home-hero{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:25px 26px;margin:0 0 14px;border:1px solid #484155;border-radius:22px;background:linear-gradient(118deg,#292638 0%,#242033 58%,#282438 100%);box-shadow:0 12px 32px #08061018}
-.ze27-home-hero h2{font-size:clamp(25px,3vw,32px);letter-spacing:-.55px;color:#f4f0ff;margin:3px 0 6px}
-.ze27-home-hero .ze27-muted{max-width:590px;font-size:13.5px}
-.ze27-library-home{padding:22px}
-.ze27-library-tools{display:flex;gap:8px;flex-wrap:wrap;min-width:min(100%,390px)}
-.ze27-library-tools input,.ze27-library-tools select{flex:1;min-width:150px;background:#1d1a2b;border:1px solid #4b435c;border-radius:12px;color:#f4f0ff;min-height:42px;padding:10px 12px}
-.ze27-card-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:auto;padding-top:10px;border-top:1px solid #484155;color:#c3bbd7;font-size:11px}
-.ze27-card-foot b{color:#d9cdef;font-weight:750;white-space:nowrap}
-.ze27-study{min-height:155px;gap:9px}
-.ze27-study:hover .ze27-card-foot b{color:#f4f0ff}
-.ze27-detail-page{animation:ze27PageIn .2s ease both}
-.ze27-back{display:inline-flex;align-items:center;gap:9px;min-height:42px;margin:0 0 12px;padding:8px 13px;border:1px solid #484155;border-radius:12px;background:#242033;color:#ded8ed;font-size:13px;font-weight:750}
-.ze27-back:hover{background:#302b40;border-color:#766b8c;color:#fff}
-.ze27-back span{font-size:19px;line-height:1}
-.ze27-import-old summary{cursor:pointer;color:#d8cfee;font-weight:750;padding:4px}
-@keyframes ze27PageIn{from{opacity:.55;transform:translateY(5px)}to{opacity:1;transform:none}}
-
-/* Projetos: uma biblioteca com duas áreas permanentes. */
-.zp-library-intro{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:23px 25px;margin:0 0 20px;border:1px solid #484155;border-radius:22px;background:linear-gradient(118deg,#292638,#242033 65%,#282438)}
-.zp-library-intro h2{font:800 clamp(24px,3vw,30px)/1.2 var(--fonte-display);letter-spacing:-.45px;margin:4px 0 6px;color:#f4f0ff}
-.zp-library-intro>.zp-muted{max-width:560px}
-.zp-library-counts{display:flex;gap:10px;flex-shrink:0}
-.zp-library-counts span{display:flex;flex-direction:column;gap:3px;padding:11px 15px;border:1px solid #484155;border-radius:14px;background:#1e1b2b;color:#c3bbd7;font-size:11px;white-space:nowrap}
-.zp-library-counts strong{font-size:21px;color:#f4f0ff}
-.zp-library-section{margin:20px 0 24px}
-.zp-library-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:11px}
-.zp-library-section-head h3{font-size:17px;color:#f4f0ff;margin:0}
-.zp-library-section-head p{font-size:12px;color:#c3bbd7;margin:4px 0 0}
-.zp-library-section-head>span{display:grid;place-items:center;min-width:30px;height:30px;padding:0 8px;border-radius:10px;background:#302b40;border:1px solid #484155;color:#e8e2f4;font-size:12px;font-weight:800}
-.zp-library-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,255px),1fr));gap:12px}
-.zp-library-card{display:flex;flex-direction:column;min-width:0;padding:16px;border:1px solid #484155;border-radius:18px;background:#242033;box-shadow:0 8px 22px #08061018;transition:transform .16s,border-color .16s,background .16s}
-.zp-library-card:hover{transform:translateY(-2px);border-color:#766b8c;background:#292638}
-.zp-library-card.is-done{background:#211f2b;border-color:#484b4c}
-.zp-library-card-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:9px}
-.zp-library-symbol{display:grid;place-items:center;width:29px;height:29px;border-radius:10px;background:#39334a;color:#c9bde6;font-size:15px;font-weight:800}
-.zp-library-card.is-done .zp-library-symbol{background:#2e403b;color:#b4d8c6}
-.zp-library-status{font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:#c3bbd7;font-weight:800}
-.zp-library-open{display:flex;flex-direction:column;align-items:flex-start;gap:5px;width:100%;min-height:87px;text-align:left;background:transparent;padding:0;color:inherit}
-.zp-library-open strong{font-size:16px;line-height:1.35;color:#f4f0ff;overflow-wrap:anywhere}
-.zp-library-open>span:not(.zp-library-link){font-size:11px;color:#c3bbd7}
-.zp-library-link{display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:7px;color:#d9cdef;font-size:12px;font-weight:750}
-.zp-library-link b{font-size:17px;font-weight:500}
-.zp-library-progress{margin-top:12px}
-.zp-library-progress .barra{height:6px;background:#393447;border-radius:99px;overflow:hidden}
-.zp-library-progress .barra span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#8f83b8,#b5a5e8)}
-.zp-library-card.is-done .zp-library-progress .barra span{background:#8fb7a5}
-.zp-library-progress>div:last-child{display:flex;justify-content:space-between;gap:8px;margin-top:6px;color:#c3bbd7;font-size:11px}
-.zp-library-progress strong{color:#e8e2f4}
-.zp-library-card-actions{display:flex;justify-content:flex-end;margin-top:12px;padding-top:10px;border-top:1px solid #40384f}
-.zp-library-card-actions button{padding:8px 10px;border-radius:10px;background:#302b40;border:1px solid #504660;color:#e4dcef;font-size:11px;font-weight:750}
-.zp-library-card-actions button:hover{border-color:#8b7eaa;background:#39334a}
-.zp-library-card.is-done .zp-library-card-actions button{color:#c4e0d1;border-color:#536c60;background:#26352f}
-.zp-library-completed .zp-library-card{box-shadow:none}
-.zp-library-empty{grid-column:1/-1;padding:20px;border:1px dashed #4b435c;border-radius:15px;color:#c3bbd7;font-size:13px;line-height:1.6;text-align:center;background:#211f2b}
-.zp-tabs button[data-zp-tab="lista"]{display:inline-flex;align-items:center;gap:7px}
-
-/* Modais e formulários: menos brilho, melhor leitura e ações consistentes. */
-.modal-bg{align-items:center;padding:22px;background:rgba(8,7,17,.78);backdrop-filter:blur(10px)}
-.modal{width:min(100%,620px);max-width:620px;max-height:min(90dvh,900px);overflow-y:auto;overscroll-behavior:contain;padding:28px 30px 26px;border:1px solid #51495f;border-radius:23px;background:linear-gradient(145deg,#282438,#211e30 78%);box-shadow:0 28px 85px -35px rgba(0,0,0,.88);scrollbar-color:#625875 transparent}
-.modal::before{height:2px;margin:-28px -30px 22px;background:linear-gradient(90deg,#81789c,#b5a5c8 55%,#d6c39f);opacity:.9}
-.modal h3{font-size:22px;line-height:1.25;color:#f4f0ff;letter-spacing:-.35px;margin:0 45px 20px 0}
-.modal label{display:block;color:#d2ccdf;font-size:12px;font-weight:750;letter-spacing:.025em;margin:15px 0 7px}
-.modal .campo,.modal input:not([type=hidden]):not([type=file]),.modal textarea,.modal select{background:#1a1825;border:1px solid #494257;color:#f4f0ff;border-radius:12px;min-height:45px;padding:11px 13px;font:inherit;font-size:14px;transition:border-color .16s,box-shadow .16s}
-.modal .campo:focus,.modal input:focus,.modal textarea:focus,.modal select:focus{outline:none;border-color:#a99cc6;box-shadow:0 0 0 3px rgba(181,165,232,.13)}
-.modal .campo::placeholder,.modal textarea::placeholder{color:#8f899e}
-.modal textarea.campo{min-height:100px;line-height:1.65}
-.modal .prio-pick{gap:8px}
-.modal .prio-pick button,.modal .dias-pick button{min-height:42px;border-radius:11px;background:#2c2939;border:1px solid #494257;color:#d8d2e3;font-size:12.5px;font-weight:700}
-.modal .prio-pick button.sel,.modal .dias-pick button.sel{background:#39344a;border-color:#a99cc6;color:#fff;box-shadow:inset 0 0 0 1px #a99cc633}
-.modal #m-tipo button.sel{background:#39344a;border-color:#a99cc6;color:#fff}
-.modal .agenda-extra{margin-top:17px;padding:14px 15px 15px;border:1px solid #403b4d;border-radius:15px;background:#211f2d}
-.modal .modal-acoes{position:sticky;bottom:-26px;z-index:2;margin:22px -2px -2px;padding:17px 2px 2px;border-top:1px solid #403b4d;background:linear-gradient(180deg,rgba(33,30,48,.92),#211e30 25%);gap:9px}
-.modal .btn{min-height:45px;border-radius:12px;font-size:13px;font-weight:800;box-shadow:none}
-.modal .btn-primario{background:#756b99;border:1px solid #9388b5;color:#fff}
-.modal .btn-primario:hover{background:#8378a7}
-.modal .btn-sec{background:#302d3b;border:1px solid #504a5f;color:#e7e2ef}
-.modal .btn-sec:hover{background:#3a3647}
-.modal .mini-btn{background:#302d3b;border:1px solid #504a5f;color:#e7e2ef;border-radius:11px}
-.modal .btn-excluir{background:transparent;color:#e4b9c1;border-color:#684b55}
-#modal-tarefa .modal{max-width:650px}
-#modal-tarefa .modal h3:after{content:"Organize com calma. Você pode ajustar os detalhes antes de salvar.";display:block;margin-top:7px;color:#aaa3b8;font:500 12px/1.5 'Nunito',sans-serif;letter-spacing:0}
-#modal-proj .modal,#modal-projedit .modal,#modal-etapa .modal,#modal-subetapa .modal{max-width:590px}
-@media(max-width:620px){
- .ze27-home-hero,.zp-library-intro{align-items:flex-start;flex-direction:column;padding:19px}
- .ze27-home-hero .ze27-primary{width:100%}
- .ze27-library-home{padding:15px}
- .ze27-library-tools{width:100%;min-width:0}
- .ze27-library-tools input,.ze27-library-tools select{min-width:0;width:100%}
- .zp-library-counts{width:100%}.zp-library-counts span{flex:1}
- .zp-library-grid{grid-template-columns:1fr}
- .modal-bg{align-items:flex-end;padding:0}
- .modal{width:100%;max-width:none;max-height:93dvh;border-radius:23px 23px 0 0;padding:25px 19px calc(20px + env(safe-area-inset-bottom));border-bottom:0}
- .modal::before{margin:-25px -19px 20px}
- .modal .modal-acoes{bottom:-20px}
+/* ZAIA V32 · OBSERVATÓRIO PESSOAL — direção visual unificada */
+:root{
+  --z32-night:#100d1f;--z32-plum:#211832;--z32-panel:#291d3b;--z32-raised:#342448;
+  --z32-line:rgba(181,160,232,.22);--z32-lilac:#b5a0e8;--z32-moon:#e8dcc5;
+  --z32-gold:#ddbB70;--z32-muted:#c9bddb;--z32-shadow:0 26px 70px -34px rgba(0,0,0,.88);
 }
-@media(prefers-reduced-motion:reduce){.ze27-detail-page,.zp-library-card{animation:none!important;transition:none!important;transform:none!important}}
+
+/* Avaliações de filmes e séries: dourado champanhe, sem alterar as notas dos livros. */
+#det-estrelas{gap:7px;margin:8px 0 10px}
+#det-estrelas button{color:#66543b;font-size:27px;line-height:1;transition:color .16s,transform .16s,text-shadow .16s}
+#det-estrelas button.on{color:var(--z32-gold);text-shadow:0 0 15px rgba(221,187,112,.2)}
+#det-estrelas button:hover{transform:translateY(-2px);color:#f0d18e}
+.midia-estrelas{color:var(--z32-gold)!important;text-shadow:0 0 12px rgba(221,187,112,.12);letter-spacing:1.4px}
+
+/* Modais: uma linguagem única, com profundidade ameixa e luz de lavanda. */
+.modal-bg{background:rgba(8,5,17,.78);backdrop-filter:blur(11px) saturate(115%);padding:18px}
+.modal{background:linear-gradient(145deg,#2b1e40 0%,#21172f 72%,#1c1529 100%);border:1px solid rgba(181,160,232,.28);border-radius:25px;padding:30px 32px;box-shadow:var(--z32-shadow);scrollbar-color:#705987 transparent}
+.modal::before{height:2px;background:linear-gradient(90deg,transparent,#ddbB70 18%,#b5a0e8 58%,transparent);opacity:.9}
+.modal h3{font-size:24px;line-height:1.22;letter-spacing:-.55px;color:#fff8ed;margin-bottom:22px}
+.modal label{font-size:11.5px;text-transform:uppercase;letter-spacing:.075em;color:#cbbddd;font-weight:800;margin:17px 0 8px}
+.modal .campo,.modal input:not([type=hidden]):not([type=file]),.modal textarea,.modal select{background:#171124;border:1px solid rgba(181,160,232,.24);color:#f8f2ff;border-radius:13px;min-height:47px;padding:12px 14px;font-size:14px;box-shadow:inset 0 1px rgba(255,255,255,.025);transition:border-color .18s,box-shadow .18s,background .18s}
+.modal .campo:focus,.modal input:focus,.modal textarea:focus,.modal select:focus{border-color:#b5a0e8;box-shadow:0 0 0 3px rgba(181,160,232,.14);background:#1b1429}
+.modal .campo::placeholder,.modal input::placeholder,.modal textarea::placeholder{color:#8f80a7}
+.modal textarea.campo{min-height:94px;line-height:1.65}
+.modal .prio-pick{gap:9px}
+.modal .prio-pick button,.modal .dias-pick button{min-height:45px;border-radius:13px;background:#30213f;border:1px solid rgba(181,160,232,.2);color:#d8cce8;font-size:13px;font-weight:750}
+.modal .prio-pick button.sel,.modal .dias-pick button.sel{background:linear-gradient(135deg,#55406f,#443052);border-color:#b5a0e8;color:#fff8ed;box-shadow:inset 0 0 0 1px rgba(181,160,232,.16),0 5px 16px -12px #b5a0e8}
+.modal .prio-pick button:hover,.modal .dias-pick button:hover{border-color:#9d86c7;background:#3a294c}
+.modal .agenda-extra{background:linear-gradient(145deg,#251a35,#1d162b);border:1px solid rgba(181,160,232,.18);border-radius:17px;padding:15px 16px;margin:17px 0}
+.modal .agenda-extra label:first-child{margin-top:0}
+.modal .modal-acoes{position:sticky;bottom:-30px;z-index:3;margin:23px -32px -30px;padding:16px 32px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(36,25,52,.94),#21172f 35%);border-top:1px solid rgba(181,160,232,.16);backdrop-filter:blur(12px);gap:10px}
+.modal .btn{min-height:47px;border-radius:13px;font-size:13px;font-weight:850;letter-spacing:.01em}
+.modal .btn-primario{background:linear-gradient(115deg,#927ac3,#725b9f 58%,#665187);border:1px solid rgba(221,187,112,.25);color:#fffaf2;box-shadow:0 8px 22px -15px rgba(181,160,232,.8)}
+.modal .btn-primario:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.modal .btn-sec,.modal .mini-btn{background:#342542;border:1px solid rgba(181,160,232,.23);color:#e8dcc5}
+.modal .btn-sec:hover,.modal .mini-btn:hover{background:#413052;border-color:#8e78b5}
+.modal .btn-excluir{background:transparent;border:1px solid rgba(224,142,164,.22);color:#e8aebe}
+.modal .btn-excluir:hover{background:rgba(132,53,79,.16)}
+.modal .m-sublist,.modal .anexos-lista{border-color:rgba(181,160,232,.17)}
+#modal-tarefa #m-tipo button.sel{background:linear-gradient(135deg,#4b385f,#3d2b50)!important;border-color:#b5a0e8!important;color:#fff5e8!important;box-shadow:inset 0 0 0 1px rgba(181,160,232,.13)}
+#modal-tarefa #m-rec-dias button.sel,.modal .dias-pick button.sel{background:#4a365f!important;border-color:#b5a0e8!important;color:#fff5e8!important}
+#modal-rotina #r-momento button.sel,#modal-rotina #r-freq button.sel,#modal-casa #casa-dias button.sel{background:#4a365f!important;border-color:#b5a0e8!important;color:#fff5e8!important}
+#modal-tarefa .modal{max-width:620px}
+#modal-proj .modal{max-width:500px}
+.det-x{background:#342542;border:1px solid rgba(181,160,232,.25);color:#f3e9ff;border-radius:13px}
+.det-x:hover{background:#473255}
+@media(min-width:560px){.modal-bg{align-items:center}.modal{margin:auto}}
+@media(max-width:559px){
+ .modal-bg{padding:0;align-items:flex-end}
+ .modal{max-height:93dvh;padding:25px 19px calc(20px + env(safe-area-inset-bottom));border-radius:25px 25px 0 0}
+ .modal::before{top:-25px;margin:-25px -19px 20px}
+ .modal .modal-acoes{bottom:-20px;margin:21px -19px -20px;padding:14px 19px calc(13px + env(safe-area-inset-bottom))}
+ .modal h3{font-size:22px}
+}
+
+/* Estudos: a biblioteca funciona como uma página inicial; o estudo vira um workspace próprio. */
+#aba-estudos{--ze30-bg:#171126;--ze30-panel:#241832;--ze30-card:#30203f;--ze30-line:#55416b;--ze30-lilac:#b5a0e8;--ze30-mint:#a8d7cb;--ze30-gold:#ddbB70;--ze30-text:#fbf5ff;--ze30-muted:#c9bddb;color:var(--ze30-text)}
+#aba-estudos .ze27-head,#aba-estudos .ze27-pane{background:#241832;border-color:rgba(181,160,232,.2);box-shadow:0 16px 38px -30px #000}
+#aba-estudos .ze27-primary{background:linear-gradient(120deg,#8f78bd,#6e588f);border:1px solid rgba(221,187,112,.28);border-radius:13px;color:#fffaf2;min-height:44px;box-shadow:0 9px 22px -18px #b5a0e8}
+#aba-estudos .ze27-primary:hover{background:linear-gradient(120deg,#a18bcf,#80679f);transform:translateY(-1px)}
+#aba-estudos .ze27-secondary{background:#342441;border:1px solid rgba(181,160,232,.24);color:#eadff5;border-radius:12px;min-height:40px}
+#aba-estudos .ze27-danger{background:#3a2537;border-color:#70465d;color:#f0c4d0;border-radius:12px}
+#aba-estudos .ze27-kicker{color:#d2b77b;letter-spacing:1.5px}
+#aba-estudos .ze27-muted{color:#c9bddb;line-height:1.6}
+#aba-estudos .ze30-section{background:linear-gradient(145deg,#251a36,#21172f);border-color:rgba(181,160,232,.2);border-radius:22px;box-shadow:0 18px 44px -34px #000}
+#aba-estudos .ze30-section-head h3{color:#fff5e8}
+#aba-estudos .ze30-stats .ze30-stat{background:#2d203e;border-color:rgba(181,160,232,.2);border-radius:16px}
+#aba-estudos .ze30-stat strong{color:#fff5e8}
+#aba-estudos .ze30-stat span{color:#c9bddb}
+#aba-estudos .ze30-tabs{background:#1a1327;border-color:rgba(181,160,232,.18);border-radius:16px}
+#aba-estudos .ze30-tabs button[aria-selected="true"]{background:#3b2b50;border-color:#806a9f;box-shadow:inset 0 -2px #ddbB70;color:#fff7eb}
+#aba-estudos .ze30-note-preview{background:#1a1327;border-color:rgba(181,160,232,.2);color:#f0e8f7}
+#aba-estudos .ze27-study{background:linear-gradient(145deg,#302141,#261a36);border-color:rgba(181,160,232,.2);border-radius:17px}
+#aba-estudos .ze27-study:hover{border-color:#b5a0e8;background:linear-gradient(145deg,#3a294f,#2d1e40)}
+#aba-estudos .ze27-tag{background:#3d2c4e;color:#e8dcc5;border-color:rgba(221,187,112,.2)}
+#aba-estudos .ze27-modal-bg{background:rgba(8,5,17,.84);backdrop-filter:blur(12px)}
+#aba-estudos .ze27-dialog{background:linear-gradient(145deg,#2a1e3c,#1d152c);border-color:rgba(181,160,232,.28);box-shadow:var(--z32-shadow)}
+#aba-estudos .ze27-dialog>.ze27-detail-head{background:#2a1e3c;border-color:rgba(181,160,232,.18)}
+#aba-estudos .ze27-dialog h3{color:#fff5e8}
+#aba-estudos .ze27-dialog input,#aba-estudos .ze27-dialog select,#aba-estudos .ze27-dialog textarea{background:#171124;border-color:rgba(181,160,232,.24);color:#fbf5ff}
+#aba-estudos .ze27-dialog-actions{background:#21172f;border-color:rgba(181,160,232,.18)}
+#aba-estudos .ze30-map-viewport{background-color:#1b1329;background-image:radial-gradient(#806b9b55 .8px,transparent .8px);border-color:rgba(181,160,232,.2)}
+#aba-estudos .ze30-map-surface .ze27-node{background:#342443;border-color:#725a88;color:#fbf5ff}
+#aba-estudos .ze30-map-surface .ze27-node.root{background:#4a355e;border-color:#d2b77b}
+
+.ze27-home{display:flex;flex-direction:column;gap:18px}
+.ze27-home-hero{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:225px;padding:28px 30px;border:1px solid rgba(181,160,232,.25);border-radius:24px;background:radial-gradient(ellipse at 92% 8%,rgba(126,91,157,.38),transparent 37%),linear-gradient(118deg,#2b1d40 0%,#241831 60%,#1d152d 100%);box-shadow:0 22px 55px -42px #000}
+.ze27-home-copy{position:relative;z-index:1;max-width:610px}
+.ze27-home-copy h2{font-size:clamp(27px,4vw,37px);line-height:1.13;letter-spacing:-.8px;color:#fff5e8;margin:8px 0}
+.ze27-home-copy>.ze27-muted{max-width:490px;font-size:14px}
+.ze27-new-study{margin-top:18px;padding:11px 17px}
+.ze27-home-orbit{position:absolute;right:9%;top:25px;width:185px;height:185px;border:1px solid rgba(221,187,112,.26);border-radius:50%;display:grid;place-items:center;color:#ddbB70;font-size:38px;opacity:.8}
+.ze27-home-orbit:before,.ze27-home-orbit:after{content:"";position:absolute;border:1px solid rgba(181,160,232,.24);border-radius:50%;inset:17px;transform:rotate(-28deg) scaleX(1.45)}
+.ze27-home-orbit:after{inset:42px;transform:rotate(38deg) scaleX(1.8)}
+.ze27-home-orbit i{position:absolute;width:9px;height:9px;border-radius:50%;background:#e8dcc5;box-shadow:0 0 18px #ddbB70;top:18px;right:35px}
+.ze27-home-stats{position:relative;z-index:1;display:flex;gap:10px;align-self:flex-end;flex-shrink:0}
+.ze27-home-stats>div{min-width:78px;padding:10px 13px;border-radius:14px;background:rgba(16,11,28,.34);border:1px solid rgba(181,160,232,.17);text-align:center}
+.ze27-home-stats strong{display:block;font-size:21px;color:#f4dfb2;line-height:1.2}
+.ze27-home-stats span{font-size:10px;color:#d0c2dc;letter-spacing:.04em}
+.ze27-library-panel{padding:22px;border-radius:22px;background:#21172f;border:1px solid rgba(181,160,232,.2)}
+.ze27-library-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:17px}
+.ze27-library-heading h3{font-size:22px;color:#fff5e8;letter-spacing:-.4px;margin:3px 0}
+.ze27-library-count{padding:6px 11px;border:1px solid rgba(221,187,112,.24);background:#342641;border-radius:999px;color:#e8dcc5;font-size:11px;font-weight:800;white-space:nowrap}
+.ze27-library-toolbar{margin-bottom:14px}
+.ze27-library-toolbar input{flex:1;min-width:180px}
+.ze27-library-toolbar select{min-width:180px}
+.ze27-library-card{position:relative;min-height:176px!important;display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:left;padding:18px 18px 15px!important;overflow:hidden}
+.ze27-library-card:after{content:"";position:absolute;right:-34px;top:-44px;width:112px;height:112px;border:1px solid rgba(221,187,112,.13);border-radius:50%;box-shadow:0 0 0 15px rgba(181,160,232,.025),0 0 0 31px rgba(181,160,232,.02);pointer-events:none}
+.ze27-card-symbol{position:absolute;right:17px;top:12px;color:#ddbB70;font-size:21px;opacity:.85}
+.ze27-library-card .ze27-tag{font-size:10px;max-width:calc(100% - 36px)}
+.ze27-library-card strong{font-size:17px!important;line-height:1.3;max-width:100%;overflow-wrap:anywhere}
+.ze27-library-card>.ze27-muted{font-size:12px}
+.ze27-card-foot{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:auto;padding-top:10px;border-top:1px solid rgba(181,160,232,.13);width:100%;font-size:10px;color:#b9a9ca}
+.ze27-card-foot b{margin-left:auto;color:#e8dcc5;font-size:10px}
+.ze27-library-empty{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;gap:8px;padding:35px 18px;text-align:center;border:1px dashed rgba(181,160,232,.3);border-radius:17px;color:#c9bddb}
+.ze27-library-empty>span{font-size:30px;color:#ddbB70}
+.ze27-library-empty strong{font-size:16px;color:#fff5e8}
+.ze27-library-empty p{max-width:390px;font-size:13px;line-height:1.6}
+.ze27-import-panel{padding:16px 18px!important}
+.ze27-import-panel summary{cursor:pointer;color:#e8dcc5;font-weight:800}
+.ze27-import-panel summary span{color:#b5a0e8;font-size:12px;margin-left:6px}
+.ze27-import-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid rgba(181,160,232,.13)}
+.ze27-import-row span{display:flex;flex-direction:column;gap:3px}.ze27-import-row strong{font-size:13px;color:#f7efff}.ze27-import-row small{font-size:11px;color:#b9a9ca}
+.ze27-workspace-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px}
+.ze27-workspace-nav>span{font-size:10px;letter-spacing:.13em;color:#b9a9ca;font-weight:800}
+.ze27-workspace-nav>span i{color:#ddbB70;font-style:normal}
+.ze27-back-library{padding:9px 13px;border:1px solid rgba(181,160,232,.2);border-radius:12px;background:#2c1f3d;color:#e8dcc5;font-size:12px;font-weight:800}
+.ze27-back-library:hover{background:#3a294d;border-color:#9c85c5}
+
+/* Projetos: espaço ativo e arquivo de conquistas. */
+#btn-novo-proj{min-height:42px;padding:9px 15px;border-radius:12px;background:linear-gradient(120deg,#8069ac,#624b83);border:1px solid rgba(221,187,112,.2);color:#fff7ec;font-weight:850}
+#btn-novo-proj:hover{filter:brightness(1.1);transform:translateY(-1px)}
+
+.zp-tabs{padding:5px;background:#1c142a;border:1px solid rgba(181,160,232,.17);border-radius:16px;gap:5px}
+.zp-tabs button{border:1px solid transparent;background:transparent;border-radius:11px;padding:10px 14px;color:#c9bddb;transition:background .16s,border-color .16s,color .16s}
+.zp-tabs button.on{background:#3b2a50;border-color:rgba(181,160,232,.28);color:#fff5e8;box-shadow:inset 0 -2px #ddbB70}
+.zp-hero{background:radial-gradient(ellipse at 100% 0%,rgba(125,88,153,.22),transparent 40%),linear-gradient(145deg,#2b1e3e,#21172f);border-color:rgba(181,160,232,.24);border-radius:23px;padding:23px;box-shadow:0 20px 45px -36px #000}
+.zp-hero h2{font-size:clamp(23px,3vw,29px);color:#fff5e8;letter-spacing:-.55px}
+.zp-hero-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin:7px 0 13px}
+.zp-hero-title-row h2{margin:0 0 4px}
+.zp-stat{background:#342448;border:1px solid rgba(181,160,232,.15);border-radius:15px}
+.zp-stat strong{color:#e8dcc5}
+.zp-missao{background:#30213f;border-color:rgba(181,160,232,.2);border-radius:16px}
+.zp-action{background:linear-gradient(120deg,#8b73b6,#69518d);border:1px solid rgba(221,187,112,.2);border-radius:12px;color:#fffaf2}
+.zp-action:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.zp-finish-action,.zp-secondary-action{min-height:40px;padding:9px 13px;border-radius:12px;font-size:12px;font-weight:800;white-space:nowrap}
+.zp-finish-action{background:rgba(221,187,112,.08);border:1px solid rgba(221,187,112,.38);color:#e8dcc5}
+.zp-finish-action:hover{background:rgba(221,187,112,.15)}
+.zp-secondary-action{background:#342542;border:1px solid rgba(181,160,232,.22);color:#e8dcc5}
+.zp-secondary-action:hover{background:#413052}
+.zp-hero-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.zp-archive-intro,.zp-empty-active{padding:24px;border-radius:22px;border:1px solid rgba(181,160,232,.23);background:radial-gradient(ellipse at 95% 0%,rgba(126,91,157,.3),transparent 40%),linear-gradient(135deg,#2b1e40,#21172f)}
+.zp-archive-intro{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px}
+.zp-archive-intro h2,.zp-empty-active h2{font-size:clamp(23px,3vw,29px);color:#fff5e8;margin:4px 0}
+.zp-archive-total{padding:8px 12px;border-radius:999px;background:#3a2a4d;border:1px solid rgba(221,187,112,.24);color:#e8dcc5;font-size:12px;font-weight:800;white-space:nowrap}
+.zp-archive-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:13px}
+.zp-archive-card{padding:18px;border-radius:18px;background:linear-gradient(145deg,#2b203b,#21172f);border:1px solid rgba(181,160,232,.2);box-shadow:0 16px 35px -30px #000}
+.zp-archive-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.zp-archive-symbol{width:31px;height:31px;display:grid;place-items:center;border-radius:10px;background:rgba(221,187,112,.13);color:#e8c982;border:1px solid rgba(221,187,112,.28)}
+.zp-archive-status{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#d8c18c;font-weight:850}
+.zp-archive-card h3{font-size:17px;line-height:1.35;color:#fff5e8;overflow-wrap:anywhere}
+.zp-archive-card>.zp-muted{margin-top:5px;font-size:11px}
+.zp-archive-progress{height:5px;background:#44334f;border-radius:999px;overflow:hidden;margin:17px 0 7px}
+.zp-archive-progress span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8c75b9,#ddbB70)}
+.zp-archive-meta{display:flex;justify-content:space-between;color:#bfaeca;font-size:11px}
+.zp-archive-meta strong{color:#e8dcc5}
+.zp-reopen{width:100%;min-height:41px;margin-top:16px;border:1px solid rgba(181,160,232,.24);border-radius:12px;background:#342542;color:#e8dcc5;font-size:12px;font-weight:800}
+.zp-reopen:hover{background:#433052;border-color:#a28bc9}
+.zp-archive-empty,.zp-empty-active{display:flex;flex-direction:column;align-items:center;text-align:center;gap:9px;padding:35px 22px}
+.zp-archive-empty{border:1px dashed rgba(181,160,232,.25);border-radius:18px;color:#c9bddb}
+.zp-archive-empty>span,.zp-empty-orbit{font-size:32px;color:#ddbB70}
+.zp-archive-empty strong{color:#fff5e8;font-size:16px}
+.zp-archive-empty p,.zp-empty-active>p{max-width:450px;font-size:13px;line-height:1.6}
+.zp-empty-active>div{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:8px}
+.zp-project-selector{background:#21172f;border-color:rgba(181,160,232,.22);border-radius:13px}
+@media(max-width:700px){
+ .ze27-home-hero{display:block;padding:22px 19px 17px;min-height:0}
+ .ze27-home-orbit{width:112px;height:112px;right:18px;top:22px;opacity:.42}
+ .ze27-home-copy{max-width:75%}.ze27-home-copy h2{font-size:27px}.ze27-home-stats{margin-top:20px;justify-content:flex-start}
+ .ze27-home-stats>div{min-width:0;flex:1;padding:9px 6px}.ze27-home-stats strong{font-size:18px}
+ .ze27-library-panel{padding:15px}.ze27-library-heading{align-items:flex-start}.ze27-library-heading h3{font-size:20px}
+ .ze27-library-toolbar{display:flex;flex-direction:column}.ze27-library-toolbar input,.ze27-library-toolbar select{width:100%;min-width:0}
+ .ze27-library-card{min-height:160px!important}.ze27-card-foot b{width:100%;margin:3px 0 0}
+ .ze27-workspace-nav>span{font-size:9px}
+ .zp-hero{padding:17px}.zp-hero-title-row{flex-direction:column}.zp-finish-action{align-self:flex-start}
+ .zp-archive-intro{align-items:flex-start;flex-direction:column;padding:19px}.zp-empty-active{padding:25px 16px}
+}
 
 </style>
 </head>
@@ -1344,10 +1428,11 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
     <section id="aba-projetos" class="oculto">
       <button id="btn-novo-proj" class="mini-btn" style="margin-bottom:14px">+ Novo projeto</button>
       <div class="zp-tabs" role="group" aria-label="Visualização dos projetos">
-        <button type="button" class="on" data-zp-tab="lista" aria-pressed="true">Meus projetos</button>
-        <button type="button" data-zp-tab="visao" aria-pressed="false">Visão geral</button>
+        <button type="button" class="on" data-zp-tab="visao" aria-pressed="true">Visão geral</button>
         <button type="button" data-zp-tab="etapas" aria-pressed="false">Etapas e missões</button>
         <button type="button" data-zp-tab="foco" aria-pressed="false">Modo Foco</button>
+        <button type="button" data-zp-tab="concluidos" aria-pressed="false">Concluídos</button>
+
       </div>
       <div id="zp-dashboard"></div>
       <div id="lista-projetos"></div>
@@ -2441,54 +2526,40 @@ function renderProjetosLegado(){ if(!projetos.length){el('lista-projetos').inner
     </div>`; }).join(''); }
 
 /* V17: cada estrela é uma etapa existente no Firebase, sem criar documentos extras. */
-let zpAba='lista', zpSelecionado=null;
+let zpAba='visao', zpSelecionado=null;
 const zpEsc=s=>esc(s);
 function zpOrdenadas(p){return etapas.filter(e=>e.projetoId===p.id).sort((a,b)=>(Number.isFinite(Number(a.ordem))?Number(a.ordem):Infinity)-(Number.isFinite(Number(b.ordem))?Number(b.ordem):Infinity)||(a.prazo||9e15)-(b.prazo||9e15)||a.id.localeCompare(b.id));}
-function zpProjeto(){return projetos.find(p=>p.id===zpSelecionado)||projetos[0]||null;}
+function zpProjeto(){return projetos.find(p=>p.id===zpSelecionado&&!p.concluido)||projetos.find(p=>!p.concluido)||null;}
 function zpStatus(){const p=zpProjeto();if(!p)return null;const es=zpOrdenadas(p);return {p,es,feitas:es.filter(e=>e.concluida).length,proxima:es.find(e=>!e.concluida)};}
+function zpDataConclusao(p){if(!p?.concluidoEm)return 'Concluído';const d=typeof p.concluidoEm?.toDate==='function'?p.concluidoEm.toDate():new Date(p.concluidoEm);return Number.isNaN(d.getTime())?'Concluído':d.toLocaleDateString('pt-BR');}
 function zpSelecionarHTML(p){return `<label class="zp-muted" for="zp-projeto">Projeto selecionado</label><select id="zp-projeto" class="zp-project-selector" aria-label="Escolher projeto">${projetos.map(x=>`<option value="${zpEsc(x.id)}" ${x.id===p.id?'selected':''}>${zpEsc(x.nome)}</option>`).join('')}</select>`;}
-function zpRenderListaProjetos(){
- const ativos=projetos.filter(p=>!p.concluido).sort((a,b)=>(Number(b.criadaEm)||0)-(Number(a.criadaEm)||0));
- const finalizados=projetos.filter(p=>!!p.concluido).sort((a,b)=>(Number(b.concluidoEm)||Number(b.criadaEm)||0)-(Number(a.concluidoEm)||Number(a.criadaEm)||0));
- const card=p=>{const es=zpOrdenadas(p),feitas=es.filter(e=>e.concluida).length,pct=es.length?Math.round(feitas/es.length*100):0;
-  const pronto=es.length>0&&feitas===es.length;
-  return `<article class="zp-library-card ${p.concluido?'is-done':''}">
-   <div class="zp-library-card-top"><span class="zp-library-symbol">${p.concluido?'✓':'✦'}</span><span class="zp-library-status">${p.concluido?'Finalizado':pronto?'Etapas concluídas':'Em andamento'}</span></div>
-   <button type="button" class="zp-library-open" data-zp-open="${zpEsc(p.id)}"><strong>${zpEsc(p.nome)}</strong><span>${p.dataFim?'Prazo · '+fmtPrazo(p.dataFim):'Sem prazo definido'}</span><span class="zp-library-link">Abrir projeto <b>→</b></span></button>
-   <div class="zp-library-progress"><div class="barra"><span style="width:${pct}%"></span></div><div><span>${feitas} de ${es.length} etapas</span><strong>${pct}%</strong></div></div>
-   <div class="zp-library-card-actions">${p.concluido?`<button type="button" data-zp-reopen="${zpEsc(p.id)}">Reabrir projeto</button>`:`<button type="button" data-zp-finish="${zpEsc(p.id)}">${pronto?'Finalizar projeto':'Marcar como finalizado'}</button>`}</div>
-  </article>`;
- };
- return `<section class="zp-library-intro"><div><p class="zp-muted">SEU UNIVERSO DE PROJETOS ✦</p><h2>Meus projetos</h2><p class="zp-muted">Acompanhe o que está em construção e guarde com carinho o que já foi concluído.</p></div><div class="zp-library-counts"><span><strong>${ativos.length}</strong>Em andamento</span><span><strong>${finalizados.length}</strong>Finalizados</span></div></section>
- <section class="zp-library-section"><div class="zp-library-section-head"><div><h3>Em andamento</h3><p>Projetos que ainda estão em movimento.</p></div><span>${ativos.length}</span></div><div class="zp-library-grid">${ativos.map(card).join('')||'<div class="zp-library-empty">Nenhum projeto em andamento. Crie um novo ou reabra um projeto finalizado.</div>'}</div></section>
- <section class="zp-library-section zp-library-completed"><div class="zp-library-section-head"><div><h3>Finalizados</h3><p>Um espaço separado para suas entregas concluídas.</p></div><span>${finalizados.length}</span></div><div class="zp-library-grid">${finalizados.map(card).join('')||'<div class="zp-library-empty">Seus projetos finalizados aparecerão aqui.</div>'}</div></section>`;
-}
-async function zpDefinirConcluido(id,concluido){
- const p=projetos.find(x=>x.id===id);if(!p||!user)return;
- const pergunta=concluido?`Finalizar o projeto “${p.nome}”? Ele será movido para a área de Finalizados. Você poderá reabri-lo depois.`:`Reabrir o projeto “${p.nome}” e movê-lo para Em andamento?`;
- if(!confirm(pergunta))return;
- try{await updateDoc(doc(db,'projetos',id),{concluido,concluidoEm:concluido?Date.now():null});projetos=projetos.map(x=>x.id===id?{...x,concluido,concluidoEm:concluido?Date.now():null}:x);renderProjetos();}
- catch(e){console.error('Não foi possível atualizar o status do projeto:',e);alert('Não foi possível atualizar o projeto. Confira a conexão e as permissões do Firebase.');}
-}
 function zpConstelacao(es){if(!es.length)return '<p class="zp-muted">Crie sua primeira etapa em “Etapas e missões” para iniciar a constelação.</p>';
  return `<div class="zp-const" role="group" aria-label="Constelação das etapas do projeto">${es.slice(0,16).map((e,i)=>`${i?'<span class="zp-link" aria-hidden="true"></span>':''}<button type="button" class="zp-star ${e.concluida?'done':!es.slice(0,i).some(x=>!x.concluida)?'next':''}" data-editetapa="${zpEsc(e.id)}" aria-label="${zpEsc(e.titulo)}, ${e.concluida?'concluída':'pendente'}"><span aria-hidden="true">${e.concluida?'✓':'✦'}</span><span>${i+1}ª etapa</span></button>`).join('')}</div>${es.length>16?'<p class="zp-muted">Mostrando as primeiras 16 etapas. Todas permanecem acessíveis em Etapas e missões.</p>':''}`;
 }
 function renderProjetos(){const root=el('zp-dashboard'),lista=el('lista-projetos');if(!root||!lista)return;
- document.querySelectorAll('[data-zp-tab]').forEach(b=>{const ativo=b.dataset.zpTab===zpAba;b.classList.toggle('on',ativo);b.setAttribute('aria-pressed',String(ativo));});
- if(!projetos.length){root.innerHTML='<div class="zp-hero">Comece criando um projeto. Depois, divida-o em pequenas etapas para acompanhar seu progresso.</div>';lista.innerHTML='';return;}
- if(zpAba==='lista'){root.innerHTML=zpRenderListaProjetos();lista.innerHTML='';return;}
- const {p,es,feitas,proxima}=zpStatus();if(!p){root.innerHTML='<div class="zp-hero">Selecione ou crie um projeto.</div>';lista.innerHTML='';return;}zpSelecionado=p.id;const pct=es.length?Math.round(feitas/es.length*100):0;
- const selector=zpSelecionarHTML(p);
- if(zpAba==='estudos'){lista.innerHTML='';root.innerHTML=zpEstudosTela(p);return;}
- if(zpAba==='etapas'){root.innerHTML=`${selector}<p class="zp-muted">Arraste pelo símbolo ⠿ para reorganizar. No celular, você também pode usar as setas. A ordem é salva automaticamente.</p>`;renderProjetosLegado();return;}
- lista.innerHTML='';
- if(zpAba==='visao'){
- root.innerHTML=`${selector}<section class="zp-hero" aria-label="Progresso do projeto"><p class="zp-muted">SEU UNIVERSO DE PROJETOS ✦</p><h2>${zpEsc(p.nome)}</h2><p class="zp-muted">Grandes ideias, pequenos passos.</p><div class="zp-statrow"><div class="zp-stat"><strong>${pct}%</strong>progresso</div><div class="zp-stat"><strong>${feitas}/${es.length}</strong>etapas</div><div class="zp-stat"><strong>${Math.round((p.focoMinutos||0))}</strong>min de foco</div></div><div class="barra" role="progressbar" aria-label="Progresso do projeto" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><span style="width:${pct}%"></span></div><p class="zp-muted" style="margin:14px 0 4px">Sua constelação de progresso</p>${zpConstelacao(es)}<div class="zp-missao"><div class="zp-missao-main"><strong>${proxima?'Próxima pequena missão':'Etapas em dia'}</strong><p class="zp-muted">${proxima?zpEsc(proxima.titulo):es.length?'Todas as etapas cadastradas foram concluídas.':'Adicione uma etapa na aba Etapas e missões.'}</p></div>${proxima?`<button type="button" class="zp-action" data-zp-missao="${zpEsc(proxima.id)}">Concluir</button>`:''}</div><div style="margin-top:14px"><button class="zp-action" type="button" data-zp-ir="foco">Iniciar sessão de foco →</button> <button type="button" class="mini-btn" data-zp-ir="etapas">Ver etapas</button></div></section>`;
- }else{
- root.innerHTML=`${selector}<section class="zp-timer" aria-label="Temporizador de foco"><p class="zp-muted">SESSÃO DE FOCO · ${zpEsc(p.nome)}</p><div class="zp-clock" id="zp-clock" role="timer" aria-label="Tempo restante">25:00</div><div class="zp-times">${[15,25,45].map(n=>`<button type="button" data-zp-min="${n}" class="${zpMin===n?'sel':''}" ${zpRodando?'disabled':''}>${n} min</button>`).join('')}</div><div class="zp-timer-actions"><button class="primary" type="button" id="zp-toggle">${zpRodando?'Pausar':zpRestante<zpMin*60?'Continuar':'Iniciar'}</button><button type="button" id="zp-reset">Reiniciar</button></div><p class="zp-muted" style="margin-top:12px" id="zp-info">Ao terminar, os minutos serão registrados neste projeto. Você pode parar ou pausar sem penalização.</p></section>`;
- zpAtualizaRelogio();
- }
+  document.querySelectorAll('[data-zp-tab]').forEach(b=>{const ativo=b.dataset.zpTab===zpAba;b.classList.toggle('on',ativo);b.setAttribute('aria-pressed',String(ativo));});
+  const ativos=projetos.filter(p=>!p.concluido),concluidos=projetos.filter(p=>!!p.concluido);
+  if(zpAba==='concluidos'){
+    root.innerHTML=`<section class="zp-archive-intro"><div><p class="zp-muted">SEU HISTÓRICO DE CONQUISTAS ✦</p><h2>Projetos concluídos</h2><p class="zp-muted">Tudo o que você já tirou do papel fica guardado aqui. Você pode reabrir um projeto quando quiser.</p></div><span class="zp-archive-total">${concluidos.length} ${concluidos.length===1?'projeto':'projetos'}</span></section>`;
+    lista.innerHTML=concluidos.length?`<div class="zp-archive-grid">${concluidos.slice().sort((a,b)=>(Number(b.concluidoEm)||Number(b.criadaEm)||0)-(Number(a.concluidoEm)||Number(a.criadaEm)||0)).map(p=>{const es=zpOrdenadas(p),feitas=es.filter(e=>e.concluida).length,pct=es.length?Math.round(feitas/es.length*100):100;const quando=zpDataConclusao(p);return `<article class="zp-archive-card"><div class="zp-archive-card-top"><span class="zp-archive-symbol">✓</span><span class="zp-archive-status">Concluído</span></div><h3>${zpEsc(p.nome)}</h3><p class="zp-muted">${quando==='Concluído'?quando:'Finalizado em '+quando}</p><div class="zp-archive-progress"><span style="width:${pct}%"></span></div><div class="zp-archive-meta"><span>${feitas}/${es.length} etapas</span><strong>${pct}%</strong></div><button type="button" class="zp-reopen" data-zp-reopen="${zpEsc(p.id)}">↶ Reabrir projeto</button></article>`;}).join('')}</div>`:'<div class="zp-archive-empty"><span>✧</span><strong>Nenhum projeto concluído ainda</strong><p>Quando finalizar um projeto, ele ficará guardado nesta área.</p></div>';
+    return;
+  }
+  if(!ativos.length){root.innerHTML=`<section class="zp-empty-active"><span class="zp-empty-orbit">✦</span><p class="zp-muted">UM NOVO COMEÇO</p><h2>Nenhum projeto em andamento.</h2><p class="zp-muted">Seus projetos finalizados ficam organizados em Concluídos. Você também pode começar algo novo por aqui.</p><div><button type="button" class="zp-action" data-zp-newproject>＋ Criar projeto</button><button type="button" class="zp-secondary-action" data-zp-tab="concluidos">Ver concluídos (${concluidos.length})</button></div></section>`;lista.innerHTML='';return;}
+  if(!ativos.some(p=>p.id===zpSelecionado))zpSelecionado=ativos[0].id;
+  const p=ativos.find(x=>x.id===zpSelecionado)||ativos[0];
+  const es=zpOrdenadas(p),feitas=es.filter(e=>e.concluida).length,proxima=es.find(e=>!e.concluida),pct=es.length?Math.round(feitas/es.length*100):0;
+  const selector=zpSelecionarHTML(p);
+  if(zpAba==='estudos'){lista.innerHTML='';root.innerHTML=zpEstudosTela(p);return;}
+  if(zpAba==='etapas'){root.innerHTML=`${selector}<p class="zp-muted">Arraste pelo símbolo ⠿ para reorganizar. No celular, você também pode usar as setas. A ordem é salva automaticamente.</p>`;renderProjetosLegado();return;}
+  lista.innerHTML='';
+  if(zpAba==='visao'){
+    root.innerHTML=`${selector}<section class="zp-hero" aria-label="Progresso do projeto"><p class="zp-muted">SEU UNIVERSO DE PROJETOS ✦</p><div class="zp-hero-title-row"><div><h2>${zpEsc(p.nome)}</h2><p class="zp-muted">Grandes ideias, pequenos passos.</p></div><button type="button" class="zp-finish-action" data-zp-finish="${zpEsc(p.id)}">✓ Finalizar projeto</button></div><div class="zp-statrow"><div class="zp-stat"><strong>${pct}%</strong>progresso</div><div class="zp-stat"><strong>${feitas}/${es.length}</strong>etapas</div><div class="zp-stat"><strong>${Math.round((p.focoMinutos||0))}</strong>min de foco</div></div><div class="barra" role="progressbar" aria-label="Progresso do projeto" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><span style="width:${pct}%"></span></div><p class="zp-muted" style="margin:14px 0 4px">Sua constelação de progresso</p>${zpConstelacao(es)}<div class="zp-missao"><div class="zp-missao-main"><strong>${proxima?'Próxima pequena missão':'Etapas em dia'}</strong><p class="zp-muted">${proxima?zpEsc(proxima.titulo):es.length?'Todas as etapas cadastradas foram concluídas.':'Adicione uma etapa na aba Etapas e missões.'}</p></div>${proxima?`<button type="button" class="zp-action" data-zp-missao="${zpEsc(proxima.id)}">Concluir</button>`:''}</div><div class="zp-hero-actions"><button class="zp-action" type="button" data-zp-ir="foco">Iniciar sessão de foco →</button><button type="button" class="zp-secondary-action" data-zp-ir="etapas">Ver etapas</button></div></section>`;
+  }else{
+    root.innerHTML=`${selector}<section class="zp-timer" aria-label="Temporizador de foco"><p class="zp-muted">SESSÃO DE FOCO · ${zpEsc(p.nome)}</p><div class="zp-clock" id="zp-clock" role="timer" aria-label="Tempo restante">25:00</div><div class="zp-times">${[15,25,45].map(n=>`<button type="button" data-zp-min="${n}" class="${zpMin===n?'sel':''}" ${zpRodando?'disabled':''}>${n} min</button>`).join('')}</div><div class="zp-timer-actions"><button class="primary" type="button" id="zp-toggle">${zpRodando?'Pausar':zpRestante<zpMin*60?'Continuar':'Iniciar'}</button><button type="button" id="zp-reset">Reiniciar</button></div><p class="zp-muted" style="margin-top:12px" id="zp-info">Ao terminar, os minutos serão registrados neste projeto. Você pode parar ou pausar sem penalização.</p></section>`;
+    zpAtualizaRelogio();
+  }
 }
+
 
 
 /* ZAIA V30 — Estudos: caderno imersivo, editor amplo e mapa conectável */
@@ -2499,24 +2570,30 @@ const ze27Id=()=>('s'+Date.now().toString(36)+Math.random().toString(36).slice(2
 const ze27Get=()=>ze27Saved.find(x=>x.id===ze27Selected)||null;
 const ze27Project=id=>projetos.find(p=>p.id===id);
 const ze27ProjectName=id=>ze27Project(id)?.nome||'Projeto não encontrado';
-function ze27Render(){
- const root=el('ze27-root');if(!root)return;
- const all=ze27Saved;
- const filtered=all.filter(x=>(ze27Filter==='todos'||(ze27Filter==='avulsos'?!x.projetoId:x.projetoId===ze27Filter))&&(!ze27Search||[x.titulo,x.materia,x.notas].join(' ').toLowerCase().includes(ze27Search.toLowerCase())));
- const selected=ze27Get();
- const study=selected&&filtered.some(x=>x.id===selected.id)?selected:null;
- const pending=projetos.flatMap(p=>(p.estudos||[]).filter(x=>!all.some(y=>y.importadoDe===p.id+':'+x.id)).map(x=>({p,x})));
- const reviews=all.reduce((n,x)=>n+(x.cartoes||[]).length,0),nodes=all.reduce((n,x)=>n+(x.nos||[]).length,0);
- if(study){
-  root.innerHTML=`<div class="ze27-detail-page"><button type="button" class="ze27-back" data-ze27="voltar"><span aria-hidden="true">←</span> Biblioteca de estudos</button>${ze27Detail(study)}</div>`;
-  return;
- }
- if(ze27Selected&&!filtered.some(x=>x.id===ze27Selected))ze27Selected=null;
- root.innerHTML=`<div class="ze27-home-hero"><div><p class="ze27-kicker">ZAIA ✦ CADERNO CÓSMICO</p><h2>Seu espaço de estudos</h2><p class="ze27-muted">Uma biblioteca para guardar ideias, aprofundar conhecimentos e acompanhar sua evolução.</p></div><button class="ze27-primary" data-ze27="novo">＋ Novo estudo</button></div>
- <div class="ze30-stats"><div class="ze30-stat"><strong>${all.length}</strong><span>Estudos salvos</span></div><div class="ze30-stat"><strong>${nodes}</strong><span>Conceitos nos mapas</span></div><div class="ze30-stat"><strong>${reviews}</strong><span>Perguntas de revisão</span></div></div>
- <section class="ze27-pane ze27-library-home"><div class="ze27-toolbar"><div><h3>Minha biblioteca</h3><p class="ze27-muted" style="margin:4px 0 0">Escolha um estudo para abrir seu caderno e suas ferramentas.</p></div><div class="ze27-library-tools"><input aria-label="Buscar estudos" id="ze27-search" placeholder="Buscar matéria ou tema…" value="${ze27Esc(ze27Search)}"/><select id="ze27-filter" aria-label="Filtrar estudos"><option value="todos" ${ze27Filter==='todos'?'selected':''}>Todos os estudos</option><option value="avulsos" ${ze27Filter==='avulsos'?'selected':''}>Avulsos</option>${projetos.map(p=>`<option value="${ze27Esc(p.id)}" ${ze27Filter===p.id?'selected':''}>${ze27Esc(p.nome)}</option>`).join('')}</select></div></div>
- <div class="ze27-list">${filtered.map(x=>`<button class="ze27-study" data-ze27="selecionar" data-id="${ze27Esc(x.id)}"><span class="ze27-tag">${x.projetoId?'↗ '+ze27Esc(ze27ProjectName(x.projetoId)):'✦ Estudo avulso'}</span><strong>${ze27Esc(x.titulo)}</strong><span class="ze27-muted">${ze27Esc(x.materia||'Sem matéria definida')}</span><span class="ze27-card-foot">${x.prova?'Prova · '+ze27Esc(x.prova):'Sem prova agendada'}<b>Abrir estudo →</b></span></button>`).join('')||'<div class="ze30-empty" style="grid-column:1/-1">Sua biblioteca está pronta para começar.<br>Crie um estudo para reunir anotações, mapas mentais e perguntas de revisão.</div>'}</div></section>
- ${pending.length?`<details class="ze27-pane ze27-import-old"><summary>Importar estudos da versão anterior (${pending.length})</summary><p class="ze27-muted">Importa uma cópia para a biblioteca independente, sem apagar o original do projeto.</p>${pending.map(({p,x})=>`<div class="ze27-toolbar"><span>${ze27Esc(x.titulo)} · ${ze27Esc(p.nome)}</span><button class="ze27-secondary" data-ze27="importar" data-proj="${ze27Esc(p.id)}" data-antigo="${ze27Esc(x.id)}">Importar</button></div>`).join('')}</details>`:''}`;
+function ze27Render(){const root=el('ze27-root');if(!root)return;
+  const all=ze27Saved;
+  const filtered=all.filter(x=>(ze27Filter==='todos'||(ze27Filter==='avulsos'?!x.projetoId:x.projetoId===ze27Filter))&&(!ze27Search||[x.titulo,x.materia,x.notas].join(' ').toLowerCase().includes(ze27Search.toLowerCase())));
+  const study=ze27Selected?all.find(x=>x.id===ze27Selected)||null:null;
+  const pending=projetos.flatMap(p=>(p.estudos||[]).filter(x=>!all.some(y=>y.importadoDe===p.id+':'+x.id)).map(x=>({p,x})));
+  const reviews=all.reduce((n,x)=>n+(x.cartoes||[]).length,0),nodes=all.reduce((n,x)=>n+(x.nos||[]).length,0);
+  if(study){
+    root.innerHTML=`<div class="ze27-workspace-nav"><button type="button" class="ze27-back-library" data-ze27="voltar">← Minha biblioteca</button><span>ZAIA <i>✦</i> ESPAÇO DE ESTUDO</span></div>${ze27Detail(study)}`;
+    return;
+  }
+  root.innerHTML=`<div class="ze27-home">
+    <section class="ze27-home-hero">
+      <div class="ze27-home-orbit" aria-hidden="true"><span>✦</span><i></i></div>
+      <div class="ze27-home-copy"><p class="ze27-kicker">ZAIA · BIBLIOTECA DE APRENDIZADO</p><h2>Seu universo de estudos.</h2><p class="ze27-muted">Um espaço para organizar o que você aprende, conectar ideias e acompanhar sua evolução.</p>
+      <button class="ze27-primary ze27-new-study" data-ze27="novo">＋ Criar novo estudo</button></div>
+      <div class="ze27-home-stats"><div><strong>${all.length}</strong><span>estudos</span></div><div><strong>${nodes}</strong><span>conceitos</span></div><div><strong>${reviews}</strong><span>perguntas de revisão</span></div></div>
+    </section>
+    <section class="ze27-library-panel">
+      <div class="ze27-library-heading"><div><p class="ze27-kicker">SEU ACERVO</p><h3>Minha biblioteca</h3><p class="ze27-muted">Escolha um estudo para entrar no seu espaço de trabalho.</p></div><span class="ze27-library-count">${filtered.length} ${filtered.length===1?'estudo':'estudos'}</span></div>
+      <div class="ze27-toolbar ze27-library-toolbar"><input aria-label="Buscar estudos" id="ze27-search" placeholder="Buscar por matéria ou tema…" value="${ze27Esc(ze27Search)}"/><select id="ze27-filter" aria-label="Filtrar estudos"><option value="todos" ${ze27Filter==='todos'?'selected':''}>Todos os estudos</option><option value="avulsos" ${ze27Filter==='avulsos'?'selected':''}>Estudos avulsos</option>${projetos.map(p=>`<option value="${ze27Esc(p.id)}" ${ze27Filter===p.id?'selected':''}>${ze27Esc(p.nome)}</option>`).join('')}</select></div>
+      <div class="ze27-list">${filtered.map((x,i)=>`<button class="ze27-study ze27-library-card" data-ze27="selecionar" data-id="${ze27Esc(x.id)}"><span class="ze27-card-symbol" aria-hidden="true">${i%3===0?'✧':i%3===1?'◈':'✦'}</span><span class="ze27-tag">${x.projetoId?'↗ '+ze27Esc(ze27ProjectName(x.projetoId)):'✦ Estudo avulso'}</span><strong>${ze27Esc(x.titulo)}</strong><span class="ze27-muted">${ze27Esc(x.materia||'Matéria não definida')}</span><span class="ze27-card-foot">${(x.nos||[]).length} conceitos <span>·</span> ${(x.cartoes||[]).length} perguntas <b>Entrar no estudo →</b></span></button>`).join('')||`<div class="ze27-library-empty"><span>✧</span><strong>${all.length?'Nenhum estudo encontrado':'Sua biblioteca começa aqui'}</strong><p>${all.length?'Tente outro termo ou ajuste o filtro.':'Crie seu primeiro estudo para reunir anotações, mapas mentais e revisões em um só lugar.'}</p>${all.length?'':'<button type="button" class="ze27-secondary" data-ze27="novo">Criar primeiro estudo</button>'}</div>`}</div>
+    </section>
+    ${pending.length?`<details class="ze27-pane ze27-import-panel"><summary>Materiais de projetos anteriores <span>${pending.length} disponíveis</span></summary><p class="ze27-muted">Importe uma cópia para a biblioteca sem apagar o conteúdo original do projeto.</p>${pending.map(({p,x})=>`<div class="ze27-import-row"><span><strong>${ze27Esc(x.titulo)}</strong><small>${ze27Esc(p.nome)}</small></span><button class="ze27-secondary" data-ze27="importar" data-proj="${ze27Esc(p.id)}" data-antigo="${ze27Esc(x.id)}">Importar</button></div>`).join('')}</details>`:''}
+  </div>`;
 }
 function ze27Nodes(study){const a=Array.isArray(study.nos)?study.nos:[];return [{id:'root',texto:study.titulo,nota:study.notas||'',pai:null,...(study.mapaRoot||{})},...a];}
 function ze27Map(study){
@@ -2594,7 +2671,7 @@ function ze27EditCard(s,index){const old=(s.cartoes||[])[index];ze27Modal(old?'E
 function ze27SelectConnectionNode(s,id){if(!ze27ConnectFrom){ze27ConnectFrom=id;ze27Render();return;}if(ze27ConnectFrom===id){ze27ConnectFrom=null;ze27Render();return;}const from=ze27ConnectFrom,to=id;const duplicate=(s.conexoes||[]).some(c=>c.de===from&&c.para===to)||((s.nos||[]).some(n=>n.id===to&&n.pai===from));if(duplicate){ze27ConnectFrom=null;ze27ConnectMode=false;ze27Render();return;}ze27Change(a=>a.map(x=>x.id===s.id?{...x,conexoes:[...(x.conexoes||[]),{id:ze27Id(),de:from,para:to}]}:x)).then(ok=>{if(ok){ze27ConnectFrom=null;ze27ConnectMode=false;ze27Render();}});}
 function ze27UpdateLines(surface){const s=ze27Get();if(!s||!surface)return;const map={};surface.querySelectorAll('.ze27-node').forEach(n=>map[n.dataset.node]={x:parseFloat(n.style.left),y:parseFloat(n.style.top)});surface.querySelectorAll('path[data-from][data-to]').forEach(p=>{const a=map[p.dataset.from],b=map[p.dataset.to];if(!a||!b)return;const dx=b.x-a.x,sign=dx>=0?1:-1,sx=a.x+sign*75,ex=b.x-sign*75;p.setAttribute('d',`M ${sx} ${a.y} C ${sx+sign*Math.max(45,Math.abs(dx)*.42)} ${a.y}, ${ex-sign*Math.max(45,Math.abs(dx)*.42)} ${b.y}, ${ex} ${b.y}`);});}
 el('ze27-root').addEventListener('click',async e=>{const b=e.target.closest('button[data-ze27]');if(!b)return;const s=ze27Get(),a=b.dataset.ze27;
- if(a==='novo'){ze27Edit(null);return;}if(a==='selecionar'){ze27Selected=b.dataset.id;ze27Section='resumo';ze27ConnectMode=false;ze27ConnectFrom=null;ze27Render();return;}if(a==='voltar'){ze27Selected=null;ze27Section='resumo';ze27ConnectMode=false;ze27ConnectFrom=null;ze27Render();return;}
+ if(a==='novo'){ze27Edit(null);return;}if(a==='voltar'){ze27Selected=null;ze27Section='resumo';ze27ConnectMode=false;ze27ConnectFrom=null;ze27Render();return;}if(a==='selecionar'){ze27Selected=b.dataset.id;ze27Section='resumo';ze27ConnectMode=false;ze27ConnectFrom=null;ze27Render();return;}
  if(a==='importar'){const p=ze27Project(b.dataset.proj),old=(p?.estudos||[]).find(x=>x.id===b.dataset.antigo);if(!old)return;const id=ze27Id();const next={id,titulo:old.titulo,materia:'',prova:old.prova||'',projetoId:p.id,notas:old.notas||'',nos:(old.ramificacoes||[]).map(x=>({id:x.id||ze27Id(),texto:x.texto,nota:x.nota||'',pai:'root'})),cartoes:old.cartoes||[],conexoes:[],importadoDe:p.id+':'+old.id};const ok=await ze27Change(a=>[...a,next]);if(ok){ze27Selected=id;ze27Section='resumo';ze27Render();}return;}
  if(a==='sec'){ze27Section=b.dataset.sec;ze27ConnectMode=false;ze27ConnectFrom=null;ze27Render();return;}
  if(!s)return;
@@ -2682,6 +2759,19 @@ document.body.addEventListener('click',async ev=>{
  if(b.id==='ze-remover-cartao'){const qs=item.cartoes||[];const i=zeCartao%Math.max(1,qs.length);if(!confirm('Excluir esta pergunta?'))return;await zeAtualizar(a=>a.map(x=>x.id===item.id?{...x,cartoes:x.cartoes.filter((_,j)=>j!==i)}:x));zeCartao=0;zeRevelada=false;return;}
 });
 
+async function zpAlterarStatusProjeto(id,finalizar){
+  const p=projetos.find(x=>x.id===id);if(!p||!user)return;
+  if(finalizar&&zpRodando&&zpProjetoFoco===id){fala('Pause ou finalize a sessão de foco antes de concluir o projeto.');return;}
+  if(finalizar&&!confirm(`Mover “${p.nome}” para a área de Concluídos? Você poderá reabri-lo depois.`))return;
+  try{
+    const concluidoEm=finalizar?Date.now():null;
+    await updateDoc(doc(db,'projetos',id),{concluido:!!finalizar,concluidoEm});
+    p.concluido=!!finalizar;p.concluidoEm=concluidoEm;
+    if(finalizar){if(zpSelecionado===id)zpSelecionado=null;zpAba='visao';}
+    else{zpSelecionado=id;zpAba='visao';}
+    renderProjetos();
+  }catch(err){console.error('Não foi possível atualizar o status do projeto:',err);fala('Não consegui atualizar o projeto. Tente novamente.',true);}
+}
 let zpMin=25,zpRestante=25*60,zpRodando=false,zpFim=0,zpTimer=null,zpProjetoFoco=null;
 function zpTempoStr(s){return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;}
 function zpAtualizaRelogio(){const x=el('zp-clock');if(x)x.textContent=zpTempoStr(Math.max(0,zpRestante));}
@@ -2689,10 +2779,10 @@ function zpPararTimer(){if(zpTimer)clearInterval(zpTimer);zpTimer=null;zpRodando
 async function zpConcluirFoco(){zpPararTimer();const id=zpProjetoFoco;zpProjetoFoco=null;const projeto=projetos.find(p=>p.id===id);if(projeto){try{await updateDoc(doc(db,'projetos',id),{focoMinutos:increment(zpMin)});}catch(e){console.error('Erro ao registrar sessão de foco',e);fala('Não consegui salvar os minutos da sessão de foco. Tente novamente.');}}zpRestante=zpMin*60;renderProjetos();}
 function zpTick(){if(!zpRodando)return;zpRestante=Math.max(0,Math.ceil((zpFim-Date.now())/1000));zpAtualizaRelogio();if(zpRestante===0)zpConcluirFoco();}
 document.body.addEventListener('click',async e=>{const btn=e.target.closest('button');if(!btn)return;
- if(btn.dataset.zpOpen){zpSelecionado=btn.dataset.zpOpen;zpAba='visao';renderProjetos();return;}
- if(btn.dataset.zpFinish){await zpDefinirConcluido(btn.dataset.zpFinish,true);return;}
- if(btn.dataset.zpReopen){await zpDefinirConcluido(btn.dataset.zpReopen,false);return;}
  if(btn.dataset.zpTab){zpAba=btn.dataset.zpTab;renderProjetos();return;}
+  if(btn.dataset.zpFinish){await zpAlterarStatusProjeto(btn.dataset.zpFinish,true);return;}
+  if(btn.dataset.zpReopen){await zpAlterarStatusProjeto(btn.dataset.zpReopen,false);return;}
+  if(btn.hasAttribute('data-zp-newproject')){el('btn-novo-proj').click();return;}
  if(btn.dataset.zpIr){zpAba=btn.dataset.zpIr;renderProjetos();return;}
  if(btn.dataset.zpMissao){const etapa=etapas.find(x=>x.id===btn.dataset.zpMissao);if(etapa&&!etapa.concluida)await toggleEtapa(etapa.id);return;}
  if(btn.dataset.zpMin){if(zpRodando)return;zpMin=+btn.dataset.zpMin;zpRestante=zpMin*60;renderProjetos();return;}
@@ -2877,7 +2967,7 @@ let abaAtual='tarefas';
 function irParaAba(name){ if(!ABAS.includes(name))return; abaAtual=name;
   document.querySelectorAll('[data-aba]').forEach(x=>x.classList.toggle('ativa',x.dataset.aba===name));
   ABAS.forEach(a=>el('aba-'+a).classList.toggle('oculto',a!==name));
-  if(name==='estudos')ze27Render();
+  if(name==='estudos'){ze27Selected=null;ze27Section='resumo';ze27ConnectMode=false;ze27ConnectFrom=null;ze27Render();}
   const btn=document.querySelector(`.aba-nav button[data-aba="${name}"]`);
   if(btn)btn.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});
   const c=document.querySelector('.conteudo'); if(c){c.classList.remove('aba-anim');void c.offsetWidth;c.classList.add('aba-anim');} }
