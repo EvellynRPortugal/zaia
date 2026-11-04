@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -934,6 +935,37 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 .zp-steps li{padding:10px 12px;border:1px solid var(--stroke);border-radius:12px;background:var(--card);display:flex;gap:10px;align-items:center}
 .zp-project-selector{background:var(--card);color:var(--txt);border:1px solid var(--stroke);border-radius:12px;padding:11px;width:100%;margin:8px 0 10px}
 @media(min-width:650px){.zp-statrow{grid-template-columns:repeat(3,1fr)}}
+
+/* ZAIA V32.1 — Biblioteca de projetos: visão panorâmica + cartões acionáveis */
+.zp-library-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin:5px 0 17px}
+.zp-library-head h2{font:800 clamp(24px,3vw,31px)/1.2 var(--fonte-display);color:#fff5e8;margin:3px 0 5px;letter-spacing:-.5px}
+.zp-library-head p{max-width:560px;line-height:1.55;margin:0}
+.zp-library-count{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 17px}
+.zp-library-count span{padding:8px 11px;border:1px solid rgba(181,160,232,.16);border-radius:12px;background:#251a35;color:#c9bddb;font-size:11px}
+.zp-library-count strong{color:#f6e8ce;font-size:14px;margin-right:4px}
+.zp-library-tools{display:flex;gap:9px;margin:0 0 14px}
+.zp-library-tools input,.zp-library-tools select{min-height:43px;border:1px solid rgba(181,160,232,.2);border-radius:12px;background:#21172f;color:#f7efff;padding:10px 12px;min-width:0}
+.zp-library-tools input{flex:1}
+.zp-library-tools select{width:min(210px,42%)}
+.zp-library-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:13px}
+.zp-library-card{position:relative;display:flex;flex-direction:column;align-items:stretch;text-align:left;min-width:0;min-height:205px;padding:17px;border:1px solid rgba(181,160,232,.19);border-radius:18px;background:linear-gradient(145deg,#2a203a,#21172f);color:#f7efff;transition:transform .16s,border-color .16s,background .16s;cursor:pointer}
+.zp-library-card:hover{transform:translateY(-2px);border-color:rgba(221,187,112,.48);background:linear-gradient(145deg,#332545,#241a34)}
+.zp-library-card:focus-visible{outline:2px solid #ddbB70;outline-offset:3px}
+.zp-library-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:13px}
+.zp-library-symbol{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:#3a2a4d;color:#e8dcc5;font-size:17px}
+.zp-library-state{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#c9bddb}
+.zp-library-card h3{font:800 17px/1.3 var(--fonte-display);color:#fff5e8;margin:0 0 5px;overflow-wrap:anywhere}
+.zp-library-next{font-size:12px;line-height:1.45;color:#bfaeca;min-height:35px;margin:0 0 12px}
+.zp-library-progress{height:6px;border-radius:99px;background:#44334f;overflow:hidden;margin-top:auto}
+.zp-library-progress span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8c75b9,#ddbB70)}
+.zp-library-foot{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-top:8px;color:#bfaeca;font-size:11px}
+.zp-library-foot strong{color:#e8dcc5;font-size:12px}
+.zp-library-arrow{position:absolute;right:16px;top:57px;color:#bda9d6;font-size:18px}
+.zp-library-empty{padding:34px 20px;text-align:center;border:1px dashed rgba(181,160,232,.25);border-radius:18px;color:#c9bddb;line-height:1.6}
+.zp-library-empty strong{display:block;color:#fff5e8;margin-bottom:5px}
+.zp-library-empty button{margin-top:12px}
+@media(max-width:560px){.zp-library-head{align-items:flex-start;flex-direction:column}.zp-library-tools{flex-direction:column}.zp-library-tools select{width:100%}.zp-library-card{min-height:190px}}
+
 /* V20 — Histórico editável, com foco visível e sem efeitos estimulantes */
 .zaia-hab-dia-editavel{cursor:pointer;font-family:inherit;transition:border-color .15s ease,background-color .15s ease}
 .zaia-hab-dia-editavel:hover{border-color:#c3aaff;background:#4a386e}
@@ -1427,12 +1459,12 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
 
     <section id="aba-projetos" class="oculto">
       <button id="btn-novo-proj" class="mini-btn" style="margin-bottom:14px">+ Novo projeto</button>
-      <div class="zp-tabs" role="group" aria-label="Visualização dos projetos">
-        <button type="button" class="on" data-zp-tab="visao" aria-pressed="true">Visão geral</button>
+      <div class="zp-tabs" role="group" aria-label="Áreas de projetos">
+        <button type="button" class="on" data-zp-tab="biblioteca" aria-pressed="true">Meus projetos</button>
+        <button type="button" data-zp-tab="visao" aria-pressed="false">Visão geral</button>
         <button type="button" data-zp-tab="etapas" aria-pressed="false">Etapas e missões</button>
         <button type="button" data-zp-tab="foco" aria-pressed="false">Modo Foco</button>
         <button type="button" data-zp-tab="concluidos" aria-pressed="false">Concluídos</button>
-
       </div>
       <div id="zp-dashboard"></div>
       <div id="lista-projetos"></div>
@@ -2526,19 +2558,34 @@ function renderProjetosLegado(){ if(!projetos.length){el('lista-projetos').inner
     </div>`; }).join(''); }
 
 /* V17: cada estrela é uma etapa existente no Firebase, sem criar documentos extras. */
-let zpAba='visao', zpSelecionado=null;
+let zpAba='biblioteca', zpSelecionado=null, zpBusca='', zpFiltro='todos';
 const zpEsc=s=>esc(s);
 function zpOrdenadas(p){return etapas.filter(e=>e.projetoId===p.id).sort((a,b)=>(Number.isFinite(Number(a.ordem))?Number(a.ordem):Infinity)-(Number.isFinite(Number(b.ordem))?Number(b.ordem):Infinity)||(a.prazo||9e15)-(b.prazo||9e15)||a.id.localeCompare(b.id));}
 function zpProjeto(){return projetos.find(p=>p.id===zpSelecionado&&!p.concluido)||projetos.find(p=>!p.concluido)||null;}
 function zpStatus(){const p=zpProjeto();if(!p)return null;const es=zpOrdenadas(p);return {p,es,feitas:es.filter(e=>e.concluida).length,proxima:es.find(e=>!e.concluida)};}
 function zpDataConclusao(p){if(!p?.concluidoEm)return 'Concluído';const d=typeof p.concluidoEm?.toDate==='function'?p.concluidoEm.toDate():new Date(p.concluidoEm);return Number.isNaN(d.getTime())?'Concluído':d.toLocaleDateString('pt-BR');}
-function zpSelecionarHTML(p){return `<label class="zp-muted" for="zp-projeto">Projeto selecionado</label><select id="zp-projeto" class="zp-project-selector" aria-label="Escolher projeto">${projetos.map(x=>`<option value="${zpEsc(x.id)}" ${x.id===p.id?'selected':''}>${zpEsc(x.nome)}</option>`).join('')}</select>`;}
+function zpSelecionarHTML(p){return `<label class="zp-muted" for="zp-projeto">Projeto selecionado</label><select id="zp-projeto" class="zp-project-selector" aria-label="Escolher projeto">${projetos.filter(x=>!x.concluido).map(x=>`<option value="${zpEsc(x.id)}" ${x.id===p.id?'selected':''}>${zpEsc(x.nome)}</option>`).join('')}</select>`;}
 function zpConstelacao(es){if(!es.length)return '<p class="zp-muted">Crie sua primeira etapa em “Etapas e missões” para iniciar a constelação.</p>';
  return `<div class="zp-const" role="group" aria-label="Constelação das etapas do projeto">${es.slice(0,16).map((e,i)=>`${i?'<span class="zp-link" aria-hidden="true"></span>':''}<button type="button" class="zp-star ${e.concluida?'done':!es.slice(0,i).some(x=>!x.concluida)?'next':''}" data-editetapa="${zpEsc(e.id)}" aria-label="${zpEsc(e.titulo)}, ${e.concluida?'concluída':'pendente'}"><span aria-hidden="true">${e.concluida?'✓':'✦'}</span><span>${i+1}ª etapa</span></button>`).join('')}</div>${es.length>16?'<p class="zp-muted">Mostrando as primeiras 16 etapas. Todas permanecem acessíveis em Etapas e missões.</p>':''}`;
 }
 function renderProjetos(){const root=el('zp-dashboard'),lista=el('lista-projetos');if(!root||!lista)return;
   document.querySelectorAll('[data-zp-tab]').forEach(b=>{const ativo=b.dataset.zpTab===zpAba;b.classList.toggle('on',ativo);b.setAttribute('aria-pressed',String(ativo));});
   const ativos=projetos.filter(p=>!p.concluido),concluidos=projetos.filter(p=>!!p.concluido);
+  if(zpAba==='biblioteca'){
+    const filtrados=ativos.filter(p=>{
+      const nome=(p.nome||'').toLocaleLowerCase('pt-BR');
+      const bateBusca=!zpBusca||nome.includes(zpBusca.toLocaleLowerCase('pt-BR'));
+      const es=zpOrdenadas(p),feitas=es.filter(e=>e.concluida).length,pct=es.length?Math.round(feitas/es.length*100):0;
+      const status=zpFiltro==='todos'||(zpFiltro==='iniciados'&&pct>0)||(zpFiltro==='nao-iniciados'&&pct===0)||(zpFiltro==='atencao'&&es.some(e=>!e.concluida&&venceu(e.prazo)));
+      return bateBusca&&status;
+    });
+    const etapasAbertas=ativos.reduce((n,p)=>n+zpOrdenadas(p).filter(e=>!e.concluida).length,0);
+    root.innerHTML=`<section class="zp-library-head"><div><p class="zp-muted">SEU ESPAÇO DE REALIZAÇÃO ✦</p><h2>Meus projetos</h2><p class="zp-muted">Cada projeto é um universo. Escolha um para continuar de onde parou.</p></div></section>
+      <div class="zp-library-count"><span><strong>${ativos.length}</strong> ativos</span><span><strong>${etapasAbertas}</strong> missões abertas</span><span><strong>${concluidos.length}</strong> concluídos</span></div>
+      <div class="zp-library-tools"><input id="zp-busca" type="search" placeholder="Buscar projeto pelo nome…" aria-label="Buscar projeto" value="${zpEsc(zpBusca)}"><select id="zp-filtro" aria-label="Filtrar projetos"><option value="todos" ${zpFiltro==='todos'?'selected':''}>Todos os ativos</option><option value="iniciados" ${zpFiltro==='iniciados'?'selected':''}>Já iniciados</option><option value="nao-iniciados" ${zpFiltro==='nao-iniciados'?'selected':''}>Ainda não iniciados</option><option value="atencao" ${zpFiltro==='atencao'?'selected':''}>Com etapas atrasadas</option></select></div>
+      ${filtrados.length?`<div class="zp-library-grid">${filtrados.map(p=>{const es=zpOrdenadas(p),feitas=es.filter(e=>e.concluida).length,pct=es.length?Math.round(feitas/es.length*100):0,proxima=es.find(e=>!e.concluida);const prazo=p.dataFim?fmtPrazo(p.dataFim):'';const atrasado=!!(p.dataFim&&venceu(p.dataFim));const detalhe=proxima?'Próxima missão: '+proxima.titulo:(es.length?'Todas as missões concluídas':'Adicione a primeira missão');return `<button type="button" class="zp-library-card" data-zp-open="${zpEsc(p.id)}"><span class="zp-library-card-top"><span class="zp-library-symbol">✧</span><span class="zp-library-state">${atrasado?'Prazo vencido':pct===0?'Não iniciado':pct===100?'Etapas completas':'Em andamento'}</span></span><h3>${zpEsc(p.nome)}</h3><p class="zp-library-next">${zpEsc(detalhe)}${prazo?' · '+(atrasado?'Entrega passou: ':'Entrega: ')+prazo:''}</p><div class="zp-library-progress"><span style="width:${pct}%"></span></div><span class="zp-library-foot"><span>${feitas}/${es.length} missões concluídas</span><strong>${pct}% <span class="zp-library-arrow">→</span></strong></span></button>`;}).join('')}</div>`:`<div class="zp-library-empty"><strong>${ativos.length?'Nenhum projeto encontrado':'Seu espaço começa aqui'}</strong>${ativos.length?'Tente outro nome ou filtro.':'Crie seu primeiro projeto e transforme uma ideia em pequenas missões.'}<br><button type="button" class="zp-action" data-zp-newproject>＋ Criar projeto</button></div>`}`;
+    lista.innerHTML='';return;
+  }
   if(zpAba==='concluidos'){
     root.innerHTML=`<section class="zp-archive-intro"><div><p class="zp-muted">SEU HISTÓRICO DE CONQUISTAS ✦</p><h2>Projetos concluídos</h2><p class="zp-muted">Tudo o que você já tirou do papel fica guardado aqui. Você pode reabrir um projeto quando quiser.</p></div><span class="zp-archive-total">${concluidos.length} ${concluidos.length===1?'projeto':'projetos'}</span></section>`;
     lista.innerHTML=concluidos.length?`<div class="zp-archive-grid">${concluidos.slice().sort((a,b)=>(Number(b.concluidoEm)||Number(b.criadaEm)||0)-(Number(a.concluidoEm)||Number(a.criadaEm)||0)).map(p=>{const es=zpOrdenadas(p),feitas=es.filter(e=>e.concluida).length,pct=es.length?Math.round(feitas/es.length*100):100;const quando=zpDataConclusao(p);return `<article class="zp-archive-card"><div class="zp-archive-card-top"><span class="zp-archive-symbol">✓</span><span class="zp-archive-status">Concluído</span></div><h3>${zpEsc(p.nome)}</h3><p class="zp-muted">${quando==='Concluído'?quando:'Finalizado em '+quando}</p><div class="zp-archive-progress"><span style="width:${pct}%"></span></div><div class="zp-archive-meta"><span>${feitas}/${es.length} etapas</span><strong>${pct}%</strong></div><button type="button" class="zp-reopen" data-zp-reopen="${zpEsc(p.id)}">↶ Reabrir projeto</button></article>`;}).join('')}</div>`:'<div class="zp-archive-empty"><span>✧</span><strong>Nenhum projeto concluído ainda</strong><p>Quando finalizar um projeto, ele ficará guardado nesta área.</p></div>';
@@ -2626,7 +2673,7 @@ function ze27Modal(title,fields,onSubmit,{danger=null,wide=true,hint='As altera�
 }
 const ze27Input=(id,label,value='',type='text',extra='')=>`<label>${ze27Esc(label)}<input name="${id}" type="${type}" value="${ze27Esc(value)}" ${extra}/></label>`;
 const ze27Area=(id,label,value='',placeholder='Escreva livremente…')=>`<label>${ze27Esc(label)}<textarea name="${id}" placeholder="${ze27Esc(placeholder)}">${ze27Esc(value)}</textarea></label>`;
-const ze27ProjSelect=id=>`<label>Vincular a projeto (opcional)<select name="projetoId"><option value="">Estudo avulso — sem projeto</option>${projetos.map(p=>`<option value="${ze27Esc(p.id)}" ${p.id===id?'selected':''}>${ze27Esc(p.nome)}</option>`).join('')}</select></label>`;
+const ze27ProjSelect=id=>`<label>Vincular a projeto (opcional)<select name="projetoId"><option value="">Estudo avulso — sem projeto</option>${projetos.filter(p=>!p.concluido||p.id===id).map(p=>`<option value="${ze27Esc(p.id)}" ${p.id===id?'selected':''}>${ze27Esc(p.nome)}${p.concluido?' · concluído':''}</option>`).join('')}</select></label>`;
 // Remove recursivamente qualquer campo undefined — o Firestore não aceita undefined.
 function ze27LimparUndefined(valor){
  if(Array.isArray(valor))return valor.map(ze27LimparUndefined);
@@ -2767,7 +2814,7 @@ async function zpAlterarStatusProjeto(id,finalizar){
     const concluidoEm=finalizar?Date.now():null;
     await updateDoc(doc(db,'projetos',id),{concluido:!!finalizar,concluidoEm});
     p.concluido=!!finalizar;p.concluidoEm=concluidoEm;
-    if(finalizar){if(zpSelecionado===id)zpSelecionado=null;zpAba='visao';}
+    if(finalizar){if(zpSelecionado===id)zpSelecionado=null;zpAba='biblioteca';}
     else{zpSelecionado=id;zpAba='visao';}
     renderProjetos();
   }catch(err){console.error('Não foi possível atualizar o status do projeto:',err);fala('Não consegui atualizar o projeto. Tente novamente.',true);}
@@ -2780,6 +2827,7 @@ async function zpConcluirFoco(){zpPararTimer();const id=zpProjetoFoco;zpProjetoF
 function zpTick(){if(!zpRodando)return;zpRestante=Math.max(0,Math.ceil((zpFim-Date.now())/1000));zpAtualizaRelogio();if(zpRestante===0)zpConcluirFoco();}
 document.body.addEventListener('click',async e=>{const btn=e.target.closest('button');if(!btn)return;
  if(btn.dataset.zpTab){zpAba=btn.dataset.zpTab;renderProjetos();return;}
+ if(btn.dataset.zpOpen){zpSelecionado=btn.dataset.zpOpen;zpAba='visao';renderProjetos();return;}
   if(btn.dataset.zpFinish){await zpAlterarStatusProjeto(btn.dataset.zpFinish,true);return;}
   if(btn.dataset.zpReopen){await zpAlterarStatusProjeto(btn.dataset.zpReopen,false);return;}
   if(btn.hasAttribute('data-zp-newproject')){el('btn-novo-proj').click();return;}
@@ -2789,7 +2837,8 @@ document.body.addEventListener('click',async e=>{const btn=e.target.closest('but
  if(btn.id==='zp-toggle'){if(zpRodando){zpRestante=Math.max(0,Math.ceil((zpFim-Date.now())/1000));zpPararTimer();renderProjetos();}else{const proj=zpProjeto();if(!proj)return;if(zpProjetoFoco&&zpProjetoFoco!==proj.id){zpRestante=zpMin*60;}zpProjetoFoco=proj.id;zpFim=Date.now()+zpRestante*1000;zpRodando=true;zpTimer=setInterval(zpTick,1000);renderProjetos();}return;}
  if(btn.id==='zp-reset'){zpPararTimer();zpProjetoFoco=null;zpRestante=zpMin*60;renderProjetos();return;}
 });
-document.body.addEventListener('change',e=>{if(e.target.id==='zp-projeto'){if(zpRodando){fala('Pause ou finalize a sessão de foco antes de trocar de projeto.');e.target.value=zpSelecionado;return;}zpSelecionado=e.target.value;zpRestante=zpMin*60;renderProjetos();}});
+document.body.addEventListener('input',e=>{if(e.target.id==='zp-busca'){zpBusca=e.target.value;const pos=e.target.selectionStart;renderProjetos();const campo=el('zp-busca');if(campo){campo.focus();campo.setSelectionRange(pos,pos);}}});
+document.body.addEventListener('change',e=>{if(e.target.id==='zp-filtro'){zpFiltro=e.target.value;renderProjetos();return;}if(e.target.id==='zp-projeto'){if(zpRodando){fala('Pause ou finalize a sessão de foco antes de trocar de projeto.');e.target.value=zpSelecionado;return;}zpSelecionado=e.target.value;zpRestante=zpMin*60;renderProjetos();}});
 function renderStats(){ const ft=tarefas.filter(t=>t.concluida).length, ab=tarefas.filter(t=>!t.concluida).length;
   const sem=tarefas.filter(t=>t.concluida&&t.concluidaEm&&t.concluidaEm>Date.now()-7*DIA).length;
   const at=tarefas.filter(t=>!t.concluida&&venceu(t.prazo)).length;
@@ -3150,7 +3199,7 @@ el('p-cancelar').onclick=()=>el('modal-proj').classList.remove('on');
 el('p-salvar').onclick=async()=>{ const nome=el('p-nome').value.trim(); if(!nome)return;
   const dataFim=el('p-prazo').value?new Date(el('p-prazo').value+'T12:00').getTime():null;
   await addDoc(collection(db,'projetos'),{nome,dataFim,userId:user.uid,concluido:false,criadaEm:Date.now()});
-  el('modal-proj').classList.remove('on'); };
+  el('modal-proj').classList.remove('on');zpAba='biblioteca';zpBusca='';zpFiltro='todos'; };
 async function addEtapaUI(pid){ const nomeI=document.querySelector(`[data-etapa-nome="${pid}"]`),prazoI=document.querySelector(`[data-etapa-prazo="${pid}"]`),horaI=document.querySelector(`[data-etapa-hora="${pid}"]`);
   const nome=nomeI.value.trim(); if(!nome)return;
   const prazo=prazoI.value?new Date(prazoI.value+'T'+(horaI.value||'12:00')).getTime():null;
