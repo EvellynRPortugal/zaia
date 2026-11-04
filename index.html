@@ -389,10 +389,10 @@
   .midia-corpo{flex:1;min-width:0}
   .midia-tit{font-size:15px;font-weight:600}
   .midia-meta{font-size:12.5px;color:var(--txt-dim);margin-top:3px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-  .midia-estrelas{color:var(--laranja-claro);font-size:13px;letter-spacing:1px;margin-top:4px}
+  .midia-estrelas{color:#E7C66F;font-size:13px;letter-spacing:1px;margin-top:4px;text-shadow:0 1px 8px rgba(231,198,111,.16)}
   .estrelas{display:flex;gap:6px}
   .estrelas button{font-size:24px;color:#4a3b70;line-height:1;background:none;transition:.1s}
-  .estrelas button.on{color:var(--laranja-claro)}
+  .estrelas button.on{color:#E7C66F;text-shadow:0 1px 9px rgba(231,198,111,.22)}
   /* grade de pôsteres */
   .poster-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px}
   .poster-card{position:relative;text-align:left;background:none;display:flex;flex-direction:column;gap:6px}
@@ -1083,6 +1083,112 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
  .ze27-dialog>.ze27-detail-head{padding:18px 17px 14px;border-radius:0}.ze27-dialog form{padding:15px 17px 20px}.ze27-dialog textarea{min-height:36vh}.ze27-dialog-actions{bottom:-20px;gap:7px}.ze27-dialog-actions button{flex:1}
 }
 
+
+
+/* ZAIA V32 — acabamento editorial: biblioteca, projetos e formulários */
+/* Avaliações: dourado suave, sem brilho excessivo. */
+.estrelas button{color:#665b70;min-width:30px;min-height:34px;border-radius:8px}
+.estrelas button:hover{color:#d8b95f;transform:translateY(-1px)}
+.estrelas button.on{color:#E7C66F;text-shadow:0 1px 9px rgba(231,198,111,.22)}
+
+/* Biblioteca de estudos: página inicial separada da página de conteúdo. */
+.ze27-home-hero{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:25px 26px;margin:0 0 14px;border:1px solid #484155;border-radius:22px;background:linear-gradient(118deg,#292638 0%,#242033 58%,#282438 100%);box-shadow:0 12px 32px #08061018}
+.ze27-home-hero h2{font-size:clamp(25px,3vw,32px);letter-spacing:-.55px;color:#f4f0ff;margin:3px 0 6px}
+.ze27-home-hero .ze27-muted{max-width:590px;font-size:13.5px}
+.ze27-library-home{padding:22px}
+.ze27-library-tools{display:flex;gap:8px;flex-wrap:wrap;min-width:min(100%,390px)}
+.ze27-library-tools input,.ze27-library-tools select{flex:1;min-width:150px;background:#1d1a2b;border:1px solid #4b435c;border-radius:12px;color:#f4f0ff;min-height:42px;padding:10px 12px}
+.ze27-card-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:auto;padding-top:10px;border-top:1px solid #484155;color:#c3bbd7;font-size:11px}
+.ze27-card-foot b{color:#d9cdef;font-weight:750;white-space:nowrap}
+.ze27-study{min-height:155px;gap:9px}
+.ze27-study:hover .ze27-card-foot b{color:#f4f0ff}
+.ze27-detail-page{animation:ze27PageIn .2s ease both}
+.ze27-back{display:inline-flex;align-items:center;gap:9px;min-height:42px;margin:0 0 12px;padding:8px 13px;border:1px solid #484155;border-radius:12px;background:#242033;color:#ded8ed;font-size:13px;font-weight:750}
+.ze27-back:hover{background:#302b40;border-color:#766b8c;color:#fff}
+.ze27-back span{font-size:19px;line-height:1}
+.ze27-import-old summary{cursor:pointer;color:#d8cfee;font-weight:750;padding:4px}
+@keyframes ze27PageIn{from{opacity:.55;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* Projetos: uma biblioteca com duas áreas permanentes. */
+.zp-library-intro{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:23px 25px;margin:0 0 20px;border:1px solid #484155;border-radius:22px;background:linear-gradient(118deg,#292638,#242033 65%,#282438)}
+.zp-library-intro h2{font:800 clamp(24px,3vw,30px)/1.2 var(--fonte-display);letter-spacing:-.45px;margin:4px 0 6px;color:#f4f0ff}
+.zp-library-intro>.zp-muted{max-width:560px}
+.zp-library-counts{display:flex;gap:10px;flex-shrink:0}
+.zp-library-counts span{display:flex;flex-direction:column;gap:3px;padding:11px 15px;border:1px solid #484155;border-radius:14px;background:#1e1b2b;color:#c3bbd7;font-size:11px;white-space:nowrap}
+.zp-library-counts strong{font-size:21px;color:#f4f0ff}
+.zp-library-section{margin:20px 0 24px}
+.zp-library-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:11px}
+.zp-library-section-head h3{font-size:17px;color:#f4f0ff;margin:0}
+.zp-library-section-head p{font-size:12px;color:#c3bbd7;margin:4px 0 0}
+.zp-library-section-head>span{display:grid;place-items:center;min-width:30px;height:30px;padding:0 8px;border-radius:10px;background:#302b40;border:1px solid #484155;color:#e8e2f4;font-size:12px;font-weight:800}
+.zp-library-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,255px),1fr));gap:12px}
+.zp-library-card{display:flex;flex-direction:column;min-width:0;padding:16px;border:1px solid #484155;border-radius:18px;background:#242033;box-shadow:0 8px 22px #08061018;transition:transform .16s,border-color .16s,background .16s}
+.zp-library-card:hover{transform:translateY(-2px);border-color:#766b8c;background:#292638}
+.zp-library-card.is-done{background:#211f2b;border-color:#484b4c}
+.zp-library-card-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:9px}
+.zp-library-symbol{display:grid;place-items:center;width:29px;height:29px;border-radius:10px;background:#39334a;color:#c9bde6;font-size:15px;font-weight:800}
+.zp-library-card.is-done .zp-library-symbol{background:#2e403b;color:#b4d8c6}
+.zp-library-status{font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:#c3bbd7;font-weight:800}
+.zp-library-open{display:flex;flex-direction:column;align-items:flex-start;gap:5px;width:100%;min-height:87px;text-align:left;background:transparent;padding:0;color:inherit}
+.zp-library-open strong{font-size:16px;line-height:1.35;color:#f4f0ff;overflow-wrap:anywhere}
+.zp-library-open>span:not(.zp-library-link){font-size:11px;color:#c3bbd7}
+.zp-library-link{display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:7px;color:#d9cdef;font-size:12px;font-weight:750}
+.zp-library-link b{font-size:17px;font-weight:500}
+.zp-library-progress{margin-top:12px}
+.zp-library-progress .barra{height:6px;background:#393447;border-radius:99px;overflow:hidden}
+.zp-library-progress .barra span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#8f83b8,#b5a5e8)}
+.zp-library-card.is-done .zp-library-progress .barra span{background:#8fb7a5}
+.zp-library-progress>div:last-child{display:flex;justify-content:space-between;gap:8px;margin-top:6px;color:#c3bbd7;font-size:11px}
+.zp-library-progress strong{color:#e8e2f4}
+.zp-library-card-actions{display:flex;justify-content:flex-end;margin-top:12px;padding-top:10px;border-top:1px solid #40384f}
+.zp-library-card-actions button{padding:8px 10px;border-radius:10px;background:#302b40;border:1px solid #504660;color:#e4dcef;font-size:11px;font-weight:750}
+.zp-library-card-actions button:hover{border-color:#8b7eaa;background:#39334a}
+.zp-library-card.is-done .zp-library-card-actions button{color:#c4e0d1;border-color:#536c60;background:#26352f}
+.zp-library-completed .zp-library-card{box-shadow:none}
+.zp-library-empty{grid-column:1/-1;padding:20px;border:1px dashed #4b435c;border-radius:15px;color:#c3bbd7;font-size:13px;line-height:1.6;text-align:center;background:#211f2b}
+.zp-tabs button[data-zp-tab="lista"]{display:inline-flex;align-items:center;gap:7px}
+
+/* Modais e formulários: menos brilho, melhor leitura e ações consistentes. */
+.modal-bg{align-items:center;padding:22px;background:rgba(8,7,17,.78);backdrop-filter:blur(10px)}
+.modal{width:min(100%,620px);max-width:620px;max-height:min(90dvh,900px);overflow-y:auto;overscroll-behavior:contain;padding:28px 30px 26px;border:1px solid #51495f;border-radius:23px;background:linear-gradient(145deg,#282438,#211e30 78%);box-shadow:0 28px 85px -35px rgba(0,0,0,.88);scrollbar-color:#625875 transparent}
+.modal::before{height:2px;margin:-28px -30px 22px;background:linear-gradient(90deg,#81789c,#b5a5c8 55%,#d6c39f);opacity:.9}
+.modal h3{font-size:22px;line-height:1.25;color:#f4f0ff;letter-spacing:-.35px;margin:0 45px 20px 0}
+.modal label{display:block;color:#d2ccdf;font-size:12px;font-weight:750;letter-spacing:.025em;margin:15px 0 7px}
+.modal .campo,.modal input:not([type=hidden]):not([type=file]),.modal textarea,.modal select{background:#1a1825;border:1px solid #494257;color:#f4f0ff;border-radius:12px;min-height:45px;padding:11px 13px;font:inherit;font-size:14px;transition:border-color .16s,box-shadow .16s}
+.modal .campo:focus,.modal input:focus,.modal textarea:focus,.modal select:focus{outline:none;border-color:#a99cc6;box-shadow:0 0 0 3px rgba(181,165,232,.13)}
+.modal .campo::placeholder,.modal textarea::placeholder{color:#8f899e}
+.modal textarea.campo{min-height:100px;line-height:1.65}
+.modal .prio-pick{gap:8px}
+.modal .prio-pick button,.modal .dias-pick button{min-height:42px;border-radius:11px;background:#2c2939;border:1px solid #494257;color:#d8d2e3;font-size:12.5px;font-weight:700}
+.modal .prio-pick button.sel,.modal .dias-pick button.sel{background:#39344a;border-color:#a99cc6;color:#fff;box-shadow:inset 0 0 0 1px #a99cc633}
+.modal #m-tipo button.sel{background:#39344a;border-color:#a99cc6;color:#fff}
+.modal .agenda-extra{margin-top:17px;padding:14px 15px 15px;border:1px solid #403b4d;border-radius:15px;background:#211f2d}
+.modal .modal-acoes{position:sticky;bottom:-26px;z-index:2;margin:22px -2px -2px;padding:17px 2px 2px;border-top:1px solid #403b4d;background:linear-gradient(180deg,rgba(33,30,48,.92),#211e30 25%);gap:9px}
+.modal .btn{min-height:45px;border-radius:12px;font-size:13px;font-weight:800;box-shadow:none}
+.modal .btn-primario{background:#756b99;border:1px solid #9388b5;color:#fff}
+.modal .btn-primario:hover{background:#8378a7}
+.modal .btn-sec{background:#302d3b;border:1px solid #504a5f;color:#e7e2ef}
+.modal .btn-sec:hover{background:#3a3647}
+.modal .mini-btn{background:#302d3b;border:1px solid #504a5f;color:#e7e2ef;border-radius:11px}
+.modal .btn-excluir{background:transparent;color:#e4b9c1;border-color:#684b55}
+#modal-tarefa .modal{max-width:650px}
+#modal-tarefa .modal h3:after{content:"Organize com calma. Você pode ajustar os detalhes antes de salvar.";display:block;margin-top:7px;color:#aaa3b8;font:500 12px/1.5 'Nunito',sans-serif;letter-spacing:0}
+#modal-proj .modal,#modal-projedit .modal,#modal-etapa .modal,#modal-subetapa .modal{max-width:590px}
+@media(max-width:620px){
+ .ze27-home-hero,.zp-library-intro{align-items:flex-start;flex-direction:column;padding:19px}
+ .ze27-home-hero .ze27-primary{width:100%}
+ .ze27-library-home{padding:15px}
+ .ze27-library-tools{width:100%;min-width:0}
+ .ze27-library-tools input,.ze27-library-tools select{min-width:0;width:100%}
+ .zp-library-counts{width:100%}.zp-library-counts span{flex:1}
+ .zp-library-grid{grid-template-columns:1fr}
+ .modal-bg{align-items:flex-end;padding:0}
+ .modal{width:100%;max-width:none;max-height:93dvh;border-radius:23px 23px 0 0;padding:25px 19px calc(20px + env(safe-area-inset-bottom));border-bottom:0}
+ .modal::before{margin:-25px -19px 20px}
+ .modal .modal-acoes{bottom:-20px}
+}
+@media(prefers-reduced-motion:reduce){.ze27-detail-page,.zp-library-card{animation:none!important;transition:none!important;transform:none!important}}
+
 </style>
 </head>
 <body>
@@ -1238,10 +1344,10 @@ body.calmo .modal,body.calmo .chat,body.calmo .tarefa,body.calmo .fab{animation:
     <section id="aba-projetos" class="oculto">
       <button id="btn-novo-proj" class="mini-btn" style="margin-bottom:14px">+ Novo projeto</button>
       <div class="zp-tabs" role="group" aria-label="Visualização dos projetos">
-        <button type="button" class="on" data-zp-tab="visao" aria-pressed="true">Visão geral</button>
+        <button type="button" class="on" data-zp-tab="lista" aria-pressed="true">Meus projetos</button>
+        <button type="button" data-zp-tab="visao" aria-pressed="false">Visão geral</button>
         <button type="button" data-zp-tab="etapas" aria-pressed="false">Etapas e missões</button>
         <button type="button" data-zp-tab="foco" aria-pressed="false">Modo Foco</button>
-
       </div>
       <div id="zp-dashboard"></div>
       <div id="lista-projetos"></div>
@@ -2335,19 +2441,43 @@ function renderProjetosLegado(){ if(!projetos.length){el('lista-projetos').inner
     </div>`; }).join(''); }
 
 /* V17: cada estrela é uma etapa existente no Firebase, sem criar documentos extras. */
-let zpAba='visao', zpSelecionado=null;
+let zpAba='lista', zpSelecionado=null;
 const zpEsc=s=>esc(s);
 function zpOrdenadas(p){return etapas.filter(e=>e.projetoId===p.id).sort((a,b)=>(Number.isFinite(Number(a.ordem))?Number(a.ordem):Infinity)-(Number.isFinite(Number(b.ordem))?Number(b.ordem):Infinity)||(a.prazo||9e15)-(b.prazo||9e15)||a.id.localeCompare(b.id));}
 function zpProjeto(){return projetos.find(p=>p.id===zpSelecionado)||projetos[0]||null;}
 function zpStatus(){const p=zpProjeto();if(!p)return null;const es=zpOrdenadas(p);return {p,es,feitas:es.filter(e=>e.concluida).length,proxima:es.find(e=>!e.concluida)};}
 function zpSelecionarHTML(p){return `<label class="zp-muted" for="zp-projeto">Projeto selecionado</label><select id="zp-projeto" class="zp-project-selector" aria-label="Escolher projeto">${projetos.map(x=>`<option value="${zpEsc(x.id)}" ${x.id===p.id?'selected':''}>${zpEsc(x.nome)}</option>`).join('')}</select>`;}
+function zpRenderListaProjetos(){
+ const ativos=projetos.filter(p=>!p.concluido).sort((a,b)=>(Number(b.criadaEm)||0)-(Number(a.criadaEm)||0));
+ const finalizados=projetos.filter(p=>!!p.concluido).sort((a,b)=>(Number(b.concluidoEm)||Number(b.criadaEm)||0)-(Number(a.concluidoEm)||Number(a.criadaEm)||0));
+ const card=p=>{const es=zpOrdenadas(p),feitas=es.filter(e=>e.concluida).length,pct=es.length?Math.round(feitas/es.length*100):0;
+  const pronto=es.length>0&&feitas===es.length;
+  return `<article class="zp-library-card ${p.concluido?'is-done':''}">
+   <div class="zp-library-card-top"><span class="zp-library-symbol">${p.concluido?'✓':'✦'}</span><span class="zp-library-status">${p.concluido?'Finalizado':pronto?'Etapas concluídas':'Em andamento'}</span></div>
+   <button type="button" class="zp-library-open" data-zp-open="${zpEsc(p.id)}"><strong>${zpEsc(p.nome)}</strong><span>${p.dataFim?'Prazo · '+fmtPrazo(p.dataFim):'Sem prazo definido'}</span><span class="zp-library-link">Abrir projeto <b>→</b></span></button>
+   <div class="zp-library-progress"><div class="barra"><span style="width:${pct}%"></span></div><div><span>${feitas} de ${es.length} etapas</span><strong>${pct}%</strong></div></div>
+   <div class="zp-library-card-actions">${p.concluido?`<button type="button" data-zp-reopen="${zpEsc(p.id)}">Reabrir projeto</button>`:`<button type="button" data-zp-finish="${zpEsc(p.id)}">${pronto?'Finalizar projeto':'Marcar como finalizado'}</button>`}</div>
+  </article>`;
+ };
+ return `<section class="zp-library-intro"><div><p class="zp-muted">SEU UNIVERSO DE PROJETOS ✦</p><h2>Meus projetos</h2><p class="zp-muted">Acompanhe o que está em construção e guarde com carinho o que já foi concluído.</p></div><div class="zp-library-counts"><span><strong>${ativos.length}</strong>Em andamento</span><span><strong>${finalizados.length}</strong>Finalizados</span></div></section>
+ <section class="zp-library-section"><div class="zp-library-section-head"><div><h3>Em andamento</h3><p>Projetos que ainda estão em movimento.</p></div><span>${ativos.length}</span></div><div class="zp-library-grid">${ativos.map(card).join('')||'<div class="zp-library-empty">Nenhum projeto em andamento. Crie um novo ou reabra um projeto finalizado.</div>'}</div></section>
+ <section class="zp-library-section zp-library-completed"><div class="zp-library-section-head"><div><h3>Finalizados</h3><p>Um espaço separado para suas entregas concluídas.</p></div><span>${finalizados.length}</span></div><div class="zp-library-grid">${finalizados.map(card).join('')||'<div class="zp-library-empty">Seus projetos finalizados aparecerão aqui.</div>'}</div></section>`;
+}
+async function zpDefinirConcluido(id,concluido){
+ const p=projetos.find(x=>x.id===id);if(!p||!user)return;
+ const pergunta=concluido?`Finalizar o projeto “${p.nome}”? Ele será movido para a área de Finalizados. Você poderá reabri-lo depois.`:`Reabrir o projeto “${p.nome}” e movê-lo para Em andamento?`;
+ if(!confirm(pergunta))return;
+ try{await updateDoc(doc(db,'projetos',id),{concluido,concluidoEm:concluido?Date.now():null});projetos=projetos.map(x=>x.id===id?{...x,concluido,concluidoEm:concluido?Date.now():null}:x);renderProjetos();}
+ catch(e){console.error('Não foi possível atualizar o status do projeto:',e);alert('Não foi possível atualizar o projeto. Confira a conexão e as permissões do Firebase.');}
+}
 function zpConstelacao(es){if(!es.length)return '<p class="zp-muted">Crie sua primeira etapa em “Etapas e missões” para iniciar a constelação.</p>';
  return `<div class="zp-const" role="group" aria-label="Constelação das etapas do projeto">${es.slice(0,16).map((e,i)=>`${i?'<span class="zp-link" aria-hidden="true"></span>':''}<button type="button" class="zp-star ${e.concluida?'done':!es.slice(0,i).some(x=>!x.concluida)?'next':''}" data-editetapa="${zpEsc(e.id)}" aria-label="${zpEsc(e.titulo)}, ${e.concluida?'concluída':'pendente'}"><span aria-hidden="true">${e.concluida?'✓':'✦'}</span><span>${i+1}ª etapa</span></button>`).join('')}</div>${es.length>16?'<p class="zp-muted">Mostrando as primeiras 16 etapas. Todas permanecem acessíveis em Etapas e missões.</p>':''}`;
 }
 function renderProjetos(){const root=el('zp-dashboard'),lista=el('lista-projetos');if(!root||!lista)return;
  document.querySelectorAll('[data-zp-tab]').forEach(b=>{const ativo=b.dataset.zpTab===zpAba;b.classList.toggle('on',ativo);b.setAttribute('aria-pressed',String(ativo));});
  if(!projetos.length){root.innerHTML='<div class="zp-hero">Comece criando um projeto. Depois, divida-o em pequenas etapas para acompanhar seu progresso.</div>';lista.innerHTML='';return;}
- const {p,es,feitas,proxima}=zpStatus();zpSelecionado=p.id;const pct=es.length?Math.round(feitas/es.length*100):0;
+ if(zpAba==='lista'){root.innerHTML=zpRenderListaProjetos();lista.innerHTML='';return;}
+ const {p,es,feitas,proxima}=zpStatus();if(!p){root.innerHTML='<div class="zp-hero">Selecione ou crie um projeto.</div>';lista.innerHTML='';return;}zpSelecionado=p.id;const pct=es.length?Math.round(feitas/es.length*100):0;
  const selector=zpSelecionarHTML(p);
  if(zpAba==='estudos'){lista.innerHTML='';root.innerHTML=zpEstudosTela(p);return;}
  if(zpAba==='etapas'){root.innerHTML=`${selector}<p class="zp-muted">Arraste pelo símbolo ⠿ para reorganizar. No celular, você também pode usar as setas. A ordem é salva automaticamente.</p>`;renderProjetosLegado();return;}
@@ -2366,20 +2496,27 @@ let ze27Saved=[],ze27Selected=null,ze27Search='',ze27Filter='todos',ze27Busy=fal
 let ze27Section='resumo',ze27Zoom=1,ze27ConnectMode=false,ze27ConnectFrom=null,ze27SuppressClickUntil=0,ze27Drag=null;
 const ze27Esc=x=>esc(String(x??''));
 const ze27Id=()=>('s'+Date.now().toString(36)+Math.random().toString(36).slice(2,9));
-const ze27Get=()=>ze27Saved.find(x=>x.id===ze27Selected)||ze27Saved[0]||null;
+const ze27Get=()=>ze27Saved.find(x=>x.id===ze27Selected)||null;
 const ze27Project=id=>projetos.find(p=>p.id===id);
 const ze27ProjectName=id=>ze27Project(id)?.nome||'Projeto não encontrado';
-function ze27Render(){const root=el('ze27-root');if(!root)return;
- const all=ze27Saved,filtered=all.filter(x=>(ze27Filter==='todos'||(ze27Filter==='avulsos'?!x.projetoId:x.projetoId===ze27Filter))&&(!ze27Search||[x.titulo,x.materia,x.notas].join(' ').toLowerCase().includes(ze27Search.toLowerCase())));
- let study=ze27Get();if(study&&!filtered.some(x=>x.id===study.id)&&ze27Filter!=='todos')study=null;
+function ze27Render(){
+ const root=el('ze27-root');if(!root)return;
+ const all=ze27Saved;
+ const filtered=all.filter(x=>(ze27Filter==='todos'||(ze27Filter==='avulsos'?!x.projetoId:x.projetoId===ze27Filter))&&(!ze27Search||[x.titulo,x.materia,x.notas].join(' ').toLowerCase().includes(ze27Search.toLowerCase())));
+ const selected=ze27Get();
+ const study=selected&&filtered.some(x=>x.id===selected.id)?selected:null;
  const pending=projetos.flatMap(p=>(p.estudos||[]).filter(x=>!all.some(y=>y.importadoDe===p.id+':'+x.id)).map(x=>({p,x})));
  const reviews=all.reduce((n,x)=>n+(x.cartoes||[]).length,0),nodes=all.reduce((n,x)=>n+(x.nos||[]).length,0);
- root.innerHTML=`<div class="ze27-head"><div><p class="ze27-kicker">ZAIA ✦ CADERNO CÓSMICO</p><h2>Meu espaço de estudos</h2><p class="ze27-muted">Um lugar tranquilo para ler, escrever, conectar ideias e se preparar para provas.</p></div><button class="ze27-primary" data-ze27="novo">＋ Novo estudo</button></div>
+ if(study){
+  root.innerHTML=`<div class="ze27-detail-page"><button type="button" class="ze27-back" data-ze27="voltar"><span aria-hidden="true">←</span> Biblioteca de estudos</button>${ze27Detail(study)}</div>`;
+  return;
+ }
+ if(ze27Selected&&!filtered.some(x=>x.id===ze27Selected))ze27Selected=null;
+ root.innerHTML=`<div class="ze27-home-hero"><div><p class="ze27-kicker">ZAIA ✦ CADERNO CÓSMICO</p><h2>Seu espaço de estudos</h2><p class="ze27-muted">Uma biblioteca para guardar ideias, aprofundar conhecimentos e acompanhar sua evolução.</p></div><button class="ze27-primary" data-ze27="novo">＋ Novo estudo</button></div>
  <div class="ze30-stats"><div class="ze30-stat"><strong>${all.length}</strong><span>Estudos salvos</span></div><div class="ze30-stat"><strong>${nodes}</strong><span>Conceitos nos mapas</span></div><div class="ze30-stat"><strong>${reviews}</strong><span>Perguntas de revisão</span></div></div>
- <div class="ze27-pane"><div class="ze27-toolbar"><div><h3>Minha biblioteca</h3><p class="ze27-muted" style="margin:4px 0 0">Estudos avulsos e materiais vinculados aos seus projetos.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><input aria-label="Buscar estudos" id="ze27-search" placeholder="Buscar matéria ou tema…" value="${ze27Esc(ze27Search)}"/><select id="ze27-filter" aria-label="Filtrar estudos"><option value="todos" ${ze27Filter==='todos'?'selected':''}>Todos os estudos</option><option value="avulsos" ${ze27Filter==='avulsos'?'selected':''}>Avulsos</option>${projetos.map(p=>`<option value="${ze27Esc(p.id)}" ${ze27Filter===p.id?'selected':''}>${ze27Esc(p.nome)}</option>`).join('')}</select></div></div>
- <div class="ze27-list">${filtered.map(x=>`<button class="ze27-study ${study?.id===x.id?'on':''}" data-ze27="selecionar" data-id="${ze27Esc(x.id)}"><span class="ze27-tag">${x.projetoId?'↗ '+ze27Esc(ze27ProjectName(x.projetoId)):'✦ Estudo avulso'}</span><strong>${ze27Esc(x.titulo)}</strong><span class="ze27-muted">${ze27Esc(x.materia||'Sem matéria definida')}${x.prova?' · Prova: '+ze27Esc(x.prova):''}</span></button>`).join('')||'<div class="ze30-empty" style="grid-column:1/-1">Nenhum estudo encontrado.<br>Crie um estudo novo ou ajuste os filtros.</div>'}</div></div>
- ${pending.length?`<details class="ze27-pane"><summary>Importar estudos da versão anterior (${pending.length})</summary><p class="ze27-muted">Importa uma cópia para a biblioteca independente, sem apagar o original do projeto.</p>${pending.map(({p,x})=>`<div class="ze27-toolbar"><span>${ze27Esc(x.titulo)} · ${ze27Esc(p.nome)}</span><button class="ze27-secondary" data-ze27="importar" data-proj="${ze27Esc(p.id)}" data-antigo="${ze27Esc(x.id)}">Importar</button></div>`).join('')}</details>`:''}
- ${study?ze27Detail(study):'<div class="ze27-pane ze30-empty">Selecione um estudo na biblioteca ou crie um novo. Cada estudo pode ter suas próprias anotações, mapa mental e perguntas de revisão.</div>'}`;
+ <section class="ze27-pane ze27-library-home"><div class="ze27-toolbar"><div><h3>Minha biblioteca</h3><p class="ze27-muted" style="margin:4px 0 0">Escolha um estudo para abrir seu caderno e suas ferramentas.</p></div><div class="ze27-library-tools"><input aria-label="Buscar estudos" id="ze27-search" placeholder="Buscar matéria ou tema…" value="${ze27Esc(ze27Search)}"/><select id="ze27-filter" aria-label="Filtrar estudos"><option value="todos" ${ze27Filter==='todos'?'selected':''}>Todos os estudos</option><option value="avulsos" ${ze27Filter==='avulsos'?'selected':''}>Avulsos</option>${projetos.map(p=>`<option value="${ze27Esc(p.id)}" ${ze27Filter===p.id?'selected':''}>${ze27Esc(p.nome)}</option>`).join('')}</select></div></div>
+ <div class="ze27-list">${filtered.map(x=>`<button class="ze27-study" data-ze27="selecionar" data-id="${ze27Esc(x.id)}"><span class="ze27-tag">${x.projetoId?'↗ '+ze27Esc(ze27ProjectName(x.projetoId)):'✦ Estudo avulso'}</span><strong>${ze27Esc(x.titulo)}</strong><span class="ze27-muted">${ze27Esc(x.materia||'Sem matéria definida')}</span><span class="ze27-card-foot">${x.prova?'Prova · '+ze27Esc(x.prova):'Sem prova agendada'}<b>Abrir estudo →</b></span></button>`).join('')||'<div class="ze30-empty" style="grid-column:1/-1">Sua biblioteca está pronta para começar.<br>Crie um estudo para reunir anotações, mapas mentais e perguntas de revisão.</div>'}</div></section>
+ ${pending.length?`<details class="ze27-pane ze27-import-old"><summary>Importar estudos da versão anterior (${pending.length})</summary><p class="ze27-muted">Importa uma cópia para a biblioteca independente, sem apagar o original do projeto.</p>${pending.map(({p,x})=>`<div class="ze27-toolbar"><span>${ze27Esc(x.titulo)} · ${ze27Esc(p.nome)}</span><button class="ze27-secondary" data-ze27="importar" data-proj="${ze27Esc(p.id)}" data-antigo="${ze27Esc(x.id)}">Importar</button></div>`).join('')}</details>`:''}`;
 }
 function ze27Nodes(study){const a=Array.isArray(study.nos)?study.nos:[];return [{id:'root',texto:study.titulo,nota:study.notas||'',pai:null,...(study.mapaRoot||{})},...a];}
 function ze27Map(study){
@@ -2457,7 +2594,7 @@ function ze27EditCard(s,index){const old=(s.cartoes||[])[index];ze27Modal(old?'E
 function ze27SelectConnectionNode(s,id){if(!ze27ConnectFrom){ze27ConnectFrom=id;ze27Render();return;}if(ze27ConnectFrom===id){ze27ConnectFrom=null;ze27Render();return;}const from=ze27ConnectFrom,to=id;const duplicate=(s.conexoes||[]).some(c=>c.de===from&&c.para===to)||((s.nos||[]).some(n=>n.id===to&&n.pai===from));if(duplicate){ze27ConnectFrom=null;ze27ConnectMode=false;ze27Render();return;}ze27Change(a=>a.map(x=>x.id===s.id?{...x,conexoes:[...(x.conexoes||[]),{id:ze27Id(),de:from,para:to}]}:x)).then(ok=>{if(ok){ze27ConnectFrom=null;ze27ConnectMode=false;ze27Render();}});}
 function ze27UpdateLines(surface){const s=ze27Get();if(!s||!surface)return;const map={};surface.querySelectorAll('.ze27-node').forEach(n=>map[n.dataset.node]={x:parseFloat(n.style.left),y:parseFloat(n.style.top)});surface.querySelectorAll('path[data-from][data-to]').forEach(p=>{const a=map[p.dataset.from],b=map[p.dataset.to];if(!a||!b)return;const dx=b.x-a.x,sign=dx>=0?1:-1,sx=a.x+sign*75,ex=b.x-sign*75;p.setAttribute('d',`M ${sx} ${a.y} C ${sx+sign*Math.max(45,Math.abs(dx)*.42)} ${a.y}, ${ex-sign*Math.max(45,Math.abs(dx)*.42)} ${b.y}, ${ex} ${b.y}`);});}
 el('ze27-root').addEventListener('click',async e=>{const b=e.target.closest('button[data-ze27]');if(!b)return;const s=ze27Get(),a=b.dataset.ze27;
- if(a==='novo'){ze27Edit(null);return;}if(a==='selecionar'){ze27Selected=b.dataset.id;ze27Section='resumo';ze27ConnectMode=false;ze27ConnectFrom=null;ze27Render();return;}
+ if(a==='novo'){ze27Edit(null);return;}if(a==='selecionar'){ze27Selected=b.dataset.id;ze27Section='resumo';ze27ConnectMode=false;ze27ConnectFrom=null;ze27Render();return;}if(a==='voltar'){ze27Selected=null;ze27Section='resumo';ze27ConnectMode=false;ze27ConnectFrom=null;ze27Render();return;}
  if(a==='importar'){const p=ze27Project(b.dataset.proj),old=(p?.estudos||[]).find(x=>x.id===b.dataset.antigo);if(!old)return;const id=ze27Id();const next={id,titulo:old.titulo,materia:'',prova:old.prova||'',projetoId:p.id,notas:old.notas||'',nos:(old.ramificacoes||[]).map(x=>({id:x.id||ze27Id(),texto:x.texto,nota:x.nota||'',pai:'root'})),cartoes:old.cartoes||[],conexoes:[],importadoDe:p.id+':'+old.id};const ok=await ze27Change(a=>[...a,next]);if(ok){ze27Selected=id;ze27Section='resumo';ze27Render();}return;}
  if(a==='sec'){ze27Section=b.dataset.sec;ze27ConnectMode=false;ze27ConnectFrom=null;ze27Render();return;}
  if(!s)return;
@@ -2552,6 +2689,9 @@ function zpPararTimer(){if(zpTimer)clearInterval(zpTimer);zpTimer=null;zpRodando
 async function zpConcluirFoco(){zpPararTimer();const id=zpProjetoFoco;zpProjetoFoco=null;const projeto=projetos.find(p=>p.id===id);if(projeto){try{await updateDoc(doc(db,'projetos',id),{focoMinutos:increment(zpMin)});}catch(e){console.error('Erro ao registrar sessão de foco',e);fala('Não consegui salvar os minutos da sessão de foco. Tente novamente.');}}zpRestante=zpMin*60;renderProjetos();}
 function zpTick(){if(!zpRodando)return;zpRestante=Math.max(0,Math.ceil((zpFim-Date.now())/1000));zpAtualizaRelogio();if(zpRestante===0)zpConcluirFoco();}
 document.body.addEventListener('click',async e=>{const btn=e.target.closest('button');if(!btn)return;
+ if(btn.dataset.zpOpen){zpSelecionado=btn.dataset.zpOpen;zpAba='visao';renderProjetos();return;}
+ if(btn.dataset.zpFinish){await zpDefinirConcluido(btn.dataset.zpFinish,true);return;}
+ if(btn.dataset.zpReopen){await zpDefinirConcluido(btn.dataset.zpReopen,false);return;}
  if(btn.dataset.zpTab){zpAba=btn.dataset.zpTab;renderProjetos();return;}
  if(btn.dataset.zpIr){zpAba=btn.dataset.zpIr;renderProjetos();return;}
  if(btn.dataset.zpMissao){const etapa=etapas.find(x=>x.id===btn.dataset.zpMissao);if(etapa&&!etapa.concluida)await toggleEtapa(etapa.id);return;}
